@@ -1,52 +1,110 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<x-guest-layout variant="login">
+    <div class="register-container">
+        <div class="lihok-outer">
+            <div class="logo">
+                <img src="{{ asset('images/logo-login.png') }}" alt="Logo" class="clogo" />
+            </div>
+            <div class="title">
+                <p class="lihok">Lihok Padulong</p>
+                <p class="mitcom">MITCOM MINGLANILLA</p>
+            </div>
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="register-title">
+            <div class="inner-register">
+                <p class="register-des">Create your Account</p>
+            </div>
+            <div class="inner-welcome">
+                <p class="register-welcome-des">Welcome! Please fill in your details to register:</p>
+            </div>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        @if ($errors->any())
+            <div class="register-error-box">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+        <form method="POST" action="{{ route('register') }}" class="register-form">
+            @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <div class="input-group name-row">
+                <input
+                    type="text"
+                    name="first_name"
+                    placeholder="First Name"
+                    id="first_name"
+                    value="{{ old('first_name') }}"
+                    required
+                    autofocus
+                    autocomplete="given-name"
+                />
+                <input
+                    type="text"
+                    name="last_name"
+                    placeholder="Last Name"
+                    id="last_name"
+                    value="{{ old('last_name') }}"
+                    required
+                    autocomplete="family-name"
+                />
+            </div>
+
+            <div class="input-group">
+                <i data-lucide="mail" class="input-icon"></i>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email address"
+                    id="email"
+                    value="{{ old('email') }}"
+                    required
+                    autocomplete="username"
+                />
+            </div>
+
+            <div class="input-group" x-data="{ show: false }">
+                <i data-lucide="lock" class="input-icon"></i>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    id="password"
+                    required
+                    autocomplete="new-password"
+                    :type="show ? 'text' : 'password'"
+                />
+                <button type="button" @click="show = !show" class="view-icon" aria-label="Toggle password">
+                    <span x-show="!show"><i data-lucide="eye-off"></i></span>
+                    <span x-show="show" x-cloak><i data-lucide="eye"></i></span>
+                </button>
+            </div>
+
+            <div class="input-group" x-data="{ show: false }">
+                <i data-lucide="lock" class="input-icon"></i>
+                <input
+                    type="password"
+                    name="password_confirmation"
+                    placeholder="Confirm Password"
+                    id="password_confirmation"
+                    required
+                    autocomplete="new-password"
+                    :type="show ? 'text' : 'password'"
+                />
+                <button type="button" @click="show = !show" class="view-icon" aria-label="Toggle password">
+                    <span x-show="!show"><i data-lucide="eye-off"></i></span>
+                    <span x-show="show" x-cloak><i data-lucide="eye"></i></span>
+                </button>
+            </div>
+
+            <button type="submit" class="register-btn">Register</button>
+        </form>
+
+        <div class="signup-footer">
+            <p class="signup-text">Already have an account?</p>
+            <a href="{{ route('login') }}" class="signup-link">Log in here</a>
         </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </div>
 </x-guest-layout>

@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #0B3CA2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.register-container {
+    background: white;
+    padding: 30px;
+    width: 360px;
+    border-radius: 8px;
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+}
+
+.register-container button {
+    width: 100%;
+    padding: 10px;
+    background: #0B3CA2;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.error-box {
+    background: #ffe5e5;
+    padding: 10px;
+    margin-bottom: 10px;
+}

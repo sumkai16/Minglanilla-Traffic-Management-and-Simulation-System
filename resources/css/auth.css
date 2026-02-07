@@ -1,0 +1,424 @@
+/* ========== SHARED (Login & Register) ========== */
+/* Used by both auth pages via layouts/guest-login.blade.php */
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(62, 144, 199);
+}
+
+/* Footer link area – "Already have an account?" / "Don't have an account?" */
+.signup-footer {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.signup-text {
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  color: rgb(160, 160, 160);
+  margin: 0;
+}
+
+.signup-link {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgb(19, 71, 135);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.signup-link:hover {
+  color: rgb(237, 61, 38);
+  text-decoration: underline;
+}
+
+/* Alpine.js: hide until hydrated */
+[x-cloak] {
+  display: none !important;
+}
+
+
+/* ========== LOGIN (resources/views/auth/login.blade.php) ========== */
+
+.login-page .login-container {
+  box-shadow: 4px 4px 5px rgb(96, 96, 96);
+  border-radius: 10px;
+  margin-top: 30%;
+  width: 600px;
+  padding: 10px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login-page .login-container .lihok-outer {
+  width: 100%;
+  gap: 12px;
+  display: flex;
+  align-items: stretch;
+  margin-top: 20px;
+  margin-left: 65px;
+  padding: 0;
+}
+
+.login-page .login-container .logo {
+  min-width: 50px;
+}
+
+.login-page .login-container .clogo {
+  object-fit: contain;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.login-page .login-container .lihok {
+  font-family: "Poppins", sans-serif;
+  margin-top: 5px;
+  color: rgb(19, 71, 135);
+  font-weight: 800;
+  font-size: 20px;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+}
+
+.login-page .login-container .mitcom {
+  font-weight: 600;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  margin-top: -20px;
+  color: rgb(237, 61, 38);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.login-page .login-title {
+  padding: 10px;
+  display: flex;
+  margin: 20px;
+  flex-direction: column;
+}
+
+.login-page .login-des {
+  font-family: "Poppins", sans-serif;
+  color: rgb(19, 71, 135);
+  font-weight: 600;
+  font-size: 25px;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+}
+
+.login-page .login-welcome-des {
+  text-align: left;
+  margin-top: -20px;
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+  color: rgb(122, 122, 122);
+}
+
+.login-page .login-form {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.login-page .login-form .input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-page .login-form .input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.login-page .login-form .input-group input:focus {
+  border-color: #3e90c7;
+}
+
+.login-page .login-form .input-icon {
+  position: absolute;
+  left: 15px;
+  width: 18px;
+  height: 18px;
+  color: #c0c0c0;
+  pointer-events: none;
+}
+
+.login-page .login-form .view-icon {
+  position: absolute;
+  right: 15px;
+  width: 18px;
+  height: 18px;
+  color: #c0c0c0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page .login-btn {
+  background-color: rgb(19, 71, 135);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.login-page .login-btn:hover {
+  background-color: rgb(237, 61, 38);
+}
+
+/* Remember me & Forgot password row */
+.login-page .remember-forgot {
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.login-page .inner-remember {
+  color: rgb(191, 191, 191);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-page .inner-remember:hover {
+  scale: 1.03;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+}
+
+.login-page .inner-forgot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page .forgot-link {
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgb(19, 71, 135);
+  transition: all 0.3s ease-in-out;
+}
+
+.login-page .forgot-link:hover {
+  scale: 1.03;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+}
+
+
+/* ========== REGISTER (resources/views/auth/register.blade.php) ========== */
+
+.login-page .register-container {
+  box-shadow: 4px 4px 5px rgb(96, 96, 96);
+  border-radius: 10px;
+  margin-top: 30%;
+  width: 600px;
+  padding: 20px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login-page .register-container .lihok-outer {
+  width: 100%;
+  gap: 12px;
+  display: flex;
+  align-items: stretch;
+  margin-top: 0;
+  margin-left: 65px;
+  padding: 0;
+}
+
+.login-page .register-container .logo {
+  min-width: 50px;
+}
+
+.login-page .register-container .clogo {
+  object-fit: contain;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.login-page .register-container .lihok {
+  font-family: "Poppins", sans-serif;
+  margin-top: 5px;
+  color: rgb(19, 71, 135);
+  font-weight: 800;
+  font-size: 20px;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+  margin-bottom: 15px;
+}
+
+.login-page .register-container .mitcom {
+  font-weight: 600;
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  margin-top: -20px;
+  color: rgb(237, 61, 38);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.login-page .register-title {
+  padding: 10px;
+  display: flex;
+  margin: 10px;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+.inner-register{
+  margin-bottom: 15px;
+}
+.login-page .register-des {
+  font-family: "Poppins", sans-serif;
+  color: rgb(19, 71, 135);
+  font-weight: 600;
+  font-size: 25px;
+  text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+}
+
+.login-page .register-welcome-des {
+  text-align: left;
+  margin-top: -20px;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  color: rgb(122, 122, 122);
+}
+
+.login-page .register-form {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.login-page .register-form .input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-page .register-form .input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.login-page .register-form .input-group input:focus {
+  border-color: #3e90c7;
+}
+
+/* First + Last name row: two inputs side by side, no icon */
+.login-page .register-form .input-group.name-row {
+  display: flex;
+  gap: 10px;
+}
+
+.login-page .register-form .input-group.name-row input {
+  flex: 1;
+  padding-left: 15px;
+}
+
+.login-page .register-form .input-icon {
+  position: absolute;
+  left: 15px;
+  width: 18px;
+  height: 18px;
+  color: #c0c0c0;
+  pointer-events: none;
+}
+
+.login-page .register-form .view-icon {
+  position: absolute;
+  right: 15px;
+  width: 18px;
+  height: 18px;
+  color: #c0c0c0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page .register-btn {
+  background-color: rgb(19, 71, 135);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.login-page .register-btn:hover {
+  background-color: rgb(237, 61, 38);
+}
+
+.login-page .register-error-box {
+  width: 90%;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  color: rgb(237, 61, 38);
+  background-color: rgba(237, 61, 38, 0.08);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.login-page .register-error-box p {
+  margin: 0 0 4px 0;
+}
+
+.login-page .register-error-box p:last-child {
+  margin-bottom: 0;
+}
