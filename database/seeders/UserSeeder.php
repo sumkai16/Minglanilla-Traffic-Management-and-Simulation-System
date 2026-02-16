@@ -19,8 +19,7 @@ class UserSeeder extends Seeder
             'last_name' => 'User',
             'email' => 'admin@minglanilla.gov.ph',
             'role' => 'admin',
-            'password' => Hash::make(env('ADMIN_PASSWORD','password')),
-            'role' => 'admin',
+            'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
 
@@ -30,7 +29,7 @@ class UserSeeder extends Seeder
             'last_name' => 'Officer',
             'email' => 'mitcom@minglanilla.gov.ph',
             'role' => 'mitcom',
-            'password' => Hash::make(env('MITCOM_PASSWORD','password')),
+            'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
 
