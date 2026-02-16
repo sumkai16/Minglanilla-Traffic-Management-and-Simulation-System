@@ -1,0 +1,106 @@
+html {
+    scroll-behavior: smooth;
+}
+
+.nav-link {
+    position: relative;
+    font-weight: 600;
+    color: #374151;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #1d4ed8;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0%;
+    height: 2px;
+    background: #1d4ed8;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+#feature-1 {
+    transition: all 0.3s ease;
+}
+
+#feature-1:hover {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #1d4ed8;
+
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(29, 78, 216, 0.2);
+}
+
+#feature-2 {
+    transition: all 0.3s ease;
+}
+
+#feature-2:hover {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #f59e0b;
+
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(245, 158, 11, 0.2);
+}
+
+#feature-3 {
+    transition: all 0.3s ease;
+}
+
+#feature-3:hover {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ef4444;
+
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
+}
+
+/*
+   OUR IMPACT CARDS
+ */
+
+.impact-card {
+    background: #ffffff;
+    border: 2px solid rgba(59, 130, 246, 0.15);
+    border-radius: 18px;
+    padding: 28px 20px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.impact-card::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 90px;
+    height: 90px;
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.impact-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+    border-color: rgba(37, 99, 235, 0.35);
+}
+
+.impact-card:hover::before {
+    transform: scale(1.2);
+}
