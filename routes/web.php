@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
 // Admin routes
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('users', \App\Http\Controllers\Admin\UsermanagementController::class);
 });
 
 // Enforcer routes

@@ -4,19 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Admin Dashboard</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
-    <h1>Welcome to the Admin Dashboard</h1>
-    <p>Here you can manage users, view reports, and configure system settings.</p>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
 
-    <div class="logout">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit">Logout</button>
-        </form>
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-700 text-sm">{{ auth()->user()->first_name }}
+                        {{ auth()->user()->last_name }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <main class="py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <!-- Welcome -->
+                <div class="bg-white shadow rounded-lg p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Welcome, {{ auth()->user()->first_name }}!</h2>
+                    <p class="text-gray-600 text-sm mt-1">Minglanilla Traffic Management System - Admin Panel</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow p-4 text-center">
+                        <div class="text-2xl font-bold text-gray-900">{{ $totalUsers }}</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Users</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600">{{ $adminCount }}</div>
+                        <div class="text-sm text-gray-500 mt-1">Admins</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600">{{ $headMitcomCount }}</div>
+                        <div class="text-sm text-gray-500 mt-1">Head MITCOM</div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600">{{ $enforcerCount }}</div>
+                        <div class="text-sm text-gray-500 mt-1">Enforcers</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white shadow rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <a href="{{ route('admin.users.index') }}"
+                            class="block p-4 border border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                            <div class="font-medium text-gray-900">👥 Manage Users</div>
+                            <div class="text-sm text-gray-500 mt-1">Add, edit, or remove users</div>
+                        </a>
+                        <a href="#"
+                            class="block p-4 border border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                            <div class="font-medium text-gray-900">📋 Traffic Reports</div>
+                            <div class="text-sm text-gray-500 mt-1">View all traffic reports</div>
+                        </a>
+                        <a href="#"
+                            class="block p-4 border border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
+                            <div class="font-medium text-gray-900">🗺️ Traffic Map</div>
+                            <div class="text-sm text-gray-500 mt-1">View live traffic map</div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
 </body>
 
