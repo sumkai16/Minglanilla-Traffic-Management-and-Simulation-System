@@ -38,7 +38,7 @@
                 </div>
 
                 <!-- Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 ">
                     <div class="bg-white rounded-lg shadow p-4 text-center">
                         <div class="text-2xl font-bold text-gray-900">{{ $totalUsers }}</div>
                         <div class="text-sm text-gray-500 mt-1">Total Users</div>
