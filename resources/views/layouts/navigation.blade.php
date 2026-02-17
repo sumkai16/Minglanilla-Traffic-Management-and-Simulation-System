@@ -2,22 +2,15 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex items-center">
                 <!-- Logo -->
-                <div class="logo-header" style="display: flex;">
-                    <x-nav-link :href="route('dashboard')" class="flex items-center">
-                        <img src="{{ asset('images/logo-login-nobg.png') }}" alt="Logo" class="clogo" />
-                    </x-nav-link>
-                    <div class="title" style="margin-left: 10px; margin-top: 5px;">
-                        <p class="lihok" style="color: #FEB21A; margin-top: 5px;">Lihok Padulong</p>
-                        <p class="mitcom" style="color: aliceblue; margin-bottom: 5px;">MITCOM MINGLANILLA</p>
-                    </div>
-                </div>
+                <a href="{{ route('dashboard') }}" class="flex items-center">
+                    <x-logo variant="image" :href="route('dashboard')" />
+                </a>
+                
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <!-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link> -->
+                    <!-- Navigation links can be added here -->
                 </div>
             </div>
 
@@ -68,7 +61,14 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div x-show="open" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-75"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}

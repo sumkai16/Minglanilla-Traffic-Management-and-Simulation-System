@@ -12,7 +12,7 @@ class DashboardController extends Controller
         // User statistics
         $totalUsers = User::count();
         $adminCount = User::where('role', 'admin')->count();
-        $mitcomCount = User::where('role', 'mitcom')->count();
+        $mitcomCount = User::where('role', 'enforcer')->count();
         $userCount = User::where('role', 'user')->count();
         
         // Get all users with latest first

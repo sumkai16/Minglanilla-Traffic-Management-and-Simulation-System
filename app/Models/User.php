@@ -30,8 +30,11 @@ class User extends Authenticatable
     public function isUser(): bool{
         return $this->role === 'user';
     }
-    public function isMitcom(): bool{
-        return $this->role === 'mitcom';
+    public function isEnforcer(): bool{
+        return $this->role === 'enforcer';
+    }
+    public function isHeadMitcom(): bool{
+        return $this->role === 'head-mitcom';
     }
     /**
      * The attributes that should be hidden for serialization.

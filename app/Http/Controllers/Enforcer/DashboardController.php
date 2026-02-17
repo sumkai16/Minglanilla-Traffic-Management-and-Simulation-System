@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Mitcom;
+namespace App\Http\Controllers\Enforcer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,6 +11,6 @@ class DashboardController extends Controller
     public function index()
     {
         
-        return view('mitcom.dashboard');
+        return view('enforcer.dashboard');
     }
 }

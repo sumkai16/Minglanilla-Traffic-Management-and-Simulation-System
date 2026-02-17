@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Mitcom\DashboardController as MitcomDashboardController;
+use App\Http\Controllers\Enforcer\DashboardController as EnforcerDashboardController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDasboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -21,10 +22,14 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     
-    if ($user->isMitcom()) {
-        return redirect()->route('mitcom.dashboard');
+    if ($user->isEnforcer()) {
+        return redirect()->route('enforcer.dashboard');
     }
     
+    if ($user->isHeadMitcom()) {
+        return redirect()->route('head-mitcom.dashboard');
+    }
+
     return redirect()->route('user.dashboard');
 })->name('dashboard');
 
@@ -40,14 +45,18 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 });
 
-// MITCOM routes
-Route::middleware(['auth', 'verified', 'role:mitcom'])->prefix('mitcom')->name('mitcom.')->group(function () {
-    Route::get('/dashboard', [MitcomDashboardController::class, 'index'])->name('dashboard');
+// Enforcer routes
+Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->name('enforcer.')->group(function () {
+    Route::get('/dashboard', [EnforcerDashboardController::class, 'index'])->name('dashboard');
 });
 
 // User routes
 Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+});
+// Head MITCOM routes
+Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
+    Route::get('/dashboard', [HeadMitcomDasboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/auth.php';
