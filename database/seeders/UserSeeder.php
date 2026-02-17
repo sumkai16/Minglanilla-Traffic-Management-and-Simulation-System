@@ -25,10 +25,10 @@ class UserSeeder extends Seeder
 
         // Create MITCOM Officer
         User::create([
-            'first_name' => 'MITCOM',
-            'last_name' => 'Officer',
-            'email' => 'mitcom@minglanilla.gov.ph',
-            'role' => 'mitcom',
+            'first_name' => 'Enforcer',
+            'last_name' => 'Bas',
+            'email' => 'enforcer@minglanilla.gov.ph',
+            'role' => 'enforcer',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
@@ -42,9 +42,19 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
+        //Create Head MITCOM
+        User::create([
+            'first_name' => 'Head',
+            'last_name' => 'MITCOM',
+            'email' => 'headmitcom@minglanilla.gov.ph',
+            'role' => 'head-mitcom',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
         $this->command->info('Created 3 test users successfully!');
         $this->command->info('Admin: admin@minglanilla.gov.ph / password');
         $this->command->info('MITCOM: mitcom@minglanilla.gov.ph / password');
         $this->command->info('User: user@example.com / password');
+        $this->command->info('Head MITCOM: headmitcom@minglanilla.gov.ph / password');
     }
 }
