@@ -60,4 +60,8 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     Route::get('/dashboard', [HeadMitcomDasboardController::class, 'index'])->name('dashboard');
 });
 
+// Public report routes
+Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
+Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
+
 require __DIR__.'/auth.php';
