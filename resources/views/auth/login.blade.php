@@ -14,9 +14,9 @@
             <div class="inner-login">
                 <p class="login-des">Log in to your Account</p>
             </div>
-            <div class="inner-welcome-back ">
+            {{-- <div class="inner-welcome-back ">
                 <p class="login-welcome-des">Welcome back! Select a method to log in:</p>
-            </div>
+            </div> --}}
         </div>
 
         <x-auth-session-status class="auth-session-status" :status="session('status')" />

@@ -104,18 +104,31 @@
         </div>
 
         <div>
-            <label for="image" class="block text-blue-900 font-semibold text-sm mb-2">Upload Image (Optional)</label>
+            <label for="image" class="block text-blue-900 font-semibold text-sm mb-2">
+                Upload Image (Optional)
+            </label>
+
             <div class="relative">
                 <input type="file" id="image" name="image" accept="image/*" class="hidden">
+
                 <label for="image"
-                    class="flex flex-col items-center justify-center w-full h-[184px] border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
-                    <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    <p class="text-gray-600 text-sm font-medium">Click to upload image</p>
-                    <p class="text-gray-500 text-xs mt-1">PNG, JPG up to 5MB</p>
+                    class="flex flex-col items-center justify-center w-full h-[184px] border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition text-center"
+                    id="uploadLabel">
+
+                    <div id="uploadPlaceholder">
+                        <svg class="w-10 h-10 text-gray-400 mb-2 mx-auto" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        <p class="text-gray-600 text-sm font-medium">Click to upload image</p>
+                        <p class="text-gray-500 text-xs mt-1">PNG, JPG up to 5MB</p>
+                    </div>
+
+                    <img id="imagePreview" class="hidden max-h-[160px] rounded-lg shadow-md object-contain" />
                 </label>
             </div>
+
             @error('image')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
