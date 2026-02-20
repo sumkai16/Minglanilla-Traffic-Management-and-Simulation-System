@@ -18,11 +18,12 @@ return new class extends Migration
         $table->string('reporter_email')->nullable();
         $table->string('reporter_phone')->nullable();
         $table->string('issue_type');
-        $table->text('description');
+        $table->text('description')->nullable();
         $table->string('location');
         $table->decimal('latitude', 10, 7);
         $table->decimal('longitude', 10, 7);
         $table->enum('status', ['pending', 'verified', 'rejected', 'assigned', 'resolved'])->default('pending');
+        $table->string('image_path')->nullable();
         $table->foreignId('verified_by')->nullable()->constrained('users')->onDelete('set null');
         $table->timestamp('verified_at')->nullable();
         $table->timestamps();

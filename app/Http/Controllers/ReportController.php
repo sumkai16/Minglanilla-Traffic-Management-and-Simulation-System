@@ -38,8 +38,16 @@ class ReportController extends Controller
             'reporter_name' => Auth::check() ? 'nullable' : 'required|string|max:255',
             'reporter_email' => Auth::check() ? 'nullable' : 'required|email|max:255',
             'reporter_phone' => 'nullable|string|max:20',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',      
+            
         ]);
+        $imagePath = null;
 
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('reports', 'public');
+        }
+
+        $validated['image_path'] = $imagePath;
         // If logged in, use user_id and clear guest fields
         if (Auth::check()) {
             $validated['user_id'] = Auth::id();
@@ -53,6 +61,7 @@ class ReportController extends Controller
 
         Report::create($validated);
 
-        return back()->with('success', 'Report submitted successfully. We will review it shortly.');
+        return redirect()->back()->with('success', 'Report submitted successfully.');        dd($imagePath);
     }
+   
 }

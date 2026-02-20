@@ -5,7 +5,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgb(62, 144, 199);
+  background-color: #142A6C;
 }
 
 /* Footer link area – "Already have an account?" / "Don't have an account?" */
@@ -303,9 +303,11 @@ body {
   width: 100%;
   align-items: center;
 }
-.inner-register{
+
+.inner-register {
   margin-bottom: 15px;
 }
+
 .login-page .register-des {
   font-family: "Poppins", sans-serif;
   color: rgb(19, 71, 135);

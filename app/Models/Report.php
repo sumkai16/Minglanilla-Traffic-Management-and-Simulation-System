@@ -20,6 +20,7 @@ class Report extends Model
         'latitude',
         'longitude',
         'status',
+        'image_path',
         'verified_by',
         'verified_at',
     ];

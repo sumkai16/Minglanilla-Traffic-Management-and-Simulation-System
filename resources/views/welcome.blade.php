@@ -8,6 +8,11 @@
     <title>{{ config('app.name', 'Minglanilla Traffic System') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
@@ -65,11 +70,10 @@
                     </p>
 
                     <div class="flex flex-wrap gap-4">
-                        <a href="{{ route('report.create') }}"
+                        <button id="openReportBtn"
                             class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition">
                             Report an Incident
-                        </a>
-
+                        </button>
                         @auth
                             <a href="{{ url('/dashboard') }}"
                                 class="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg shadow-lg transition hover:bg-gray-100">
@@ -208,6 +212,53 @@
         </p>
     </footer>
 
+
+    <!-- REPORT MODAL -->
+    <div id="reportModal"
+        class="fixed inset-0 bg-black bg-opacity-50 opacity-0 invisible transition-opacity duration-300 z-50 flex items-center justify-center">
+
+        <div id="reportModalContent" class="bg-white w-full max-w-3xl rounded-lg shadow-xl relative overflow-y-auto max-h-[90vh]
+                    transform scale-95 transition-all duration-300">
+
+            <!-- Close Button -->
+            <button id="closeReportBtn">
+                class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl font-bold">
+                &times;
+            </button>
+
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-blue-900 mb-6">
+                    Report Traffic Incident
+                </h2>
+
+                <x-report-form />
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
+        <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+            <div class="bg-white w-full max-w-md rounded-lg shadow-xl p-8 text-center transform scale-95 opacity-0 transition-all duration-300"
+                id="successModalContent">
+
+                <div class="text-green-600 text-4xl mb-4">✓</div>
+
+                <h2 class="text-xl font-bold text-gray-800 mb-2">
+                    Success!
+                </h2>
+
+                <p class="text-gray-600 mb-6">
+                    {{ session('success') }}
+                </p>
+
+                <button id="closeSuccessModal"
+                    class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    @endif
 </body>
 
 </html>
