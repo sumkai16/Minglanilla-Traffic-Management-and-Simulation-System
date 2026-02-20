@@ -28,6 +28,7 @@
             <!-- Form Card -->
             <div class="bg-white rounded-lg shadow-xl overflow-hidden border-t-8 border-red-600">
                 <x-report-form />
+
             </div>
         </div>
     </div>
