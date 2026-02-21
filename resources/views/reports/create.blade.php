@@ -32,4 +32,17 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Only init public map if it exists (landing page)
+            if (document.getElementById('public-map')) {
+                initPublicMap('public-map');
+            }
+
+            // Initialize map picker for report form
+            if (document.getElementById('map-picker')) {
+                initReportMapPicker();
+            }
+        });
+    </script>
 </x-guest-layout>

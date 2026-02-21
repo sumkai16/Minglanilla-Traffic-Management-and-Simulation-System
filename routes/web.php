@@ -64,4 +64,8 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
 Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
 
+
+//API endpoint for map data
+Route::get('/api/reports/map', [App\Http\Controllers\ReportController::class, 'mapData'])->name('reports.map');
+
 require __DIR__.'/auth.php';
