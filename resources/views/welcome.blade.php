@@ -99,7 +99,7 @@
         </div>
     </section>
     <!-- Traffic Map Section -->
-    <section class="py-16 bg-gray-50">
+    <section class="py-16 bg-gray-50 ">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-8">
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Live Incident Map</h2>

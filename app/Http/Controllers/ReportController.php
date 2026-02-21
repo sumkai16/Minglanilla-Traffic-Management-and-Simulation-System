@@ -88,5 +88,8 @@ class ReportController extends Controller
     }
 
 
-
+ public function confirmation()
+    {
+        return view('reports.confirmation');
+    }
 }

@@ -54,7 +54,6 @@ window.initPublicMap = function (containerId) {
         .catch(error => console.error('Error loading map data:', error));
 };
 // Map picker for report form
-// Map picker for report form
 window.initReportMapPicker = function () {
     const latInput = document.getElementById('latitude');
     const lngInput = document.getElementById('longitude');
@@ -82,13 +81,15 @@ window.initReportMapPicker = function () {
             (position) => {
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
-
                 // Center map on user's location
                 map.setView([userLat, userLng], 16);
-
                 // Place marker at user's location
                 latInput.value = userLat.toFixed(6);
                 lngInput.value = userLng.toFixed(6);
+                // Remove any existing marker first
+                if (marker) {
+                    map.removeLayer(marker);
+                }
                 marker = L.marker([userLat, userLng]).addTo(map);
             },
             (error) => {
