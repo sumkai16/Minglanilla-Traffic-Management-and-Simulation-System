@@ -66,7 +66,7 @@ window.initReportMapPicker = function () {
     let defaultLng = 123.7972;
 
     // Initialize map
-    const map = L.map(mapContainer).setView([defaultLat, defaultLng], 14);
+    const map = L.map(mapContainer).setView([defaultLat, defaultLng], 19);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
