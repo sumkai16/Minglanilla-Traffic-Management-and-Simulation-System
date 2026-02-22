@@ -135,10 +135,18 @@
         </div>
     </div>
 
-    <!-- Coordinates (hidden for now) -->
+    <!-- Map Picker -->
+    <div class="mb-6">
+        <label class="block text-blue-900 font-semibold text-sm mb-2">Click on the Map to Mark Incident Location <span
+                class="text-red-600">*</span></label>
+        <div id="map-picker" class="w-full h-[400px] border-2 border-gray-300 rounded-lg"></div>
+        <p class="text-xs text-gray-600 mt-2">Click anywhere on the map to pinpoint the exact location of the incident.
+        </p>
+    </div>
+
+    <!-- Hidden coordinate inputs -->
     <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', '10.2833') }}">
     <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', '123.7972') }}">
-
     <!-- Disclaimer -->
     <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-6">
         <div class="flex">

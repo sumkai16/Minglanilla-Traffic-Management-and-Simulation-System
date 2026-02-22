@@ -19,6 +19,9 @@
                             <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
                                 {{ __('User Management') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')">
+                                {{ __('Reports') }}
+                            </x-nav-link>
                         @endif
 
                         @if(auth()->user()->role === 'head-mitcom')

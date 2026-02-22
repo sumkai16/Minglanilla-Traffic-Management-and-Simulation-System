@@ -63,5 +63,33 @@ class ReportController extends Controller
 
         return redirect()->back()->with('success', 'Report submitted successfully.');        dd($imagePath);
     }
-   
+   // Get reports for map display
+    public function mapData()
+    {
+        $reports = Report::with('user')
+            ->where('status', '!=', 'rejected')
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function ($report) {
+                return [
+                    'id' => $report->id,
+                    'latitude' => (float) $report->latitude,
+                    'longitude' => (float) $report->longitude,
+                    'issue_type' => $report->issue_type,
+                    'description' => $report->description,
+                    'location' => $report->location,
+                    'status' => $report->status,
+                    'created_at' => $report->created_at->diffForHumans(),
+                ];
+            });
+
+        return response()->json($reports);
+    }
+
+
+ public function confirmation()
+    {
+        return view('reports.confirmation');
+    }
 }

@@ -15,6 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
             modalContent.classList.remove('scale-95');
             modalContent.classList.add('scale-100');
             document.body.classList.add('overflow-hidden');
+
+            // Initialize map picker after modal is visible
+            setTimeout(() => {
+                if (typeof window.initReportMapPicker === 'function') {
+                    window.initReportMapPicker();
+                }
+            }, 100);
         });
     }
 

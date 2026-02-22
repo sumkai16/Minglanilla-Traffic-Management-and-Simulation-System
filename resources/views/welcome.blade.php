@@ -98,7 +98,25 @@
             </div>
         </div>
     </section>
+    <!-- Traffic Map Section -->
+    <section class="py-16 bg-gray-50 ">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Live Incident Map</h2>
+                <p class="text-gray-600">View recent traffic incidents and reports across Minglanilla</p>
+            </div>
 
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div id="public-map" class="w-full h-[500px]"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initPublicMap('public-map');
+        });
+    </script>
     <!-- CORE FEATURES -->
     <section id="core-features" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -221,11 +239,10 @@
                     transform scale-95 transition-all duration-300">
 
             <!-- Close Button -->
-            <button id="closeReportBtn">
+            <button id="closeReportBtn"
                 class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl font-bold">
                 &times;
             </button>
-
             <div class="p-8">
                 <h2 class="text-2xl font-bold text-blue-900 mb-6">
                     Report Traffic Incident

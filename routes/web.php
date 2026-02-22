@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', \App\Http\Controllers\Admin\UsermanagementController::class);
+
+    Route::get('reports',[App\Http\Controllers\Admin\ReportManagementController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}',[App\Http\Controllers\Admin\ReportManagementController::class, 'show'])->name('reports.show');
+    Route::patch('reports/{report}/status',[App\Http\Controllers\Admin\ReportManagementController::class, 'updateStatus'])->name('reports.updateStatus');
 });
 
 // Enforcer routes
@@ -63,5 +67,9 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 // Public report routes
 Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
 Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
+
+
+//API endpoint for map data
+Route::get('/api/reports/map', [App\Http\Controllers\ReportController::class, 'mapData'])->name('reports.map');
 
 require __DIR__.'/auth.php';
