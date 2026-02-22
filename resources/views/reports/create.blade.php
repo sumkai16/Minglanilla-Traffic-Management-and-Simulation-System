@@ -1,10 +1,23 @@
 <x-guest-layout>
-    <!-- Hero Section -->
-    <div class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Urgent Incident Reporting</h1>
-            <p class="text-blue-100 text-lg">Submit real-time reports directly to MTCOM. Your data helps dispatch
-                traffic officers and notify commuters within minutes.</p>
+
+
+<div id="reportCard"
+     class="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] 
+     transition-all duration-500 ease-out p-10 border border-gray-100">
+
+    <!-- Logo & Title -->
+    <div class="flex items-center gap-4 mb-8">  
+        <img src="{{ asset('images/logo-login.png') }}" 
+             alt="Logo" 
+             class="w-14 h-14 rounded-lg object-contain">
+
+        <div>
+            <p class="text-xl font-black text-blue-900 tracking-wide">
+                Lihok Padulong
+            </p>
+            <p class="text-sm font-extrabold text-red-600 -mt-1 tracking-wide">
+                MITCOM MINGLANILLA
+            </p>
         </div>
     </div>
 
@@ -45,4 +58,37 @@
             }
         });
     </script>
+
+    </form>
+
+</div>
+
+<!-- Animations + Submit Behavior -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const card = document.getElementById('reportCard');
+
+    // Fade in effect
+    card.classList.add('opacity-0', 'translate-y-4');
+
+    setTimeout(() => {
+        card.classList.remove('opacity-0', 'translate-y-4');
+        card.classList.add('opacity-100', 'translate-y-0');
+    }, 100);
+
+    // Submit loading state
+    const form = document.getElementById('reportForm');
+    const button = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+
+    form.addEventListener('submit', function () {
+        button.disabled = true;
+        btnText.classList.add('invisible');
+        spinner.classList.remove('hidden');
+    });
+});
+</script>
+
 </x-guest-layout>
