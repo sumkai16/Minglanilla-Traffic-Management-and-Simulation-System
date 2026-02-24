@@ -59,14 +59,7 @@
                                 </svg>
                                 Back to Dashboard
                             </a>
-                            <a href="{{ route('admin.users.create') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path
-                                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
-                                </svg>
-                                Add User
-                            </a>
+
                             <div
                                 class="flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2">
                                 <span class="text-white text-sm whitespace-nowrap">
@@ -188,6 +181,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- add user button-->
+                <div class="flex justify-end m-2">
+                    <a href="{{ route('admin.users.create') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                        </svg>
+                        Add User
+                    </a>
                 </div>
 
                 <!-- Table -->
@@ -332,11 +336,11 @@
                                         <td class="px-6 py-4 align-middle">
                                             <span
                                                 class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                                                                                            @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
-                                                                                                                                            @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                                                            @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
-                                                                                                                                            @else bg-slate-50 text-slate-800 ring-slate-200
-                                                                                                                                            @endif">
+                                                                                                                                                                                @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
+                                                                                                                                                                                @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                                                                                                @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
+                                                                                                                                                                                @else bg-slate-50 text-slate-800 ring-slate-200
+                                                                                                                                                                                @endif">
                                                 {{ ucfirst(str_replace('-', ' ', $user->role)) }}
                                             </span>
                                         </td>

@@ -235,14 +235,15 @@
     <div id="reportModal"
         class="fixed inset-0 bg-black bg-opacity-50 opacity-0 invisible transition-opacity duration-300 z-50 flex items-center justify-center">
 
-        <div id="reportModalContent" class="bg-white w-full max-w-3xl rounded-lg shadow-xl relative overflow-y-auto max-h-[90vh]
-                    transform scale-95 transition-all duration-300">
+        <div id="reportModalContent" class="bg-white w-full max-w-3xl rounded-lg shadow-xl relative 
+               h-[700px] overflow-y-auto
+               transform scale-95 transition-all duration-300">
 
-            <!-- Close Button -->
             <button id="closeReportBtn"
                 class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl font-bold">
                 &times;
             </button>
+
             <div class="p-8">
                 <h2 class="text-2xl font-bold text-blue-900 mb-6">
                     Report Traffic Incident
