@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>My Dashboard</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     <style>
@@ -18,7 +18,18 @@
 <body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
     <div class="min-h-screen">
 
-        <x-app-nav pageTitle="My Dashboard" />
+        <x-app-nav pageTitle="My Dashboard">
+            <a href="{{ route('user.reports.create') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                </svg>
+                Report Incident
+
+            </a>
+
+        </x-app-nav>
 
         <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
@@ -26,13 +37,171 @@
 
                 <!-- Welcome Card -->
                 <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 mb-6 -mt-4 relative z-10">
-                    <h2 class="text-lg font-semibold text-slate-900">Welcome, {{ auth()->user()->first_name }}!</h2>
-                    <p class="text-slate-600 text-sm mt-1">Track your incident reports and submit new ones</p>
+                    <h2 class="text-lg font-semibold text-slate-900">Welcome back, {{ auth()->user()->first_name }}!
+                    </h2>
+                    <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
                 </div>
 
-                <!-- Content goes here -->
-                <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6">
-                    <p class="text-slate-700">User dashboard content coming soon...</p>
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-slate-500">Pending</div>
+                                <div class="text-3xl font-semibold text-yellow-600 mt-3">{{ $pendingCount }}</div>
+                            </div>
+                            <div
+                                class="h-10 w-10 rounded-xl bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-200 flex items-center justify-center">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-slate-500">Verified</div>
+                                <div class="text-3xl font-semibold text-blue-600 mt-3">{{ $verifiedCount }}</div>
+                            </div>
+                            <div
+                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-slate-500">Resolved</div>
+                                <div class="text-3xl font-semibold text-green-600 mt-3">{{ $resolvedCount }}</div>
+                            </div>
+                            <div
+                                class="h-10 w-10 rounded-xl bg-green-50 text-green-700 ring-1 ring-inset ring-green-200 flex items-center justify-center">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if(session('success'))
+                    <div
+                        class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 px-6 py-4 rounded-lg mb-6 shadow-sm animate-fade-in">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-emerald-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <strong class="font-semibold">Success!</strong>
+                                <span class="block text-sm mt-0.5">{{ session('success') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <!-- Reports Table -->
+                <div
+                    class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden border-t-4 border-t-blue-600">
+                    <div class="px-6 py-5 border-b border-slate-200">
+                        <h2 class="text-lg font-semibold text-slate-900">My Reports</h2>
+                        <p class="text-sm text-slate-500 mt-1">View all your submitted incident reports</p>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        #</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Issue Type</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Location</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                        Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-100">
+                                @forelse($reports as $report)
+                                    <tr class="hover:bg-slate-50/70 transition cursor-pointer"
+                                        onclick="window.location='{{ route('user.reports.show', $report) }}'">
+                                        <td class="px-6 py-4 text-sm text-gray-500">#{{ $report->id }}</td>
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                                            {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">
+                                            {{ Str::limit($report->location, 40) }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
+                                                                                                @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                                                @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                                                @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                                                @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                                                @endif">
+                                                {{ ucfirst($report->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-500">
+                                            {{ $report->created_at->format('M d, Y') }}
+                                            <br>
+                                            <span
+                                                class="text-xs text-gray-400">{{ $report->created_at->diffForHumans() }}</span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-12 text-center">
+                                            <div class="text-slate-400 mb-2">
+                                                <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                            </div>
+                                            <p class="text-slate-500 font-medium">No reports yet</p>
+                                            <p class="text-sm text-slate-400 mt-1">Submit your first incident report to get
+                                                started</p>
+                                            <a href="{{ route('user.reports.create') }}"
+                                                class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                                Report Incident
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    @if($reports->hasPages())
+                        <div class="px-6 py-4 border-t border-slate-200">
+                            {{ $reports->links() }}
+                        </div>
+                    @endif
                 </div>
 
             </div>

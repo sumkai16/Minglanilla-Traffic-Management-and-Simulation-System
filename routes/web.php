@@ -58,6 +58,9 @@ Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->na
 // User routes
 Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports/create', [App\Http\Controllers\User\ReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports', [App\Http\Controllers\User\ReportController::class, 'store'])->name('reports.store');
+    Route::get('/reports/{report}',[App\Http\Controllers\User\ReportController::class, 'show'])->name('reports.show');
 });
 // Head MITCOM routes
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {

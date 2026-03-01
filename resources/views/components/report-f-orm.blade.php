@@ -1,5 +1,8 @@
-<form method="POST" action="{{ route('report.store') }}" enctype="multipart/form-data" class="p-8">
+@props(['action' => ''])
+
+<form method="POST" action="{{ $action ?: route('report.store') }}" enctype="multipart/form-data" class="p-8">
     @csrf
+    ...
 
     @guest
         <!-- Guest Reporter Info -->

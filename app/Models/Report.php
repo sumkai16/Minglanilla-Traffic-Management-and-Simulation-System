@@ -54,4 +54,5 @@ class Report extends Model
     {
         return $this->user ? $this->user->email : $this->attributes['reporter_email'];
     }
+    
 }

@@ -32,8 +32,25 @@
                 <div class="flex flex-wrap items-center gap-3">
 
 
-                    @if (!request()->routeIs('admin.dashboard'))
-                        <a href="{{ route('admin.dashboard') }}"
+                    @if (
+                            !request()->routeIs([
+                                'admin.dashboard*',
+                                'user.dashboard*',
+                                'head-mitcom.dashboard*',
+                                'enforcer.dashboard*'
+                            ])
+                        )
+                        @php
+                            $dashboardRoute = match (auth()->user()->role) {
+                                'admin' => route('admin.dashboard'),
+                                'head-mitcom' => route('head-mitcom.dashboard'),
+                                'enforcer' => route('enforcer.dashboard'),
+                                'user' => route('user.dashboard'),
+                                default => route('user.dashboard'),
+                            };
+                        @endphp
+
+                        <a href="{{ $dashboardRoute }}"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 transition">
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
@@ -41,6 +58,7 @@
                                     clip-rule="evenodd" />
                             </svg>
                             Back to Dashboard
+                        </a>
                         </a>
                     @endif
 
