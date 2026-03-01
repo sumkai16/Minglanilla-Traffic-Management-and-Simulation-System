@@ -19,14 +19,16 @@
     <div class="min-h-screen">
 
         <x-app-nav pageTitle="My Dashboard">
-            <a href="{{ route('report.create') }}"
+            <a href="{{ route('user.reports.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition">
                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
                         d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
                 </svg>
                 Report Incident
+
             </a>
+
         </x-app-nav>
 
         <main class="py-8 relative">
@@ -96,7 +98,22 @@
                         </div>
                     </div>
                 </div>
-
+                @if(session('success'))
+                    <div
+                        class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 px-6 py-4 rounded-lg mb-6 shadow-sm animate-fade-in">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-emerald-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div>
+                                <strong class="font-semibold">Success!</strong>
+                                <span class="block text-sm mt-0.5">{{ session('success') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <!-- Reports Table -->
                 <div
                     class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden border-t-4 border-t-blue-600">
@@ -128,7 +145,8 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-slate-100">
                                 @forelse($reports as $report)
-                                    <tr class="hover:bg-slate-50/70 transition">
+                                    <tr class="hover:bg-slate-50/70 transition cursor-pointer"
+                                        onclick="window.location='{{ route('user.reports.show', $report) }}'">
                                         <td class="px-6 py-4 text-sm text-gray-500">#{{ $report->id }}</td>
                                         <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                             {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
@@ -138,12 +156,12 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                    @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
-                                                    @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
-                                                    @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
-                                                    @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
-                                                    @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
-                                                    @endif">
+                                                                                                @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                                                @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                                                @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                                                @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                                                @endif">
                                                 {{ ucfirst($report->status) }}
                                             </span>
                                         </td>
@@ -167,7 +185,7 @@
                                             <p class="text-slate-500 font-medium">No reports yet</p>
                                             <p class="text-sm text-slate-400 mt-1">Submit your first incident report to get
                                                 started</p>
-                                            <a href="{{ route('report.create') }}"
+                                            <a href="{{ route('user.reports.create') }}"
                                                 class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                                 Report Incident
                                             </a>

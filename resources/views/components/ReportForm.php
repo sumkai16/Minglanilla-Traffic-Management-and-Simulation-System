@@ -8,11 +8,11 @@ use Illuminate\View\Component;
 
 class ReportForm extends Component
 {
-    public bool $isModal;
+    public string $action;
 
-    public function __construct(bool $isModal = false)
+    public function __construct(string $action = '')
     {
-        $this->isModal = $isModal;
+        $this->action = $action ?: route('report.store');
     }
 
     public function render(): View|Closure|string
