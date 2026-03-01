@@ -37,9 +37,17 @@
 
                 <!-- Welcome Card -->
                 <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 mb-6 -mt-4 relative z-10">
-                    <h2 class="text-lg font-semibold text-slate-900">Welcome back, {{ auth()->user()->first_name }}!
-                    </h2>
-                    <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-lg font-semibold text-slate-900">Welcome back,
+                                {{ auth()->user()->first_name }}!</h2>
+                            <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold text-blue-600">{{ $reports->total() }}</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wider">Total Reports</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Stats -->
@@ -156,12 +164,12 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                                                @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
-                                                                                                @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
-                                                                                                @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
-                                                                                                @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
-                                                                                                @endif">
+                                                                                                    @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                                                    @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                    @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                                                    @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                                                    @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                                                    @endif">
                                                 {{ ucfirst($report->status) }}
                                             </span>
                                         </td>

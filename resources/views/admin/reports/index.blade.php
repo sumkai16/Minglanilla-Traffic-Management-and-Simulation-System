@@ -213,12 +213,12 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
-                                                                @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
-                                                                @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
-                                                                @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
-                                                                @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
-                                                                @endif">
+                                                                            @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                            @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                            @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                            @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                            @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                            @endif">
                                                 {{ ucfirst($report->status) }}
                                             </span>
                                         </td>
@@ -234,8 +234,17 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-8 text-center text-slate-500">
-                                            No reports found.
+                                        <td colspan="7" class="px-6 py-12 text-center">
+                                            <div class="text-slate-400 mb-2">
+                                                <svg class="h-12 w-12 mx-auto" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <p class="text-slate-500 font-medium">No reports found</p>
+                                                <p class="text-sm text-slate-400 mt-1">Try adjusting your filters</p>
+                                            </div>
+
                                         </td>
                                     </tr>
                                 @endforelse
