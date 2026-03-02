@@ -45,7 +45,7 @@
                         </div>
                         <div class="text-right">
                             <div class="text-3xl font-bold text-blue-600">{{ $reports->total() }}</div>
-                            <div class="text-xs text-slate-500 uppercase tracking-wider">Total Reports</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wider mt-1">Total Reports</div>
                         </div>
                     </div>
                 </div>
@@ -164,12 +164,12 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                                                    @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
-                                                                                                    @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                    @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
-                                                                                                    @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
-                                                                                                    @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
-                                                                                                    @endif">
+                                                                                                        @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                                                        @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                        @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                                                        @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                                                        @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                                                        @endif">
                                                 {{ ucfirst($report->status) }}
                                             </span>
                                         </td>
