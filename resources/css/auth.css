@@ -150,7 +150,7 @@ body {
     gap: 8px;
 }
 
-.login-page .login-title > div {
+.login-page .login-title>div {
     width: 100%;
 }
 
@@ -376,6 +376,10 @@ body {
     width: 100%;
     align-items: center;
 }
+<<<<<<< HEAD
+
+=======
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
 .inner-register {
     margin-bottom: 15px;
 }
@@ -500,4 +504,8 @@ body {
 
 .login-page .register-error-box p:last-child {
     margin-bottom: 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
