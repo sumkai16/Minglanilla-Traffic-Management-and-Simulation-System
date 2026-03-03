@@ -1,77 +1,75 @@
-@layer components {
-    html {
-        scroll-behavior: smooth;
-    }
+html {
+    scroll-behavior: smooth;
+}
 
-    /* NAV LINKS */
-    .nav-link {
-        @apply relative font-semibold text-gray-700 transition-colors duration-300;
-    }
+/* NAV LINKS */
+.nav-link {
+    @apply relative font-semibold text-gray-700 transition-colors duration-300;
+}
 
-    .nav-link:hover {
-        @apply text-blue-700;
-    }
+.nav-link:hover {
+    @apply text-blue-700;
+}
 
-    .nav-link::after {
-        content: "";
-        @apply absolute left-0 -bottom-1 h-[2px] w-0 bg-blue-700 transition-all duration-300;
-    }
+.nav-link::after {
+    content: "";
+    @apply absolute left-0 -bottom-1 h-[2px] w-0 bg-blue-700 transition-all duration-300;
+}
 
-    .nav-link:hover::after {
-        @apply w-full;
-    }
+.nav-link:hover::after {
+    @apply w-full;
+}
 
-    /* FEATURE CARDS */
-    .feature-card {
-        @apply transition-all duration-300;
-    }
+/* FEATURE CARDS */
+.feature-card {
+    @apply transition-all duration-300;
+}
 
-    .feature-card:hover {
-        transform: translateY(-2px);
-    }
+.feature-card:hover {
+    transform: translateY(-2px);
+}
 
-    .feature-blue:hover {
-        @apply border-2 border-blue-700 shadow-lg;
-        box-shadow: 0 10px 15px rgba(29, 78, 216, 0.2);
-    }
+.feature-blue:hover {
+    @apply border-2 border-blue-700 shadow-lg;
+    box-shadow: 0 10px 15px rgba(29, 78, 216, 0.2);
+}
 
-    .feature-yellow:hover {
-        @apply border-2 border-amber-500 shadow-lg;
-        box-shadow: 0 10px 15px rgba(245, 158, 11, 0.2);
-    }
+.feature-yellow:hover {
+    @apply border-2 border-amber-500 shadow-lg;
+    box-shadow: 0 10px 15px rgba(245, 158, 11, 0.2);
+}
 
-    .feature-red:hover {
-        @apply border-2 border-red-500 shadow-lg;
-        box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
-    }
+.feature-red:hover {
+    @apply border-2 border-red-500 shadow-lg;
+    box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
+}
 
-    /* IMPACT CARDS */
-    .impact-card {
-        @apply relative overflow-hidden cursor-pointer bg-white
-           border-2 rounded-2xl p-7 transition-all duration-300;
-        border-color: rgba(59, 130, 246, 0.15);
-        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
-    }
+/* IMPACT CARDS */
+.impact-card {
+    @apply relative overflow-hidden cursor-pointer bg-white
+       border-2 rounded-2xl p-7 transition-all duration-300;
+    border-color: rgba(59, 130, 246, 0.15);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
+}
 
-    .impact-card::before {
-        content: "";
-        position: absolute;
-        top: -40px;
-        left: -40px;
-        width: 90px;
-        height: 90px;
-        border-radius: 9999px;
-        background: rgba(59, 130, 246, 0.08);
-        transition: transform 0.3s ease;
-    }
+.impact-card::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 90px;
+    height: 90px;
+    border-radius: 9999px;
+    background: rgba(59, 130, 246, 0.08);
+    transition: transform 0.3s ease;
+}
 
-    .impact-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
-        border-color: rgba(37, 99, 235, 0.35);
-    }
+.impact-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+    border-color: rgba(37, 99, 235, 0.35);
+}
 
-    .impact-card:hover::before {
-        transform: scale(1.2);
-    }
+.impact-card:hover::before {
+    transform: scale(1.2);
 }

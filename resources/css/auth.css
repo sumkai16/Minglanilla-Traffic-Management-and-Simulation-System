@@ -5,7 +5,44 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(62, 144, 199);
+    min-height: 100vh;
+    background: radial-gradient(circle at top, rgba(255, 255, 255, 0.25), transparent 45%),
+        linear-gradient(135deg, #0b1d3a 0%, #123b7a 45%, #1e63b8 100%);
+}
+
+.login-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    overflow: hidden;
+}
+
+.login-page::before,
+.login-page::after {
+    content: "";
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    border-radius: 999px;
+    filter: blur(80px);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.login-page::before {
+    top: -120px;
+    left: -80px;
+    background: #4ea1ff;
+}
+
+.login-page::after {
+    bottom: -140px;
+    right: -120px;
+    background: #4fd1ff;
 }
 
 /* Footer link area – "Already have an account?" / "Don't have an account?" */
@@ -21,7 +58,7 @@ body {
 .signup-text {
     font-family: "Poppins", sans-serif;
     font-size: 13px;
-    color: rgb(160, 160, 160);
+    color: #94a3b8;
     margin: 0;
 }
 
@@ -29,13 +66,13 @@ body {
     font-family: "Poppins", sans-serif;
     font-size: 14px;
     font-weight: 700;
-    color: rgb(19, 71, 135);
+    color: #1d4ed8;
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
 .signup-link:hover {
-    color: rgb(237, 61, 38);
+    color: #2563eb;
     text-decoration: underline;
 }
 
@@ -47,61 +84,67 @@ body {
 /* ========== LOGIN (resources/views/auth/login.blade.php) ========== */
 
 .login-page .login-container {
-    box-shadow: 4px 4px 5px rgb(96, 96, 96);
-    border-radius: 10px;
-    margin-top: 30%;
+    box-shadow: 0 30px 60px rgba(12, 38, 88, 0.35);
+    border-radius: 20px;
     width: 600px;
-    padding: 10px;
-    background-color: white;
+    max-width: 92vw;
+    padding: 28px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(147, 197, 253, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 .login-page .login-container .lihok-outer {
     width: 100%;
-    gap: 12px;
+    gap: 14px;
     display: flex;
-    align-items: stretch;
-    margin-top: 20px;
-    margin-left: 65px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-left: 0;
     padding: 0;
 }
 
 .login-page .login-container .logo {
-    min-width: 50px;
+    min-width: 56px;
 }
 
 .login-page .login-container .clogo {
     object-fit: contain;
     width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(12, 38, 88, 0.25);
 }
 
 .login-page .login-container .lihok {
     font-family: "Poppins", sans-serif;
     margin-top: 5px;
-    color: rgb(19, 71, 135);
+    color: #0f3f8c;
     font-weight: 800;
     font-size: 20px;
-    text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+    text-shadow: 2px 2px 12px rgba(16, 52, 115, 0.15);
 }
 
 .login-page .login-container .mitcom {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
     font-family: "Poppins", sans-serif;
-    margin-top: -20px;
-    color: rgb(237, 61, 38);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -12px;
+    color: #1d64c2;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .login-page .login-title {
-    padding: 10px;
+    padding: 8px;
     display: flex;
-    margin: 20px;
+    margin: 18px 0 8px 0;
     flex-direction: column;
     width: 100%;
     gap: 8px;
@@ -113,10 +156,10 @@ body {
 
 .login-page .login-des {
     font-family: "Poppins", sans-serif;
-    color: rgb(19, 71, 135);
-    font-weight: 600;
-    font-size: 25px;
-    text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+    color: #0f3f8c;
+    font-weight: 700;
+    font-size: 26px;
+    text-shadow: 2px 2px 12px rgba(16, 52, 115, 0.15);
     margin: 0;
     padding: 0;
     width: 100%;
@@ -137,11 +180,11 @@ body {
 }
 
 .login-page .login-form {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-top: 10px;
+    margin-top: 6px;
 }
 
 .login-page .login-form .input-group {
@@ -153,17 +196,19 @@ body {
 .login-page .login-form .input-group input {
     width: 100%;
     padding: 15px 15px 15px 45px;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #f8fbff;
     font-family: "Poppins", sans-serif;
     font-size: 14px;
     outline: none;
-    transition: border 0.3s ease;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .login-page .login-form .input-group input:focus {
-    border-color: #3e90c7;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
 .login-page .login-form .input-icon {
@@ -191,20 +236,23 @@ body {
 }
 
 .login-page .login-btn {
-    background-color: rgb(19, 71, 135);
+    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
-    padding: 12px;
+    padding: 14px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
-    transition: background 0.3s;
+    margin-top: 6px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    box-shadow: 0 12px 24px rgba(29, 78, 216, 0.25);
 }
 
 .login-page .login-btn:hover {
-    background-color: rgb(237, 61, 38);
+    background: linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px rgba(29, 78, 216, 0.3);
 }
 
 /* Remember me & Forgot password row */
@@ -218,7 +266,7 @@ body {
 }
 
 .login-page .inner-remember {
-    color: rgb(191, 191, 191);
+    color: #6b7280;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -240,10 +288,10 @@ body {
 
 .login-page .forgot-link {
     text-decoration: none;
-    font-weight: 500;
-    font-size: 10px;
+    font-weight: 600;
+    font-size: 11px;
     letter-spacing: 1px;
-    color: rgb(19, 71, 135);
+    color: #1d4ed8;
     transition: all 0.3s ease-in-out;
 }
 
@@ -255,16 +303,19 @@ body {
 /* ========== REGISTER (resources/views/auth/register.blade.php) ========== */
 
 .login-page .register-container {
-    box-shadow: 4px 4px 5px rgb(96, 96, 96);
-    border-radius: 10px;
-    margin-top: 30%;
+    box-shadow: 0 30px 60px rgba(12, 38, 88, 0.35);
+    border-radius: 20px;
     width: 600px;
-    padding: 20px;
-    background-color: white;
+    max-width: 92vw;
+    padding: 28px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(147, 197, 253, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 .login-page .description {
@@ -276,42 +327,45 @@ body {
 
 .login-page .register-container .lihok-outer {
     width: 100%;
-    gap: 12px;
+    gap: 14px;
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
     margin-top: 0;
-    margin-left: 65px;
+    margin-left: 0;
     padding: 0;
 }
 
 .login-page .register-container .logo {
-    min-width: 50px;
+    min-width: 56px;
 }
 
 .login-page .register-container .clogo {
     object-fit: contain;
     width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(12, 38, 88, 0.25);
 }
 
 .login-page .register-container .lihok {
     font-family: "Poppins", sans-serif;
     margin-top: 5px;
-    color: rgb(19, 71, 135);
+    color: #0f3f8c;
     font-weight: 800;
     font-size: 20px;
-    text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+    text-shadow: 2px 2px 12px rgba(16, 52, 115, 0.15);
     margin-bottom: 15px;
 }
 
 .login-page .register-container .mitcom {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
     font-family: "Poppins", sans-serif;
-    margin-top: -20px;
-    color: rgb(237, 61, 38);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -12px;
+    color: #1d64c2;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .login-page .register-title {
@@ -328,10 +382,10 @@ body {
 
 .login-page .register-des {
     font-family: "Poppins", sans-serif;
-    color: rgb(19, 71, 135);
-    font-weight: 600;
+    color: #0f3f8c;
+    font-weight: 700;
     font-size: 25px;
-    text-shadow: 2px 2px 4px rgba(18, 18, 18, 0.2);
+    text-shadow: 2px 2px 12px rgba(16, 52, 115, 0.15);
 }
 
 .login-page .register-welcome-des {
@@ -343,7 +397,7 @@ body {
 }
 
 .login-page .register-form {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -359,17 +413,19 @@ body {
 .login-page .register-form .input-group input {
     width: 100%;
     padding: 15px 15px 15px 45px;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #f8fbff;
     font-family: "Poppins", sans-serif;
     font-size: 14px;
     outline: none;
-    transition: border 0.3s ease;
+    transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .login-page .register-form .input-group input:focus {
-    border-color: #3e90c7;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
 /* First + Last name row: two inputs side by side, no icon */
@@ -408,20 +464,23 @@ body {
 }
 
 .login-page .register-btn {
-    background-color: rgb(19, 71, 135);
+    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
-    padding: 12px;
+    padding: 14px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     cursor: pointer;
     margin-top: 10px;
-    transition: background 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    box-shadow: 0 12px 24px rgba(29, 78, 216, 0.25);
 }
 
 .login-page .register-btn:hover {
-    background-color: rgb(237, 61, 38);
+    background: linear-gradient(90deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px rgba(29, 78, 216, 0.3);
 }
 
 .login-page .register-error-box {

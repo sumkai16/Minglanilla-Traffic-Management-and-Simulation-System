@@ -16,11 +16,11 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
 
         <x-app-nav pageTitle="My Dashboard">
             <a href="{{ route('user.reports.create') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition">
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-400 transition">
                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
                         d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
@@ -36,16 +36,16 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <!-- Welcome Card -->
-                <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 mb-6 -mt-4 relative z-10">
+                <div class="bg-white shadow-sm rounded-2xl border border-blue-100 p-6 mb-6 -mt-4 relative z-10">
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-slate-900">Welcome back,
                                 {{ auth()->user()->first_name }}!</h2>
-                            <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
+                            <p class="text-blue-700/80 text-sm mt-1">Track your incident reports and view their status</p>
                         </div>
                         <div class="text-right">
                             <div class="text-3xl font-bold text-blue-600">{{ $reports->total() }}</div>
-                            <div class="text-xs text-slate-500 uppercase tracking-wider mt-1">Total Reports</div>
+                            <div class="text-xs text-blue-700/70 uppercase tracking-wider mt-1">Total Reports</div>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                 <!-- Stats -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Pending</div>
@@ -71,7 +71,7 @@
                     </div>
 
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Verified</div>
@@ -89,7 +89,7 @@
                     </div>
 
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Resolved</div>
@@ -124,10 +124,10 @@
                 @endif
                 <!-- Reports Table -->
                 <div
-                    class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden border-t-4 border-t-blue-600">
-                    <div class="px-6 py-5 border-b border-slate-200">
+                    class="bg-white shadow-sm rounded-2xl border border-blue-100 overflow-hidden border-t-4 border-t-blue-600">
+                    <div class="px-6 py-5 border-b border-blue-100">
                         <h2 class="text-lg font-semibold text-slate-900">My Reports</h2>
-                        <p class="text-sm text-slate-500 mt-1">View all your submitted incident reports</p>
+                        <p class="text-sm text-blue-700/70 mt-1">View all your submitted incident reports</p>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -206,15 +206,58 @@
 
                     <!-- Pagination -->
                     @if($reports->hasPages())
-                        <div class="px-6 py-4 border-t border-slate-200">
+                        <div class="px-6 py-4 border-t border-blue-100">
                             {{ $reports->links() }}
                         </div>
                     @endif
                 </div>
 
+                <!-- Live Map -->
+                <div class="relative overflow-hidden bg-white shadow-xl rounded-2xl p-6 mt-6 border border-blue-100">
+                    <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.25),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.2),transparent_55%)]"></div>
+                    <div class="relative">
+                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-slate-900">Live Traffic Map</h3>
+                                <p class="text-sm text-blue-700/80">Browse live incidents around Minglanilla</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100">
+                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                                    Verified
+                                </span>
+                                <span class="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 border border-yellow-100">
+                                    <span class="h-2 w-2 rounded-full bg-yellow-500"></span>
+                                    Pending
+                                </span>
+                                <span class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 border border-green-100">
+                                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
+                                    Resolved
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-inner">
+                            <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-500/10"></div>
+                            <div id="user-map" class="w-full h-[420px]"></div>
+                            <div class="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
+                                Live Map
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.getElementById('user-map')) {
+                initPublicMap('user-map');
+            }
+        });
+    </script>
 </body>
 
 </html>
