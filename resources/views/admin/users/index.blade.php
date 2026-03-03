@@ -16,109 +16,17 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
-        <div class="relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-700 via-blue-900 to-slate-900"></div>
-            <div
-                class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.4),transparent_55%)]">
-            </div>
-            <div class="absolute inset-0 bg-black/20"></div>
-
-<<<<<<< HEAD
-            <!-- Header -->
-            <header class="relative">
-                <div class="max-w-7xl mx-auto p-5 lg:px-8">
-                    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center">
-                                <div
-                                    class="h-17 w-17 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
-                                    <img src="{{ asset('images/second_logo-removebg-preview.png') }}"
-                                        alt="Minglanilla Official Seal" class="h-20 w-20 object-contain">
-                                </div>
-                                <div
-                                    class="-ml-3 h-17 w-17 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
-                                    <img src="{{ asset('images/first_logo-removebg-preview.png') }}"
-                                        alt="Minglanilla Shield Logo" class="h-20 w-20 object-contain">
-                                </div>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold tracking-wide text-blue-100">LIHOK PADULONG</p>
-                                <p class="text-xs uppercase tracking-widest text-red-200">Minglanilla Traffic Command
-                                </p>
-                                <h1 class="text-3xl font-semibold text-white ">User Management</h1>
-
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3">
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M11.78 4.22a.75.75 0 010 1.06L7.56 9.5H16a.75.75 0 010 1.5H7.56l4.22 4.22a.75.75 0 11-1.06 1.06l-5.5-5.5a.75.75 0 010-1.06l5.5-5.5a.75.75 0 011.06 0z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                Back to Dashboard
-                            </a>
-<<<<<<< HEAD
-                            <a href="{{ route('admin.users.create') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path
-                                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
-                                </svg>
-                                Add User
-                            </a>
-=======
-
->>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
-                            <div
-                                class="flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2">
-                                <span class="text-white text-sm whitespace-nowrap">
-                                    {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
-                                </span>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-2 bg-red-500/90 text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-red-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M7.5 3.25A2.25 2.25 0 005.25 5.5v9A2.25 2.25 0 007.5 16.75h3a.75.75 0 000-1.5h-3a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75h3a.75.75 0 000-1.5h-3z"
-                                                clip-rule="evenodd" />
-                                            <path fill-rule="evenodd"
-                                                d="M11.72 6.22a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9.5a.75.75 0 010-1.5h3.94l-1.72-1.72a.75.75 0 010-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-=======
-        <!-- Header -->
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-800 text-sm">
-                        ← Back to Dashboard
-                    </a>
-                    <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
->>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
-                </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-700 text-sm">
-                        {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </header>
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+        <x-app-nav pageTitle="User Management">
+            <a href="{{ route('admin.users.create') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-blue-900 text-sm font-semibold hover:bg-blue-50 hover:-translate-y-0.5 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path
+                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                </svg>
+                Add User
+            </a>
+        </x-app-nav>
 
         <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
@@ -140,14 +48,14 @@
                 <!-- Stats -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 -mt-4 relative z-10">
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Total Users</div>
+                                <div class="text-xs uppercase tracking-widest text-blue-700/70">Total Users</div>
                                 <div class="text-3xl font-semibold text-slate-900 mt-3">{{ $users->count() }}</div>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-slate-900/5 text-slate-700 ring-1 ring-inset ring-slate-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
                                     <path fill-rule="evenodd"
@@ -158,16 +66,16 @@
                         </div>
                     </div>
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Admins</div>
-                                <div class="text-3xl font-semibold text-red-600 mt-3">
+                                <div class="text-xs uppercase tracking-widest text-blue-700/70">Admins</div>
+                                <div class="text-3xl font-semibold text-slate-900 mt-3">
                                     {{ $users->where('role', 'admin')->count() }}
                                 </div>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-red-50 text-red-700 ring-1 ring-inset ring-red-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd"
                                         d="M10 2a.75.75 0 01.39.11l6 3.6a.75.75 0 01.36.64v4.58a7.5 7.5 0 01-6.9 7.48.75.75 0 01-.17 0A7.5 7.5 0 013.25 10.93V6.35a.75.75 0 01.36-.64l6-3.6A.75.75 0 0110 2zm3.03 7.28a.75.75 0 10-1.06-1.06L9.5 10.69 8.03 9.22a.75.75 0 10-1.06 1.06l2 2a.75.75 0 001.06 0l3-3z"
@@ -177,11 +85,11 @@
                         </div>
                     </div>
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Head MITCOM</div>
-                                <div class="text-3xl font-semibold text-blue-600 mt-3">
+                                <div class="text-xs uppercase tracking-widest text-blue-700/70">Head MITCOM</div>
+                                <div class="text-3xl font-semibold text-slate-900 mt-3">
                                     {{ $users->where('role', 'head-mitcom')->count() }}
                                 </div>
                             </div>
@@ -193,44 +101,19 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
                         </div>
                     </div>
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Enforcers</div>
-                                <div class="text-3xl font-semibold text-amber-600 mt-3">
+                                <div class="text-xs uppercase tracking-widest text-blue-700/70">Enforcers</div>
+                                <div class="text-3xl font-semibold text-slate-900 mt-3">
                                     {{ $users->where('role', 'enforcer')->count() }}
                                 </div>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 flex items-center justify-center">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M9.664 2.318a.75.75 0 01.672 0l6.5 3.25a.75.75 0 01.414.671V10c0 4.01-3.185 7.39-7.25 7.79A8.03 8.03 0 012.75 10V6.239a.75.75 0 01.414-.671l6.5-3.25zM10 6a.75.75 0 01.75.75v2.5h1.5a.75.75 0 010 1.5h-1.5v2.5a.75.75 0 01-1.5 0v-2.5h-1.5a.75.75 0 010-1.5h1.5v-2.5A.75.75 0 0110 6z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-=======
->>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
-=======
->>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
-                        </div>
-                    </div>
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Enforcers</div>
-                                <div class="text-3xl font-semibold text-amber-600 mt-3">
-                                    {{ $users->where('role', 'enforcer')->count() }}
-                                </div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-xl bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd"
                                         d="M9.664 2.318a.75.75 0 01.672 0l6.5 3.25a.75.75 0 01.414.671V10c0 4.01-3.185 7.39-7.25 7.79A8.03 8.03 0 012.75 10V6.239a.75.75 0 01.414-.671l6.5-3.25zM10 6a.75.75 0 01.75.75v2.5h1.5a.75.75 0 010 1.5h-1.5v2.5a.75.75 0 01-1.5 0v-2.5h-1.5a.75.75 0 010-1.5h1.5v-2.5A.75.75 0 0110 6z"
@@ -239,36 +122,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- add user button-->
-                <div class="flex justify-end m-2">
-                    <a href="{{ route('admin.users.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path
-                                d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
-                        </svg>
-                        Add User
-                    </a>
                 </div>
 
                 <!-- Table -->
-                <div x-cloak x-data="{
-                        q: '',
-                        role: 'all',
-                        normalize(v) { return (v ?? '').toString().toLowerCase(); },
-                        matches(text) {
-                            const q = this.normalize(this.q).trim();
-                            if (!q) return true;
-                            return this.normalize(text).includes(q);
-                        },
-                    }"
-                    class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden border-t-4 border-t-red-600">
+                <div
+                    class="bg-white shadow-sm rounded-2xl border border-blue-100 overflow-hidden border-t-4 border-t-blue-600">
                     <div
-                        class="px-6 py-5 border-b border-slate-200 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        class="px-6 py-5 border-b border-blue-100 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-slate-900">All Users</h2>
-                            <p class="text-sm text-slate-500">Search and filter accounts, then edit roles or remove
+                            <p class="text-sm text-blue-700/70">Search and filter accounts, then edit roles or remove
                                 access.</p>
                         </div>
 
@@ -282,11 +145,11 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input x-model="q" type="text" placeholder="Search name or email"
-                                    class="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <button type="button" @click="q=''"
+                                <input id="userSearch" type="text" placeholder="Search name or email"
+                                    class="w-full rounded-xl border border-blue-100 bg-white pl-9 pr-9 py-2 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <button type="button" id="clearSearch"
                                     class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
-                                    :class="q.trim() ? '' : 'hidden'" aria-label="Clear search">
+                                    aria-label="Clear search">
                                     <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path
                                             d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -304,29 +167,24 @@
                                     </svg>
                                     Role
                                 </span>
-                                <button type="button" @click="role='all'"
-                                    class="px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition"
-                                    :class="role==='all' ? 'bg-blue-700 text-white ring-blue-700' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'">
+                                <button type="button" data-role-filter="all"
+                                    class="role-filter px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition bg-blue-700 text-white ring-blue-700">
                                     All
                                 </button>
-                                <button type="button" @click="role='admin'"
-                                    class="px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition"
-                                    :class="role==='admin' ? 'bg-red-600 text-white ring-red-600' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'">
+                                <button type="button" data-role-filter="admin"
+                                    class="role-filter px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition bg-white text-slate-700 ring-slate-200 hover:bg-slate-50">
                                     Admin
                                 </button>
-                                <button type="button" @click="role='head-mitcom'"
-                                    class="px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition"
-                                    :class="role==='head-mitcom' ? 'bg-blue-700 text-white ring-blue-700' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'">
+                                <button type="button" data-role-filter="head-mitcom"
+                                    class="role-filter px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition bg-white text-slate-700 ring-slate-200 hover:bg-slate-50">
                                     Head MITCOM
                                 </button>
-                                <button type="button" @click="role='enforcer'"
-                                    class="px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition"
-                                    :class="role==='enforcer' ? 'bg-amber-500 text-white ring-amber-500' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'">
+                                <button type="button" data-role-filter="enforcer"
+                                    class="role-filter px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition bg-white text-slate-700 ring-slate-200 hover:bg-slate-50">
                                     Enforcer
                                 </button>
-                                <button type="button" @click="role='user'"
-                                    class="px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition"
-                                    :class="role==='user' ? 'bg-slate-800 text-white ring-slate-800' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'">
+                                <button type="button" data-role-filter="user"
+                                    class="role-filter px-3 py-1.5 rounded-full text-xs font-semibold ring-1 ring-inset transition bg-white text-slate-700 ring-slate-200 hover:bg-slate-50">
                                     User
                                 </button>
                             </div>
@@ -357,9 +215,10 @@
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-slate-100">
+                            <tbody id="usersTable" class="bg-white divide-y divide-slate-100">
                                 @forelse($users as $user)
-                                    <tr x-show="(role === 'all' || role === @json($user->role)) && matches(@json(strtolower($user->first_name . ' ' . $user->last_name . ' ' . $user->email)))"
+                                    <tr data-role="{{ $user->role }}"
+                                        data-search="{{ strtolower($user->first_name . ' ' . $user->last_name . ' ' . $user->email) }}"
                                         class="hover:bg-slate-50/70 transition">
                                         <td class="px-6 py-4 text-sm text-gray-500 align-middle">{{ $user->id }}</td>
                                         <td class="px-6 py-4 align-middle">
@@ -378,7 +237,6 @@
                                                 </div>
                                             </div>
                                         </td>
-<<<<<<< HEAD
                                         <td class="px-6 py-4 text-sm text-gray-500 align-middle">
                                             <span class="inline-flex items-center gap-2">
                                                 <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
@@ -394,30 +252,7 @@
                                         </td>
                                         <td class="px-6 py-4 align-middle">
                                             <span
-                                                class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-<<<<<<< HEAD
-                                                                                                                                            @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
-                                                                                                                                            @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                                                            @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
-                                                                                                                                            @else bg-slate-50 text-slate-800 ring-slate-200
-                                                                                                                                            @endif">
-=======
-                                                                                                                                                                                @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
-                                                                                                                                                                                @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                                                                                                @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
-                                                                                                                                                                                @else bg-slate-50 text-slate-800 ring-slate-200
-                                                                                                                                                                                @endif">
->>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
-=======
-                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
-                                        <td class="px-6 py-4">
-                                            <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                                            @if($user->role === 'admin') bg-purple-100 text-purple-800
-                                                            @elseif($user->role === 'head-mitcom') bg-blue-100 text-blue-800
-                                                            @elseif($user->role === 'enforcer') bg-green-100 text-green-800
-                                                            @else bg-gray-100 text-gray-800
-                                                            @endif">
->>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
+                                                class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset bg-blue-50 text-blue-800 ring-blue-200">
                                                 {{ ucfirst(str_replace('-', ' ', $user->role)) }}
                                             </span>
                                         </td>
@@ -470,6 +305,53 @@
 
             </div>
         </main>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tableBody = document.getElementById('usersTable');
+                const searchInput = document.getElementById('userSearch');
+                const clearSearch = document.getElementById('clearSearch');
+                const roleButtons = Array.from(document.querySelectorAll('.role-filter'));
+                let activeRole = 'all';
+
+                const applyFilters = () => {
+                    const q = (searchInput?.value || '').trim().toLowerCase();
+                    const rows = tableBody ? Array.from(tableBody.querySelectorAll('tr[data-role]')) : [];
+                    rows.forEach((row) => {
+                        const role = row.dataset.role || '';
+                        const search = row.dataset.search || '';
+                        const roleOk = activeRole === 'all' || role === activeRole;
+                        const searchOk = !q || search.includes(q);
+                        row.classList.toggle('hidden', !(roleOk && searchOk));
+                    });
+                };
+
+                roleButtons.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        activeRole = btn.dataset.roleFilter || 'all';
+                        roleButtons.forEach((b) => {
+                            b.classList.remove('bg-blue-700', 'text-white', 'ring-blue-700');
+                            b.classList.add('bg-white', 'text-slate-700', 'ring-slate-200', 'hover:bg-slate-50');
+                        });
+                        btn.classList.remove('bg-white', 'text-slate-700', 'ring-slate-200', 'hover:bg-slate-50');
+                        btn.classList.add('bg-blue-700', 'text-white', 'ring-blue-700');
+                        applyFilters();
+                    });
+                });
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', applyFilters);
+                }
+                if (clearSearch) {
+                    clearSearch.addEventListener('click', () => {
+                        if (searchInput) searchInput.value = '';
+                        applyFilters();
+                    });
+                }
+
+                applyFilters();
+            });
+        </script>
     </div>
 </body>
 
