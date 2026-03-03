@@ -24,6 +24,7 @@
             </div>
             <div class="absolute inset-0 bg-black/20"></div>
 
+<<<<<<< HEAD
             <!-- Header -->
             <header class="relative">
                 <div class="max-w-7xl mx-auto p-5 lg:px-8">
@@ -94,9 +95,30 @@
                             </div>
                         </div>
                     </div>
+=======
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-800 text-sm">
+                        ← Back to Dashboard
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
                 </div>
-            </header>
-        </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-700 text-sm">
+                        {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                    </span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
 
         <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
@@ -172,6 +194,7 @@
                                 </svg>
                             </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         </div>
                     </div>
                     <div
@@ -193,6 +216,8 @@
                             </div>
 =======
 >>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
+=======
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
                         </div>
                     </div>
                     <div
@@ -353,6 +378,7 @@
                                                 </div>
                                             </div>
                                         </td>
+<<<<<<< HEAD
                                         <td class="px-6 py-4 text-sm text-gray-500 align-middle">
                                             <span class="inline-flex items-center gap-2">
                                                 <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
@@ -382,6 +408,16 @@
                                                                                                                                                                                 @else bg-slate-50 text-slate-800 ring-slate-200
                                                                                                                                                                                 @endif">
 >>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
+=======
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                                            @if($user->role === 'admin') bg-purple-100 text-purple-800
+                                                            @elseif($user->role === 'head-mitcom') bg-blue-100 text-blue-800
+                                                            @elseif($user->role === 'enforcer') bg-green-100 text-green-800
+                                                            @else bg-gray-100 text-gray-800
+                                                            @endif">
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
                                                 {{ ucfirst(str_replace('-', ' ', $user->role)) }}
                                             </span>
                                         </td>

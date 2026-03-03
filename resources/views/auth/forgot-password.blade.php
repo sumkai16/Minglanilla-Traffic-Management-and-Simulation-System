@@ -10,6 +10,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="login-title">
 <<<<<<< HEAD
   
@@ -19,10 +20,15 @@
             </div>
             
 =======
+=======
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
 
-            <div class="inner-login">
-                <p class="login-des">Forgot your password?</p>
+    <form method="POST" action="{{ route('password.email') }}">
+        @csrf
 
+<<<<<<< HEAD
             </div>
 
 >>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
@@ -56,3 +62,19 @@
 =======
 </x-guest-layout>
 >>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
+=======
+        <!-- Email Address -->
+        <div>
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+            <x-primary-button>
+                {{ __('Email Password Reset Link') }}
+            </x-primary-button>
+        </div>
+    </div>
+</x-guest-layout>
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304

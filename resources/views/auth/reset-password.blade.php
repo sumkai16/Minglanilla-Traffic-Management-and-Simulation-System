@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <x-guest-layout variant="login">
     <div class="login-container">
         <div class="lihok-outer">
@@ -26,10 +27,16 @@
 
         <form method="POST" action="{{ route('password.store') }}" class="login-form">
             @csrf
+=======
+<x-guest-layout>
+    <form method="POST" action="{{ route('password.store') }}">
+        @csrf
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
 
             <!-- Password Reset Token -->
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
+<<<<<<< HEAD
             <!-- Email Address -->
             <div class="input-group">
                 <i data-lucide="mail" class="input-icon"></i>
@@ -77,16 +84,39 @@
                 </button>
             </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="input-error" />
+=======
+        <!-- Email Address -->
+        <div>
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
 
-            <button type="submit" class="login-btn">Reset Password</button>
-        </form>
+        <!-- Password -->
+        <div class="mt-4">
+            <x-input-label for="password" :value="__('Password')" />
+            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
 
-        <div class="signup-footer">
-            <a href="{{ route('login') }}" class="signup-link">Back to login</a>
+        <!-- Confirm Password -->
+        <div class="mt-4">
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
+
+            <x-text-input id="password_confirmation" class="block mt-1 w-full"
+                                type="password"
+                                name="password_confirmation" required autocomplete="new-password" />
+
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
     </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
 </x-guest-layout>
 =======
 </x-guest-layout>
 >>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
+=======
+</x-guest-layout>
+>>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
