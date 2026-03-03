@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f964e373c81bdcf9ae60400d4fb733d02b9f3304
+
     <head>
      @vite(['resources/css/app.css', 'resources/css/welcome.css', 'resources/js/app.js'])
         <meta charset="utf-8">
@@ -15,10 +12,10 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-<<<<<<< HEAD
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-=======
+
 
 <head>
     <meta charset="utf-8">
@@ -34,8 +31,7 @@
     </style>
 </head>
 
->>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
-=======
+
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/css/welcome.css', 'resources/js/app.js'])
