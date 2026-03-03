@@ -151,15 +151,17 @@
                             <p class="mt-1 text-gray-900">{{ $report->created_at->format('M d, Y h:i A') }}</p>
                             <p class="text-sm text-gray-500">{{ $report->created_at->diffForHumans() }}</p>
                         </div>
+
                     </div>
+                    @if($report->verified_at)
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500">Last Updated</label>
+                            <p class="mt-1 text-gray-900">{{ $report->verified_at->format('M d, Y h:i A') }}</p>
+                            <p class="text-sm text-gray-500">{{ $report->verified_at->diffForHumans() }}</p>
+                        </div>
+                    @endif
                 </div>
-                @if($report->verified_at)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500">Last Updated</label>
-                        <p class="mt-1 text-gray-900">{{ $report->verified_at->format('M d, Y h:i A') }}</p>
-                        <p class="text-sm text-gray-500">{{ $report->verified_at->diffForHumans() }}</p>
-                    </div>
-                @endif
+
                 @if($report->verified_by)
                     <!-- Verification Info -->
                     <div class="bg-white rounded-lg shadow-md p-6">
