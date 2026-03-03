@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', \App\Http\Controllers\Admin\UsermanagementController::class);
+
+    Route::get('reports',[App\Http\Controllers\Admin\ReportManagementController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}',[App\Http\Controllers\Admin\ReportManagementController::class, 'show'])->name('reports.show');
+    Route::patch('reports/{report}/status',[App\Http\Controllers\Admin\ReportManagementController::class, 'updateStatus'])->name('reports.updateStatus');
 });
 
 // Enforcer routes
@@ -54,10 +58,21 @@ Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->na
 // User routes
 Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports/create', [App\Http\Controllers\User\ReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports', [App\Http\Controllers\User\ReportController::class, 'store'])->name('reports.store');
+    Route::get('/reports/{report}',[App\Http\Controllers\User\ReportController::class, 'show'])->name('reports.show');
 });
 // Head MITCOM routes
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
     Route::get('/dashboard', [HeadMitcomDasboardController::class, 'index'])->name('dashboard');
 });
+
+// Public report routes
+Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
+Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
+
+
+//API endpoint for map data
+Route::get('/api/reports/map', [App\Http\Controllers\ReportController::class, 'mapData'])->name('reports.map');
 
 require __DIR__.'/auth.php';

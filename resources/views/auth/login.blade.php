@@ -14,9 +14,9 @@
             <div class="inner-login">
                 <p class="login-des">Log in to your Account</p>
             </div>
-            <!-- <div class="inner-welcome-back">
+            {{-- <div class="inner-welcome-back ">
                 <p class="login-welcome-des">Welcome back! Select a method to log in:</p>
-            </div> -->
+            </div> --}}
         </div>
 
         <x-auth-session-status class="auth-session-status" :status="session('status')" />
@@ -26,14 +26,17 @@
 
             <div class="input-group">
                 <i data-lucide="mail" class="input-icon"></i>
-                <input id="email" type="email" name="email" placeholder="Email address" value="{{ old('email') }}" required autofocus autocomplete="username" />
+                <input id="email" type="email" name="email" placeholder="Email address" value="{{ old('email') }}"
+                    required autofocus autocomplete="username" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="input-error" />
 
             <div class="input-group" x-data="{ show: false }">
                 <i data-lucide="lock" class="input-icon"></i>
-                <input id="password" :type="show ? 'text' : 'password'" name="password" placeholder="Password" required autocomplete="current-password" />
-                <button type="button" @click="show = !show" class="view-icon" aria-label="Toggle password visibility" style="background:none;border:none;padding:0;display:flex;align-items:center;">
+                <input id="password" :type="show ? 'text' : 'password'" name="password" placeholder="Password" required
+                    autocomplete="current-password" />
+                <button type="button" @click="show = !show" class="view-icon" aria-label="Toggle password visibility"
+                    style="background:none;border:none;padding:0;display:flex;align-items:center;">
                     <span x-show="!show"><i data-lucide="eye-off"></i></span>
                     <span x-show="show" x-cloak><i data-lucide="eye"></i></span>
                 </button>
@@ -42,7 +45,7 @@
 
             <div class="remember-forgot">
                 <label class="inner-remember" for="remember_me">
-                    <input id="remember_me" type="checkbox" name="remember"  />
+                    <input id="remember_me" type="checkbox" name="remember" />
                     <span style="margin-left:4px; color: rgb(48, 48, 48);">Remember me</span>
                 </label>
                 @if (Route::has('password.request'))

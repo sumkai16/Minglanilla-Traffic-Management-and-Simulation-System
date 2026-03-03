@@ -59,6 +59,7 @@
                                 </svg>
                                 Back to Dashboard
                             </a>
+<<<<<<< HEAD
                             <a href="{{ route('admin.users.create') }}"
                                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
                                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -67,6 +68,9 @@
                                 </svg>
                                 Add User
                             </a>
+=======
+
+>>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
                             <div
                                 class="flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2">
                                 <span class="text-white text-sm whitespace-nowrap">
@@ -167,6 +171,28 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
+<<<<<<< HEAD
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-slate-500">Enforcers</div>
+                                <div class="text-3xl font-semibold text-amber-600 mt-3">
+                                    {{ $users->where('role', 'enforcer')->count() }}
+                                </div>
+                            </div>
+                            <div
+                                class="h-10 w-10 rounded-xl bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 flex items-center justify-center">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd"
+                                        d="M9.664 2.318a.75.75 0 01.672 0l6.5 3.25a.75.75 0 01.414.671V10c0 4.01-3.185 7.39-7.25 7.79A8.03 8.03 0 012.75 10V6.239a.75.75 0 01.414-.671l6.5-3.25zM10 6a.75.75 0 01.75.75v2.5h1.5a.75.75 0 010 1.5h-1.5v2.5a.75.75 0 01-1.5 0v-2.5h-1.5a.75.75 0 010-1.5h1.5v-2.5A.75.75 0 0110 6z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+=======
+>>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
                         </div>
                     </div>
                     <div
@@ -188,6 +214,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- add user button-->
+                <div class="flex justify-end m-2">
+                    <a href="{{ route('admin.users.create') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                        </svg>
+                        Add User
+                    </a>
                 </div>
 
                 <!-- Table -->
@@ -332,11 +369,19 @@
                                         <td class="px-6 py-4 align-middle">
                                             <span
                                                 class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
+<<<<<<< HEAD
                                                                                                                                             @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
                                                                                                                                             @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
                                                                                                                                             @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
                                                                                                                                             @else bg-slate-50 text-slate-800 ring-slate-200
                                                                                                                                             @endif">
+=======
+                                                                                                                                                                                @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
+                                                                                                                                                                                @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                                                                                                @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
+                                                                                                                                                                                @else bg-slate-50 text-slate-800 ring-slate-200
+                                                                                                                                                                                @endif">
+>>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
                                                 {{ ucfirst(str_replace('-', ' ', $user->role)) }}
                                             </span>
                                         </td>

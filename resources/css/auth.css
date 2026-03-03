@@ -107,7 +107,7 @@ body {
     gap: 8px;
 }
 
-.login-page .login-title > div {
+.login-page .login-title>div {
     width: 100%;
 }
 
@@ -322,9 +322,11 @@ body {
     width: 100%;
     align-items: center;
 }
+
 .inner-register {
     margin-bottom: 15px;
 }
+
 .login-page .register-des {
     font-family: "Poppins", sans-serif;
     color: rgb(19, 71, 135);

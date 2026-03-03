@@ -14,11 +14,19 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+<<<<<<< HEAD
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-50">
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>
+=======
+    <body class="font-sans text-gray-900 antialiased bg-[#4A8FB6]">
+    <div class="min-h-screen py-16">
+        <div class="max-w-4xl mx-auto px-6">
+            {{ $slot }}
+>>>>>>> 5279ad827b2b9563ccc4049f839b6abaf4fbee60
         </div>
-    </body>
+    </div>
+</body>
 </html>
