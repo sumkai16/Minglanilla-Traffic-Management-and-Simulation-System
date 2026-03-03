@@ -24,75 +24,28 @@
             </div>
             <div class="absolute inset-0 bg-black/20"></div>
 
-            <!-- Header -->
-            <header class="relative">
-                <div class="max-w-7xl mx-auto p-5 lg:px-8">
-                    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center">
-                                <div
-                                    class="h-17 w-17 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
-                                    <img src="{{ asset('images/second_logo-removebg-preview.png') }}"
-                                        alt="Minglanilla Official Seal" class="h-20 w-20 object-contain">
-                                </div>
-                                <div
-                                    class="-ml-3 h-17 w-17 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center overflow-hidden">
-                                    <img src="{{ asset('images/first_logo-removebg-preview.png') }}"
-                                        alt="Minglanilla Shield Logo" class="h-20 w-20 object-contain">
-                                </div>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold tracking-wide text-blue-100">LIHOK PADULONG</p>
-                                <p class="text-xs uppercase tracking-widest text-red-200">Minglanilla Traffic Command
-                                </p>
-                                <h1 class="text-3xl font-semibold text-white ">User Management</h1>
-
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3">
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M11.78 4.22a.75.75 0 010 1.06L7.56 9.5H16a.75.75 0 010 1.5H7.56l4.22 4.22a.75.75 0 11-1.06 1.06l-5.5-5.5a.75.75 0 010-1.06l5.5-5.5a.75.75 0 011.06 0z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                Back to Dashboard
-                            </a>
-                            <a href="{{ route('admin.users.create') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path
-                                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
-                                </svg>
-                                Add User
-                            </a>
-                            <div
-                                class="flex items-center gap-3 rounded-full bg-white/10 border border-white/15 px-4 py-2">
-                                <span class="text-white text-sm whitespace-nowrap">
-                                    {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
-                                </span>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-2 bg-red-500/90 text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-red-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fill-rule="evenodd"
-                                                d="M7.5 3.25A2.25 2.25 0 005.25 5.5v9A2.25 2.25 0 007.5 16.75h3a.75.75 0 000-1.5h-3a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75h3a.75.75 0 000-1.5h-3z"
-                                                clip-rule="evenodd" />
-                                            <path fill-rule="evenodd"
-                                                d="M11.72 6.22a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9.5a.75.75 0 010-1.5h3.94l-1.72-1.72a.75.75 0 010-1.06z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Header -->
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-800 text-sm">
+                        ← Back to Dashboard
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
                 </div>
-            </header>
-        </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-700 text-sm">
+                        {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                    </span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
 
         <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
@@ -188,6 +141,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- add user button-->
+                <div class="flex justify-end m-2">
+                    <a href="{{ route('admin.users.create') }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400 text-blue-950 text-sm font-semibold hover:bg-yellow-500 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path
+                                d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                        </svg>
+                        Add User
+                    </a>
                 </div>
 
                 <!-- Table -->
@@ -316,27 +280,14 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500 align-middle">
-                                            <span class="inline-flex items-center gap-2">
-                                                <svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor"
-                                                    aria-hidden="true">
-                                                    <path
-                                                        d="M2 6.5A2.5 2.5 0 014.5 4h11A2.5 2.5 0 0118 6.5v7A2.5 2.5 0 0115.5 16h-11A2.5 2.5 0 012 13.5v-7z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M3.06 6.62a.75.75 0 01.99-.32l5.43 2.72a1.25 1.25 0 001.1 0l5.43-2.72a.75.75 0 11.67 1.34l-5.43 2.72a2.75 2.75 0 01-2.46 0L3.38 7.96a.75.75 0 01-.32-.99z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                <span class="truncate">{{ $user->email }}</span>
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 align-middle">
-                                            <span
-                                                class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                                                                                            @if($user->role === 'admin') bg-red-50 text-red-800 ring-red-200
-                                                                                                                                            @elseif($user->role === 'head-mitcom') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                                                            @elseif($user->role === 'enforcer') bg-amber-50 text-amber-900 ring-amber-200
-                                                                                                                                            @else bg-slate-50 text-slate-800 ring-slate-200
-                                                                                                                                            @endif">
+                                        <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                                            @if($user->role === 'admin') bg-purple-100 text-purple-800
+                                                            @elseif($user->role === 'head-mitcom') bg-blue-100 text-blue-800
+                                                            @elseif($user->role === 'enforcer') bg-green-100 text-green-800
+                                                            @else bg-gray-100 text-gray-800
+                                                            @endif">
                                                 {{ ucfirst(str_replace('-', ' ', $user->role)) }}
                                             </span>
                                         </td>

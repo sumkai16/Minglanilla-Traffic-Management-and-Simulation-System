@@ -10,23 +10,9 @@
 
 <body class="bg-gray-100">
     <div class="min-h-screen">
-
+        <x-app-nav pageTitle="Admin Dashboard" />
         <!-- Header -->
-        <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-                <div class="flex items-center gap-4">
-                    <span class="text-gray-700 text-sm">{{ auth()->user()->first_name }}
-                        {{ auth()->user()->last_name }}</span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </header>
+
 
         <main class="py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,7 +52,7 @@
                             <div class="font-medium text-gray-900">👥 Manage Users</div>
                             <div class="text-sm text-gray-500 mt-1">Add, edit, or remove users</div>
                         </a>
-                        <a href="#"
+                        <a href="{{ route('admin.reports.index') }}"
                             class="block p-4 border border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition">
                             <div class="font-medium text-gray-900">📋 Traffic Reports</div>
                             <div class="text-sm text-gray-500 mt-1">View all traffic reports</div>
