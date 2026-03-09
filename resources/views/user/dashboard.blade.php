@@ -19,6 +19,16 @@
     <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
 
         <x-app-nav pageTitle="My Dashboard">
+            <a href="{{ route('user.profile.edit') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 transition">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                    <path fill-rule="evenodd"
+                        d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                        clip-rule="evenodd" />
+                </svg>
+                My Profile
+            </a>
             <a href="{{ route('user.reports.create') }}"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-400 transition">
                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -40,8 +50,14 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-slate-900">Welcome back,
+<<<<<<< HEAD
                                 {{ auth()->user()->first_name }}!</h2>
                             <p class="text-blue-700/80 text-sm mt-1">Track your incident reports and view their status</p>
+=======
+                                {{ auth()->user()->first_name }}!
+                            </h2>
+                            <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
+>>>>>>> 25cbdd0a2da1d14a0d6fd908cafac23ff6197cee
                         </div>
                         <div class="text-right">
                             <div class="text-3xl font-bold text-blue-600">{{ $reports->total() }}</div>
@@ -164,12 +180,12 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="px-3 py-1 text-xs font-semibold rounded-full ring-1 ring-inset
-                                                                                                        @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
-                                                                                                        @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
-                                                                                                        @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
-                                                                                                        @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
-                                                                                                        @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
-                                                                                                        @endif">
+                                                                                                            @if($report->status === 'pending') bg-yellow-50 text-yellow-800 ring-yellow-200
+                                                                                                            @elseif($report->status === 'verified') bg-blue-50 text-blue-800 ring-blue-200
+                                                                                                            @elseif($report->status === 'assigned') bg-purple-50 text-purple-800 ring-purple-200
+                                                                                                            @elseif($report->status === 'resolved') bg-green-50 text-green-800 ring-green-200
+                                                                                                            @elseif($report->status === 'rejected') bg-red-50 text-red-800 ring-red-200
+                                                                                                            @endif">
                                                 {{ ucfirst($report->status) }}
                                             </span>
                                         </td>

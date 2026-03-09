@@ -160,7 +160,34 @@
                     Live Feed
                 </div>
             </div>
+            <!-- Legend -->
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div class="flex flex-wrap items-center gap-4 text-xs">
+                    <span class="font-semibold text-slate-700">Legend:</span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <span class="text-slate-600">Pending</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span class="text-slate-600">Verified</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span class="text-slate-600">Assigned</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="text-slate-600">Resolved</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-slate-600">Rejected</span>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </section>
 
     <script>

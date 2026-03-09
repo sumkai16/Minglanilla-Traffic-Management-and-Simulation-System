@@ -62,8 +62,8 @@ window.initReportMapPicker = function () {
     if (!mapContainer || !latInput || !lngInput) return;
 
     // Default center (Minglanilla)
-    let defaultLat = 10.2833;
-    let defaultLng = 123.7972;
+    let defaultLat = 10.2038;
+    let defaultLng = 123.7887;
 
     // Initialize map
     const map = L.map(mapContainer).setView([defaultLat, defaultLng], 19);

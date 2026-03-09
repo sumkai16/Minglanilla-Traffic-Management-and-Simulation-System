@@ -74,7 +74,7 @@ class ReportManagementController extends Controller
 
         //If verified or rejected, record kung kinsa
         if(in_array($validated['status'],['verified','rejected'])){
-            $report->verified_at = Auth::id();
+            $report->verified_by = Auth::id();
             $report->verified_at = now();
         }
 

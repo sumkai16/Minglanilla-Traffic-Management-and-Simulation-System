@@ -61,7 +61,7 @@ class ReportController extends Controller
 
         Report::create($validated);
 
-        return redirect()->back()->with('success', 'Report submitted successfully.');        dd($imagePath);
+        return redirect()->back()->with('success', 'Report submitted successfully.');
     }
    // Get reports for map display
     public function mapData()

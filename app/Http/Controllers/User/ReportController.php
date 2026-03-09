@@ -29,7 +29,7 @@ class ReportController extends Controller
 
         if($request->hasFile('image')){
             $path = $request->file('image')->store('reports', 'public');
-            $validated['image'] = $path;
+            $validated['image_path'] = $path;
         }
 
         Report::create($validated);

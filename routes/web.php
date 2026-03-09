@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Enforcer\DashboardController as EnforcerDashboardController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
-use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDasboardController;
+use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -33,10 +33,11 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     return redirect()->route('user.dashboard');
 })->name('dashboard');
 
-// Profile routes
+// Profile routes (all authenticated users)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -48,6 +49,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('reports',[App\Http\Controllers\Admin\ReportManagementController::class, 'index'])->name('reports.index');
     Route::get('/reports/{report}',[App\Http\Controllers\Admin\ReportManagementController::class, 'show'])->name('reports.show');
     Route::patch('reports/{report}/status',[App\Http\Controllers\Admin\ReportManagementController::class, 'updateStatus'])->name('reports.updateStatus');
+
+    Route::get('/map', [\App\Http\Controllers\Admin\DashboardController::class, 'map'])->name('map');
 });
 
 // Enforcer routes
@@ -61,10 +64,12 @@ Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user
     Route::get('/reports/create', [App\Http\Controllers\User\ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [App\Http\Controllers\User\ReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}',[App\Http\Controllers\User\ReportController::class, 'show'])->name('reports.show');
+
+    Route::get('/profile', fn () => redirect()->route('profile.edit'))->name('profile.edit');
 });
 // Head MITCOM routes
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
-    Route::get('/dashboard', [HeadMitcomDasboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [HeadMitcomDashboardController::class, 'index'])->name('dashboard');
 });
 
 // Public report routes
