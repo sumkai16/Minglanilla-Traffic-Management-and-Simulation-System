@@ -64,11 +64,9 @@ class UsermanagementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
-        $user = User::findOrFail($id);
-        return view('admin.users.edit',compact('user'));
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -84,8 +82,8 @@ class UsermanagementController extends Controller
             'role' => 'required|in:admin,user,enforcer,head-mitcom',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
-        $user->firstname = $request->first_name;
-        $user->lastname = $request->last_name;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->role = $request->role;
         if($request->filled('password')){

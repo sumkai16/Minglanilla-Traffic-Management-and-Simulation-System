@@ -23,4 +23,7 @@ class DashboardController extends Controller
             'userCount'
         ));
     }
+    public function map(){
+        return view('admin.map');
+    }
 }
