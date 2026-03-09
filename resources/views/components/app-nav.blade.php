@@ -64,9 +64,15 @@
 
                     {{ $slot }}
 
+                    @php
+                        $userDisplayName = auth()->user()->role === 'user'
+                            ? 'Citizen'
+                            : trim(auth()->user()->first_name . ' ' . auth()->user()->last_name);
+                    @endphp
+
                     <div class="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-4 py-2 shadow">
                         <span class="text-white text-sm whitespace-nowrap">
-                            {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                            {{ $userDisplayName }}
                         </span>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

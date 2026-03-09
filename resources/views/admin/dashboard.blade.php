@@ -165,22 +165,6 @@
                                 View all traffic reports
                             </div>
                         </a>
-<<<<<<< HEAD
-
-                        <!-- Traffic Map -->
-                        <a href="#"
-                            class="group block p-6 rounded-2xl border border-blue-100 bg-white
-                                   transition-all duration-300 
-                                   hover:border-blue-500 hover:shadow-xl hover:-translate-y-1">
-
-                            <div class="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition">
-                                🗺️ Traffic Map
-                            </div>
-
-                            <div class="text-sm text-blue-700/70 mt-2">
-                                View live traffic map
-                            </div>
-=======
                         <a href="{{ route('admin.map') }}"
                             class="block p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                             <div class="flex items-center gap-3 mb-2">
@@ -196,7 +180,6 @@
                                 <div class="font-semibold text-slate-900">Live Traffic Map</div>
                             </div>
                             <div class="text-sm text-slate-500">View all incidents on interactive map</div>
->>>>>>> 25cbdd0a2da1d14a0d6fd908cafac23ff6197cee
                         </a>
 
                     </div>

@@ -41,27 +41,42 @@
 
         </x-app-nav>
 
-        <main class="py-8 relative">
-            <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
+        <main class="py-10 relative">
+            <div class="absolute inset-x-0 top-0 -z-10 h-60 bg-gradient-to-b from-blue-100/70 via-blue-50 to-transparent"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <!-- Welcome Card -->
-                <div class="bg-white shadow-sm rounded-2xl border border-blue-100 p-6 mb-6 -mt-4 relative z-10">
-                    <div class="flex items-center justify-between">
+                <div
+                    class="relative overflow-hidden bg-white shadow-sm rounded-3xl border border-blue-100 p-7 mb-6 -mt-6">
+                    <div class="absolute -right-14 -top-12 h-40 w-40 rounded-full bg-blue-500/10 blur-2xl"></div>
+                    <div class="absolute -left-10 -bottom-12 h-36 w-36 rounded-full bg-cyan-400/10 blur-2xl"></div>
+                    <div class="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h2 class="text-lg font-semibold text-slate-900">Welcome back,
-<<<<<<< HEAD
-                                {{ auth()->user()->first_name }}!</h2>
-                            <p class="text-blue-700/80 text-sm mt-1">Track your incident reports and view their status</p>
-=======
-                                {{ auth()->user()->first_name }}!
+                            <div class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                Citizen Dashboard
+                            </div>
+                            <h2 class="mt-3 text-2xl md:text-3xl font-bold text-slate-900">
+                                Welcome Citizen!
                             </h2>
-                            <p class="text-slate-600 text-sm mt-1">Track your incident reports and view their status</p>
->>>>>>> 25cbdd0a2da1d14a0d6fd908cafac23ff6197cee
+                            <p class="text-slate-600 text-sm mt-2 max-w-xl">
+                                Track your incident reports, follow their progress, and stay updated with real-time traffic
+                                activity.
+                            </p>
                         </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-bold text-blue-600">{{ $reports->total() }}</div>
-                            <div class="text-xs text-blue-700/70 uppercase tracking-wider mt-1">Total Reports</div>
+                        <div
+                            class="flex items-center gap-6 rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white px-5 py-4 shadow-sm">
+                            <div>
+                                <div class="text-xs uppercase tracking-widest text-slate-500">Total Reports</div>
+                                <div class="text-4xl font-bold text-blue-600 mt-2">{{ $reports->total() }}</div>
+                            </div>
+                            <div class="h-12 w-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow">
+                                <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                        d="M3.75 5.5A1.75 1.75 0 015.5 3.75h6.086c.464 0 .91.184 1.237.513l3.664 3.664c.329.327.513.773.513 1.237V14.5a1.75 1.75 0 01-1.75 1.75H5.5A1.75 1.75 0 013.75 14.5v-9z" />
+                                    <path
+                                        d="M12.25 3.75V7a.75.75 0 00.75.75h3.25" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,14 +84,15 @@
                 <!-- Stats -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="group bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Pending</div>
                                 <div class="text-3xl font-semibold text-yellow-600 mt-3">{{ $pendingCount }}</div>
+                                <p class="text-xs text-slate-400 mt-2">Awaiting validation</p>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-200 flex items-center justify-center group-hover:scale-105 transition">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"
@@ -87,14 +103,15 @@
                     </div>
 
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="group bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Verified</div>
                                 <div class="text-3xl font-semibold text-blue-600 mt-3">{{ $verifiedCount }}</div>
+                                <p class="text-xs text-slate-400 mt-2">Confirmed by team</p>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center group-hover:scale-105 transition">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
@@ -105,14 +122,15 @@
                     </div>
 
                     <div
-                        class="bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
+                        class="group bg-white rounded-2xl shadow-sm border border-blue-100 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Resolved</div>
                                 <div class="text-3xl font-semibold text-green-600 mt-3">{{ $resolvedCount }}</div>
+                                <p class="text-xs text-slate-400 mt-2">Closed successfully</p>
                             </div>
                             <div
-                                class="h-10 w-10 rounded-xl bg-green-50 text-green-700 ring-1 ring-inset ring-green-200 flex items-center justify-center">
+                                class="h-10 w-10 rounded-xl bg-green-50 text-green-700 ring-1 ring-inset ring-green-200 flex items-center justify-center group-hover:scale-105 transition">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -142,8 +160,57 @@
                 <div
                     class="bg-white shadow-sm rounded-2xl border border-blue-100 overflow-hidden border-t-4 border-t-blue-600">
                     <div class="px-6 py-5 border-b border-blue-100">
-                        <h2 class="text-lg font-semibold text-slate-900">My Reports</h2>
-                        <p class="text-sm text-blue-700/70 mt-1">View all your submitted incident reports</p>
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-slate-900">My Reports</h2>
+                                <p class="text-sm text-blue-700/70 mt-1">View all your submitted incident reports</p>
+                            </div>
+                            <form method="GET" action="{{ route('user.dashboard') }}"
+                                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold uppercase tracking-widest text-slate-500">Issue Type</label>
+                                    <select name="issue_type"
+                                        class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200">
+                                        <option value="">All issues</option>
+                                        @foreach($issueTypes as $type)
+                                            <option value="{{ $type['value'] }}" @selected($issueType === $type['value'])>
+                                                {{ $type['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold uppercase tracking-widest text-slate-500">Report Status</label>
+                                    <select name="status"
+                                        class="rounded-lg border border-slate-200 bg-white px-7 py-2 text-sm text-slate-700 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200">
+                                        <option value="">All statuses</option>
+                                        @foreach($statusOptions as $option)
+                                            <option value="{{ $option['value'] }}" @selected($status === $option['value'])>
+                                                {{ $option['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold uppercase tracking-widest text-slate-500">Order</label>
+                                    <select name="sort"
+                                        class="rounded-lg border border-slate-200 bg-white px-7 py-2 text-sm text-slate-700 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200">
+                                        <option value="latest" @selected($sort === 'latest')>Latest </option>
+                                        <option value="oldest" @selected($sort === 'oldest')>Oldest </option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 pt-1 sm:pt-6">
+                                    <button type="submit"
+                                        class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-7 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition">
+                                        Apply
+                                    </button>
+                                    <a href="{{ route('user.dashboard') }}"
+                                        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-800 transition">
+                                        Reset
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">

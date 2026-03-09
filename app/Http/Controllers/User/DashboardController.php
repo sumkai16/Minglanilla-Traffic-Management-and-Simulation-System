@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
@@ -13,11 +14,40 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        $issueType = request()->string('issue_type')->toString();
+        $status = request()->string('status')->toString();
+        $sort = request()->string('sort')->toString();
+
+        $validStatuses = ['pending', 'verified', 'assigned', 'resolved', 'rejected'];
+        $sort = in_array($sort, ['latest', 'oldest'], true) ? $sort : 'latest';
+
         // Base query for the authenticated user's reports
-        $reportsQuery = $user->reports()->latest();
+        $reportsQuery = $user->reports()
+            ->when($issueType !== '', function ($query) use ($issueType) {
+                $query->where('issue_type', $issueType);
+            })
+            ->when(in_array($status, $validStatuses, true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderBy('created_at', $sort === 'oldest' ? 'asc' : 'desc');
 
         // Paginated list of user's reports
-        $reports = $reportsQuery->paginate(10);
+        $reports = $reportsQuery->paginate(10)->withQueryString();
+
+        $issueTypes = $user->reports()
+            ->select('issue_type')
+            ->distinct()
+            ->orderBy('issue_type')
+            ->pluck('issue_type')
+            ->map(fn ($type) => [
+                'value' => $type,
+                'label' => Str::title(str_replace('_', ' ', $type)),
+            ]);
+
+        $statusOptions = collect($validStatuses)->map(fn ($value) => [
+            'value' => $value,
+            'label' => Str::title($value),
+        ]);
 
         // Status counts for the stats cards
         $pendingCount = $user->reports()->where('status', 'pending')->count();
@@ -28,7 +58,12 @@ class DashboardController extends Controller
             'reports',
             'pendingCount',
             'verifiedCount',
-            'resolvedCount'
+            'resolvedCount',
+            'issueTypes',
+            'statusOptions',
+            'issueType',
+            'status',
+            'sort'
         ));
     }
 }
