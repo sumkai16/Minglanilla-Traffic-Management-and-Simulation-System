@@ -31,9 +31,31 @@ class User extends Authenticatable
         ];
     }
 
-    // Add this method:
-    public function reports()
+
+
+        public function reports()
     {
         return $this->hasMany(Report::class);
+    }
+
+    // Add these helper methods:
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isEnforcer()
+    {
+        return $this->role === 'enforcer';
+    }
+
+    public function isHeadMitcom()
+    {
+        return $this->role === 'head-mitcom';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'user';
     }
 }
