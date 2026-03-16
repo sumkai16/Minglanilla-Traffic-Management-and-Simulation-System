@@ -23,12 +23,15 @@ class Report extends Model
         'image_path',
         'verified_by',
         'verified_at',
+        'assigned_to',
+        'assigned_at',
     ];
 
     protected $casts = [
         'verified_at' => 'datetime',
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
+        'assigned_at' => 'datetime',
     ];
 
     // Relationship: Report belongs to a user (nullable for guests)
@@ -53,6 +56,10 @@ class Report extends Model
     public function getReporterEmailAttribute()
     {
         return $this->user ? $this->user->email : $this->attributes['reporter_email'];
+    }
+    public function assignedEnforcer(){
+        
+    return $this->belongsTo(User::class, 'assigned_to');
     }
     
 }
