@@ -10,6 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // Base query for the authenticated user's reports
