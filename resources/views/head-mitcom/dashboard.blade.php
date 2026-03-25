@@ -111,7 +111,7 @@
 
                 <!-- Quick Actions -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <a href="#"
+                    <a href="{{ route('head-mitcom.reports.index') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
                             <div
@@ -129,7 +129,7 @@
                         <div class="text-sm text-slate-500">Manage and assign incidents</div>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('head-mitcom.enforcers.index') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
                             <div
@@ -211,9 +211,11 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ $report->created_at->format('M d, Y') }}</td>
+                                            {{ $report->created_at->format('M d, Y') }}
+                                        </td>
                                         <td class="px-6 py-4">
-                                            <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                                            <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
+                                                class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
                                                 Assign →
                                             </a>
                                         </td>
@@ -275,8 +277,11 @@
                                                 <span class="text-slate-400">Not assigned</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ $report->assigned_at ? $report->assigned_at->diffForHumans() : 'N/A' }}
+                                        <td class="px-6 py-4">
+                                            <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
+                                                class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                                                View →
+                                            </a>
                                         </td>
                                     </tr>
                                 @empty

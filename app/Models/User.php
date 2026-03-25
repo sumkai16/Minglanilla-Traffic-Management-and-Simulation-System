@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+
     use HasFactory, Notifiable;
 
     protected $fillable = [
@@ -58,4 +59,10 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+
+    public function assignedReports()
+    {
+        return $this->hasMany(Report::class, 'assigned_to');
+    }
+   
 }
