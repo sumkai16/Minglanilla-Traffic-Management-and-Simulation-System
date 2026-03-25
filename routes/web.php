@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Enforcer\DashboardController as EnforcerDashboardController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDashboardController;
+use App\Http\Controllers\HeadMitcom\ReportController as HeadMitcomReportController;
+use App\Http\Controllers\HeadMitcom\EnforcerController as HeadMitcomEnforcerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -70,6 +72,15 @@ Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user
 // Head MITCOM routes
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
     Route::get('/dashboard', [HeadMitcomDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports', [HeadMitcomReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [HeadMitcomReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/assign', [HeadMitcomReportController::class, 'assign'])->name('reports.assign');
+    Route::post('/reports/{report}/reassign', [HeadMitcomReportController::class, 'reassign'])->name('reports.reassign');
+    Route::post('/reports/{report}/verify', [HeadMitcomReportController::class, 'verify'])->name('reports.verify');
+    Route::post('/reports/{report}/reject', [HeadMitcomReportController::class, 'reject'])->name('reports.reject');
+
+    Route::get('/enforcers', [HeadMitcomEnforcerController::class, 'index'])->name('enforcers.index');
+    Route::get('/enforcers/{user}', [HeadMitcomEnforcerController::class, 'show'])->name('enforcers.show');
 });
 
 // Public report routes

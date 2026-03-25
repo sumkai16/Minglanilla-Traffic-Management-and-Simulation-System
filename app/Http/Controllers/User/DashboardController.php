@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        /** @var User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $issueType = request()->string('issue_type')->toString();
