@@ -16,16 +16,18 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100"
+        x-data="{ showCreateModal: {{ $errors->any() ? 'true' : 'false' }} }"
+        @keydown.escape.window="showCreateModal = false">
         <x-app-nav pageTitle="User Management">
-            <a href="{{ route('admin.users.create') }}"
+            <button type="button" @click="showCreateModal = true"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-blue-900 text-sm font-semibold hover:bg-blue-50 hover:-translate-y-0.5 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path
                         d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
                 </svg>
                 Add User
-            </a>
+            </button>
         </x-app-nav>
 
         <main class="py-8 relative">
@@ -305,6 +307,139 @@
 
             </div>
         </main>
+
+        <div x-cloak x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex min-h-screen items-center justify-center px-4 py-8">
+                <div x-show="showCreateModal" x-transition.opacity class="absolute inset-0 bg-slate-950/55 backdrop-blur-sm"></div>
+
+                <div x-show="showCreateModal" x-transition
+                    class="relative w-full max-w-3xl overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-2xl">
+                    <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-700 via-cyan-500 to-slate-800"></div>
+
+                    <div class="relative px-6 py-6 sm:px-8 border-b border-slate-200 bg-gradient-to-r from-blue-50 via-white to-cyan-50">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.25em] text-blue-700 font-semibold">Admin Action</p>
+                                <h2 class="text-2xl font-bold text-slate-900 mt-2">Add New User</h2>
+                                <p class="text-sm text-slate-500 mt-1">Create a new account for administrators, Head MITCOM, enforcers, or citizens.</p>
+                            </div>
+                            <button type="button" @click="showCreateModal = false"
+                                class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition"
+                                aria-label="Close add user modal">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path
+                                        d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ route('admin.users.store') }}" class="p-6 sm:p-8">
+                        @csrf
+
+                        @if ($errors->any())
+                            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                <p class="font-semibold">Please review the form and correct the highlighted fields.</p>
+                            </div>
+                        @endif
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    First Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="first_name" value="{{ old('first_name') }}"
+                                    placeholder="Enter first name"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 @error('first_name') border-red-500 @enderror">
+                                @error('first_name')
+                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Last Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="last_name" value="{{ old('last_name') }}"
+                                    placeholder="Enter last name"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 @error('last_name') border-red-500 @enderror">
+                                @error('last_name')
+                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Email Address <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" name="email" value="{{ old('email') }}"
+                                    placeholder="Enter email address"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 @error('email') border-red-500 @enderror">
+                                @error('email')
+                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Role <span class="text-red-500">*</span>
+                                </label>
+                                <select name="role"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 @error('role') border-red-500 @enderror">
+                                    <option value="">Select a role</option>
+                                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="head-mitcom" {{ old('role') === 'head-mitcom' ? 'selected' : '' }}>Head MITCOM</option>
+                                    <option value="enforcer" {{ old('role') === 'enforcer' ? 'selected' : '' }}>Enforcer</option>
+                                    <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>Citizen</option>
+                                </select>
+                                @error('role')
+                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-4">
+                                <p class="text-sm font-semibold text-slate-900">Quick Notes</p>
+                                <p class="text-xs text-slate-600 mt-2">New accounts are automatically marked as verified and can sign in right away after creation.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
+                                <input type="password" name="password" placeholder="Minimum 8 characters"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 @error('password') border-red-500 @enderror">
+                                @error('password')
+                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Confirm Password <span class="text-red-500">*</span>
+                                </label>
+                                <input type="password" name="password_confirmation" placeholder="Re-enter password"
+                                    class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+                            <button type="button" @click="showCreateModal = false"
+                                class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                class="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-blue-700 transition">
+                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path
+                                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+                                </svg>
+                                Create User
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

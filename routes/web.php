@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 // Enforcer routes
 Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->name('enforcer.')->group(function () {
     Route::get('/dashboard', [EnforcerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports/{report}', [App\Http\Controllers\Enforcer\ReportController::class, 'show'])->name('reports.show');
 });
 
 // User routes
@@ -72,6 +73,7 @@ Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user
 // Head MITCOM routes
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
     Route::get('/dashboard', [HeadMitcomDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/map', [HeadMitcomDashboardController::class, 'map'])->name('map');
     Route::get('/reports', [HeadMitcomReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/{report}', [HeadMitcomReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/assign', [HeadMitcomReportController::class, 'assign'])->name('reports.assign');

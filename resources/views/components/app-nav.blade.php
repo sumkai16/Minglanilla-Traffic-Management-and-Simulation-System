@@ -1,5 +1,28 @@
 @props(['pageTitle' => 'Dashboard'])
 
+@php
+    $showDashboardLink = !request()->routeIs([
+        'admin.dashboard*',
+        'user.dashboard*',
+        'head-mitcom.dashboard*',
+        'enforcer.dashboard*',
+    ]);
+
+    $dashboardRoute = match (auth()->user()->role) {
+        'admin' => route('admin.dashboard'),
+        'head-mitcom' => route('head-mitcom.dashboard'),
+        'enforcer' => route('enforcer.dashboard'),
+        'user' => route('user.dashboard'),
+        default => route('user.dashboard'),
+    };
+
+    $showEnforcerProfileLink = auth()->user()->role === 'enforcer';
+
+    $userDisplayName = auth()->user()->role === 'user'
+        ? 'Citizen'
+        : trim(auth()->user()->first_name . ' ' . auth()->user()->last_name);
+@endphp
+
 <div class="relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-950"></div>
     <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_55%)]"></div>
@@ -30,26 +53,7 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-
-
-                    @if (
-                            !request()->routeIs([
-                                'admin.dashboard*',
-                                'user.dashboard*',
-                                'head-mitcom.dashboard*',
-                                'enforcer.dashboard*'
-                            ])
-                        )
-                        @php
-                            $dashboardRoute = match (auth()->user()->role) {
-                                'admin' => route('admin.dashboard'),
-                                'head-mitcom' => route('head-mitcom.dashboard'),
-                                'enforcer' => route('enforcer.dashboard'),
-                                'user' => route('user.dashboard'),
-                                default => route('user.dashboard'),
-                            };
-                        @endphp
-
+                    @if ($showDashboardLink)
                         <a href="{{ $dashboardRoute }}"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 hover:-translate-y-0.5 transition">
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -59,16 +63,23 @@
                             </svg>
                             Back to Dashboard
                         </a>
+                    @endif
+
+                    @if($showEnforcerProfileLink)
+                        <a href="{{ route('profile.edit') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 hover:-translate-y-0.5 transition shadow-sm">
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                                <path fill-rule="evenodd"
+                                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Profile Management
                         </a>
                     @endif
 
                     {{ $slot }}
-
-                    @php
-                        $userDisplayName = auth()->user()->role === 'user'
-                            ? 'Citizen'
-                            : trim(auth()->user()->first_name . ' ' . auth()->user()->last_name);
-                    @endphp
 
                     <div class="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-4 py-2 shadow">
                         <span class="text-white text-sm whitespace-nowrap">

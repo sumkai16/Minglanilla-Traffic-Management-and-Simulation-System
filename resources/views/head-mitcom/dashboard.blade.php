@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <a href="{{ route('head-mitcom.reports.index') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
@@ -145,7 +145,26 @@
                         <div class="text-sm text-slate-500">View enforcer workload and assignments</div>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('profile.edit') }}"
+                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div
+                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
+                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path
+                                        d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                                    <path fill-rule="evenodd"
+                                        d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="font-semibold text-slate-900">Profile Management</div>
+                        </div>
+                        <div class="text-sm text-slate-500">Update your account details and password</div>
+                    </a>
+
+                    <a href="{{ route('head-mitcom.map') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
                             <div

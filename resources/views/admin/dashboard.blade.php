@@ -87,45 +87,7 @@
 
                 </div>
 
-                <!-- Live Map -->
-                <div class="relative overflow-hidden bg-white shadow-xl rounded-2xl p-6 mb-8 border border-blue-100">
-                    <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.25),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.25),transparent_55%)]"></div>
-                     <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                    <div class="relative">
-                        
-                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
-                            
-                            <div>
-                                <h3 class="text-xl font-semibold text-slate-900">Live Traffic Map</h3>
-                                <p class="text-sm text-blue-700/80">Real-time reports across Minglanilla</p>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100">
-                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
-                                    Verified
-                                </span>
-                                <span class="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 border border-yellow-100">
-                                    <span class="h-2 w-2 rounded-full bg-yellow-500"></span>
-                                    Pending
-                                </span>
-                                <span class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 border border-green-100">
-                                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                                    Resolved
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-inner">
-                            <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-500/10 via-transparent to-teal-500/10"></div>
-                            <div id="admin-map" class="w-full h-[420px]"></div>
-                            <div class="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
-                                Live Map
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
+    <!-- Quick Actions -->
                 <div class="bg-white shadow-xl rounded-2xl p-8 border border-blue-100">
                     
                     
@@ -185,6 +147,46 @@
                     </div>
 
                 </div>
+
+                <!-- Live Map -->
+                <div class="relative overflow-hidden bg-white shadow-xl rounded-2xl p-6 mt-5 mb-8 border border-blue-100">
+                    <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.25),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.25),transparent_55%)]"></div>
+                     <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
+                    <div class="relative">
+                        
+                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+                            
+                            <div>
+                                <h3 class="text-xl font-semibold text-slate-900">Live Traffic Map</h3>
+                                <p class="text-sm text-blue-700/80">Real-time reports across Minglanilla</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100">
+                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                                    Verified
+                                </span>
+                                <span class="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 border border-yellow-100">
+                                    <span class="h-2 w-2 rounded-full bg-yellow-500"></span>
+                                    Pending
+                                </span>
+                                <span class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 border border-green-100">
+                                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
+                                    Resolved
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-inner">
+                            <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-500/10 via-transparent to-teal-500/10"></div>
+                            <div id="admin-map" class="w-full h-[420px]"></div>
+                            <div class="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
+                                Live Map
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            
 
             </div>
         </main>

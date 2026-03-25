@@ -41,4 +41,9 @@ class DashboardController extends Controller
             'recentAssigned'
         ));
     }
+
+    public function map()
+    {
+        return view('head-mitcom.map');
+    }
 }
