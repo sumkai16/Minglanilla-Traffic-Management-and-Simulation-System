@@ -10,7 +10,20 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        
-        return view('enforcer.dashboard');
+          $userId = auth()->user()->id;
+
+        $assignedCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'assigned')
+            ->count();
+
+        $forVerificationCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'for_verification')
+            ->count();
+
+        $resolvedCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'resolved')
+            ->count();
+
+    return view('enforcer.dashboard', compact('assignedCount', 'forVerificationCount', 'resolvedCount'));
     }
 }

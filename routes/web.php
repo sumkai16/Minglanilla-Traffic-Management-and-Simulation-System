@@ -58,6 +58,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 // Enforcer routes
 Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->name('enforcer.')->group(function () {
     Route::get('/dashboard', [EnforcerDashboardController::class, 'index'])->name('dashboard');
+
+     // Report routes
+    Route::get('/reports', [App\Http\Controllers\Enforcer\ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [App\Http\Controllers\Enforcer\ReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/proof', [App\Http\Controllers\Enforcer\ReportController::class, 'submitProof'])->name('reports.proof');
 });
 
 // User routes
@@ -81,6 +86,9 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 
     Route::get('/enforcers', [HeadMitcomEnforcerController::class, 'index'])->name('enforcers.index');
     Route::get('/enforcers/{user}', [HeadMitcomEnforcerController::class, 'show'])->name('enforcers.show');
+
+    Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
+    Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
 });
 
 // Public report routes
