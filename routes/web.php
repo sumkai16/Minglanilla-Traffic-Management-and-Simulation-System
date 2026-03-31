@@ -58,15 +58,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
 // Enforcer routes
 Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->name('enforcer.')->group(function () {
     Route::get('/dashboard', [EnforcerDashboardController::class, 'index'])->name('dashboard');
-<<<<<<< HEAD
-    Route::get('/reports/{report}', [App\Http\Controllers\Enforcer\ReportController::class, 'show'])->name('reports.show');
-=======
 
-     // Report routes
+    // Report routes
     Route::get('/reports', [App\Http\Controllers\Enforcer\ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/{report}', [App\Http\Controllers\Enforcer\ReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/proof', [App\Http\Controllers\Enforcer\ReportController::class, 'submitProof'])->name('reports.proof');
->>>>>>> 1d914ef388f56be386049aad752c94290edbb82c
 });
 
 // User routes
