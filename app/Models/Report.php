@@ -25,6 +25,8 @@ class Report extends Model
         'verified_at',
         'assigned_to',
         'assigned_at',
+        'proof_image',
+        'resolved_at',
     ];
 
     protected $casts = [

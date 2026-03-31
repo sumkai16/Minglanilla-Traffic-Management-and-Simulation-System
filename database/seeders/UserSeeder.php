@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
         ]);
         $this->command->info('Created 3 test users successfully!');
         $this->command->info('Admin: admin@minglanilla.gov.ph / password');
-        $this->command->info('MITCOM: mitcom@minglanilla.gov.ph / password');
+        $this->command->info('Enforcer: enforcer@minglanilla.gov.ph / password');
         $this->command->info('User: user@example.com / password');
         $this->command->info('Head MITCOM: headmitcom@minglanilla.gov.ph / password');
     }

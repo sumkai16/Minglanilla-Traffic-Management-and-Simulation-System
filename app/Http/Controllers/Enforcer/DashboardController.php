@@ -11,6 +11,7 @@ class DashboardController extends Controller
     //
     public function index()
     {
+<<<<<<< HEAD
         $enforcerId = auth()->id();
 
         $currentAssigned = Report::with('user')
@@ -38,5 +39,22 @@ class DashboardController extends Controller
             'activeCount',
             'resolvedCount'
         ));
+=======
+          $userId = auth()->user()->id;
+
+        $assignedCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'assigned')
+            ->count();
+
+        $forVerificationCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'for_verification')
+            ->count();
+
+        $resolvedCount = \App\Models\Report::where('assigned_to', $userId)
+            ->where('status', 'resolved')
+            ->count();
+
+    return view('enforcer.dashboard', compact('assignedCount', 'forVerificationCount', 'resolvedCount'));
+>>>>>>> 1d914ef388f56be386049aad752c94290edbb82c
     }
 }

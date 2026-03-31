@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 
 class ReportController extends Controller
 {
@@ -58,5 +60,32 @@ class ReportController extends Controller
     {
         $report->update(['status' => 'rejected']);
         return back()->with('success', 'Report rejected.');
+    }
+    public function confirmResolved(Report $report)
+    {
+        if ($report->status !== 'for_verification') {
+            return back()->with('error', 'This report is not pending verification.');
+        }
+
+        $report->update([
+            'status' => 'resolved',
+            'resolved_at' => now(),
+        ]);
+
+        return back()->with('success', 'Report marked as resolved.');
+    }
+
+public function rejectResolved(Report $report)
+    {
+        if ($report->status !== 'for_verification') {
+            return back()->with('error', 'This report is not pending verification.');
+        }
+
+        $report->update([
+            'status' => 'assigned',
+            'proof_image' => null,
+        ]);
+
+        return back()->with('success', 'Proof rejected. Report sent back to enforcer.');
     }
 }
