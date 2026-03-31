@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -54,11 +55,23 @@ class DashboardController extends Controller
         $verifiedCount = $user->reports()->where('status', 'verified')->count();
         $resolvedCount = $user->reports()->where('status', 'resolved')->count();
 
+        $urgentAnnouncement = Announcement::with('author')
+            ->published()
+            ->where('priority', 'urgent')
+            ->first();
+
+        $latestAnnouncements = Announcement::with('author')
+            ->published()
+            ->take(3)
+            ->get();
+
         return view('user.dashboard', compact(
             'reports',
             'pendingCount',
             'verifiedCount',
             'resolvedCount',
+            'urgentAnnouncement',
+            'latestAnnouncements',
             'issueTypes',
             'statusOptions',
             'issueType',

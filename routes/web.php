@@ -7,6 +7,8 @@ use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDashboardController;
 use App\Http\Controllers\HeadMitcom\ReportController as HeadMitcomReportController;
 use App\Http\Controllers\HeadMitcom\EnforcerController as HeadMitcomEnforcerController;
+use App\Http\Controllers\HeadMitcom\AnnouncementController as HeadMitcomAnnouncementController;
+use App\Http\Controllers\User\AnnouncementController as UserAnnouncementController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -68,6 +70,7 @@ Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->na
 // User routes
 Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/announcements', [UserAnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('/reports/create', [App\Http\Controllers\User\ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [App\Http\Controllers\User\ReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}',[App\Http\Controllers\User\ReportController::class, 'show'])->name('reports.show');
@@ -78,6 +81,12 @@ Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user
 Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
     Route::get('/dashboard', [HeadMitcomDashboardController::class, 'index'])->name('dashboard');
     Route::get('/map', [HeadMitcomDashboardController::class, 'map'])->name('map');
+    Route::get('/announcements', [HeadMitcomAnnouncementController::class, 'index'])->name('announcements.index');
+    Route::post('/announcements', [HeadMitcomAnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('/announcements/{announcement}/edit', [HeadMitcomAnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('/announcements/{announcement}', [HeadMitcomAnnouncementController::class, 'update'])->name('announcements.update');
+    Route::patch('/announcements/{announcement}/publish', [HeadMitcomAnnouncementController::class, 'publish'])->name('announcements.publish');
+    Route::patch('/announcements/{announcement}/unpublish', [HeadMitcomAnnouncementController::class, 'unpublish'])->name('announcements.unpublish');
     Route::get('/reports', [HeadMitcomReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/{report}', [HeadMitcomReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/assign', [HeadMitcomReportController::class, 'assign'])->name('reports.assign');

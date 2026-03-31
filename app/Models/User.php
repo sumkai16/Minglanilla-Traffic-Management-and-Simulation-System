@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -34,7 +35,7 @@ class User extends Authenticatable
 
 
 
-        public function reports()
+    public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
     }
@@ -60,9 +61,13 @@ class User extends Authenticatable
         return $this->role === 'user';
     }
 
-    public function assignedReports()
+    public function assignedReports(): HasMany
     {
         return $this->hasMany(Report::class, 'assigned_to');
     }
-   
+
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class, 'created_by');
+    }
 }
