@@ -98,7 +98,7 @@
                             class="inline-block w-3 h-1 bg-green-500 rounded"></span> Green = reroute path</span>
                 </p>
 
-                <div class="flex gap-2 mb-3">
+                <div class="flex gap-2 mb-3 flex-wrap">
                     <button type="button" id="btn-closure" onclick="setDrawMode('closure')"
                         class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 transition">
                         ✏ Draw Road Closure (Red)
@@ -107,13 +107,25 @@
                         class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-500 hover:bg-green-50 hover:border-green-300 hover:text-green-600 transition">
                         ✏ Draw Reroute Path (Green)
                     </button>
-                    <button type="button" onclick="clearAllDrawings()"
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-red-50 hover:text-red-500 transition ml-auto">
-                        Clear All
+                    <button type="button" id="btn-undo" onclick="undoLastVertex()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-600 transition"
+                        disabled>
+                        ↩ Undo
+                    </button>
+                    <button type="button" onclick="clearRed()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition ml-auto">
+                        Clear Red
+                    </button>
+                    <button type="button" onclick="clearGreen()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-green-50 hover:border-green-300 hover:text-green-500 transition">
+                        Clear Green
                     </button>
                 </div>
 
                 <div id="advisory-map"></div>
+                <p id="draw-hint" class="text-xs text-slate-400 mt-1 italic">
+                    Click on the map to start drawing. Double-click to finish.
+                </p>
             </div>
 
             {{-- Submit --}}
@@ -133,39 +145,22 @@
 
     <x-toast />
     <script>
-        const map = L.map('advisory-map').setView([10.2731, 123.7956], 14);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        const closureLayer = new L.FeatureGroup().addTo(map);
-        const rerouteLayer = new L.FeatureGroup().addTo(map);
-
-        // Load existing map data
-        const existingData = @json($advisory->map_data);
-
-        if (existingData) {
-            if (existingData.closures) {
-                existingData.closures.forEach(function (item) {
-                    const line = L.polyline(item.coordinates, { color: '#ef4444', weight: 4 });
-                    closureLayer.addLayer(line);
-                });
-            }
-            if (existingData.reroutes) {
-                existingData.reroutes.forEach(function (item) {
-                    const line = L.polyline(item.coordinates, { color: '#22c55e', weight: 4 });
-                    rerouteLayer.addLayer(line);
-                });
-            }
-        }
-
-        updateMapData();
-
+        let map;
+        let closureLayer;
+        let rerouteLayer;
         let currentMode = 'closure';
-        let drawHandler = null;
+
+        let isDrawing = false;
+        let currentPolyline = null;
+        let currentLatLngs = [];
+        let snappingCursor = null;
 
         function setDrawMode(mode) {
+            if (isDrawing && mode !== currentMode) {
+                const confirmed = confirm('You have an unfinished line. Switching modes will discard it. Continue?');
+                if (!confirmed) return;
+            }
+
             currentMode = mode;
 
             document.getElementById('btn-closure').className = mode === 'closure'
@@ -176,33 +171,61 @@
                 ? 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-green-400 bg-green-100 text-green-700 transition'
                 : 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-500 hover:bg-green-50 hover:border-green-300 hover:text-green-600 transition';
 
-            if (drawHandler) {
-                drawHandler.disable();
-            }
-
-            const color = mode === 'closure' ? '#ef4444' : '#22c55e';
-
-            // Create a new polyline draw handler for the selected mode and enable it
-            drawHandler = new L.Draw.Polyline(map, {
-                shapeOptions: { color: color, weight: 4 },
-            });
-            drawHandler.enable();
+            cancelCurrentDrawing();
         }
 
-        map.on(L.Draw.Event.CREATED, function (e) {
-            const layer = e.layer;
-            if (currentMode === 'closure') {
-                layer.setStyle({ color: '#ef4444', weight: 4 });
-                closureLayer.addLayer(layer);
-            } else {
-                layer.setStyle({ color: '#22c55e', weight: 4 });
-                rerouteLayer.addLayer(layer);
-            }
-            updateMapData();
-        });
+        function cancelCurrentDrawing() {
+            if (currentPolyline) map.removeLayer(currentPolyline);
+            if (snappingCursor) map.removeLayer(snappingCursor);
+            currentPolyline = null;
+            currentLatLngs = [];
+            snappingCursor = null;
+            isDrawing = false;
+            updateStatusHint();
+        }
 
-        function clearAllDrawings() {
+        function undoLastVertex() {
+            if (!isDrawing || currentLatLngs.length === 0) return;
+
+            currentLatLngs.pop();
+
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+                snappingCursor = null;
+            }
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+                currentPolyline = null;
+            }
+
+            if (currentLatLngs.length === 0) {
+                isDrawing = false;
+                updateStatusHint();
+                return;
+            }
+
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+
+            if (currentLatLngs.length >= 2) {
+                currentPolyline = L.polyline(currentLatLngs, { color, weight: 6, opacity: 0.9 }).addTo(map);
+            }
+
+            const last = currentLatLngs[currentLatLngs.length - 1];
+            snappingCursor = L.circleMarker(last, {
+                radius: 5, color, fillColor: color, fillOpacity: 1, weight: 2
+            }).addTo(map);
+
+            updateStatusHint();
+        }
+
+        function clearRed() {
+            if (isDrawing && currentMode === 'closure') cancelCurrentDrawing();
             closureLayer.clearLayers();
+            updateMapData();
+        }
+
+        function clearGreen() {
+            if (isDrawing && currentMode === 'reroute') cancelCurrentDrawing();
             rerouteLayer.clearLayers();
             updateMapData();
         }
@@ -214,7 +237,6 @@
             closureLayer.eachLayer(function (layer) {
                 closures.push({ type: 'polyline', color: 'red', coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng]) });
             });
-
             rerouteLayer.eachLayer(function (layer) {
                 reroutes.push({ type: 'polyline', color: 'green', coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng]) });
             });
@@ -222,11 +244,152 @@
             document.getElementById('map_data_input').value = JSON.stringify({ closures, reroutes });
         }
 
-        document.getElementById('advisory-form').addEventListener('submit', function () {
-            updateMapData();
-        });
+        function updateStatusHint() {
+            const hint = document.getElementById('draw-hint');
+            const undoBtn = document.getElementById('btn-undo');
 
-        setDrawMode('closure');
+            if (hint) {
+                hint.textContent = !isDrawing
+                    ? 'Click on the map to start drawing. Double-click to finish.'
+                    : `${currentLatLngs.length} point(s) placed. Click to add more. Double-click to finish.`;
+            }
+
+            if (undoBtn) {
+                undoBtn.disabled = !isDrawing || currentLatLngs.length === 0;
+            }
+        }
+
+        async function snapToRoad(lat, lng) {
+            try {
+                const url = `https://router.project-osrm.org/nearest/v1/driving/${lng},${lat}?number=1`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.code === 'Ok' && data.waypoints && data.waypoints.length > 0) {
+                    const snapped = data.waypoints[0].location;
+                    return { lat: snapped[1], lng: snapped[0] };
+                }
+            } catch (err) {
+                console.warn('OSRM snap failed, using raw coordinates:', err);
+            }
+            return { lat, lng };
+        }
+
+        async function handleMapClick(e) {
+            const rawLat = e.latlng.lat;
+            const rawLng = e.latlng.lng;
+
+            if (snappingCursor) map.removeLayer(snappingCursor);
+
+            snappingCursor = L.circleMarker([rawLat, rawLng], {
+                radius: 5, color: '#94a3b8', fillColor: '#cbd5e1', fillOpacity: 0.8, weight: 1
+            }).addTo(map);
+
+            const snapped = await snapToRoad(rawLat, rawLng);
+
+            if (snappingCursor) map.removeLayer(snappingCursor);
+
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+
+            snappingCursor = L.circleMarker([snapped.lat, snapped.lng], {
+                radius: 5, color, fillColor: color, fillOpacity: 1, weight: 2
+            }).addTo(map);
+
+            currentLatLngs.push([snapped.lat, snapped.lng]);
+            isDrawing = true;
+
+            if (currentPolyline) map.removeLayer(currentPolyline);
+
+            if (currentLatLngs.length >= 2) {
+                currentPolyline = L.polyline(currentLatLngs, { color, weight: 6, opacity: 0.9 }).addTo(map);
+            }
+
+            updateStatusHint();
+        }
+
+        function finishCurrentDrawing() {
+            if (currentLatLngs.length < 2) {
+                cancelCurrentDrawing();
+                return;
+            }
+
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+            const finalPolyline = L.polyline(currentLatLngs, { color, weight: 6, opacity: 0.9 });
+
+            if (currentMode === 'closure') {
+                closureLayer.addLayer(finalPolyline);
+            } else {
+                rerouteLayer.addLayer(finalPolyline);
+            }
+
+            if (currentPolyline) map.removeLayer(currentPolyline);
+            if (snappingCursor) map.removeLayer(snappingCursor);
+
+            currentPolyline = null;
+            currentLatLngs = [];
+            snappingCursor = null;
+            isDrawing = false;
+
+            updateMapData();
+            updateStatusHint();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            map = L.map('advisory-map').setView([10.2731, 123.7956], 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            closureLayer = new L.FeatureGroup().addTo(map);
+            rerouteLayer = new L.FeatureGroup().addTo(map);
+
+            // Load existing map data
+            const existingData = @json($advisory->map_data);
+
+            if (existingData) {
+                if (existingData.closures) {
+                    existingData.closures.forEach(function (item) {
+                        const line = L.polyline(item.coordinates, { color: '#ef4444', weight: 6, opacity: 0.9 });
+                        closureLayer.addLayer(line);
+                    });
+                }
+                if (existingData.reroutes) {
+                    existingData.reroutes.forEach(function (item) {
+                        const line = L.polyline(item.coordinates, { color: '#22c55e', weight: 6, opacity: 0.9 });
+                        rerouteLayer.addLayer(line);
+                    });
+                }
+            }
+
+            updateMapData();
+
+            let clickTimer = null;
+
+            map.on('click', function (e) {
+                if (clickTimer) return;
+                clickTimer = setTimeout(function () {
+                    clickTimer = null;
+                    handleMapClick(e);
+                }, 250);
+            });
+
+            map.on('dblclick', function (e) {
+                L.DomEvent.stopPropagation(e);
+                if (clickTimer) {
+                    clearTimeout(clickTimer);
+                    clickTimer = null;
+                }
+                finishCurrentDrawing();
+            });
+
+            document.getElementById('advisory-form').addEventListener('submit', function () {
+                if (isDrawing) finishCurrentDrawing();
+                updateMapData();
+            });
+
+            updateStatusHint();
+            setDrawMode('closure');
+        });
     </script>
 </body>
 

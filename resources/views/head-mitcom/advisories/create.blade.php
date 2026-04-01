@@ -109,13 +109,25 @@
                         class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-500 hover:bg-green-50 hover:border-green-300 hover:text-green-600 transition">
                         ✏ Draw Reroute Path (Green)
                     </button>
-                    <button type="button" onclick="clearAllDrawings()"
-                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-red-50 hover:text-red-500 transition ml-auto">
-                        Clear All
+                    <button type="button" id="btn-undo" onclick="undoLastVertex()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-600 transition"
+                        disabled>
+                        ↩ Undo
+                    </button>
+                    <button type="button" onclick="clearRed()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-red-50 hover:border-red-300 hover:text-red-500 transition ml-auto">
+                        Clear Red
+                    </button>
+                    <button type="button" onclick="clearGreen()"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-400 hover:bg-green-50 hover:border-green-300 hover:text-green-500 transition">
+                        Clear Green
                     </button>
                 </div>
 
-                <div id="advisory-map"></div>
+                <div id="advisory-map" class="w-full rounded-xl" style="height: 400px;"></div>
+                <p id="draw-hint" class="text-xs text-slate-400 mt-1 italic">
+                    Click on the map to start drawing. Double-click to finish.
+                </p>
             </div>
 
             {{-- Submit --}}
@@ -139,9 +151,19 @@
         let closureLayer;
         let rerouteLayer;
         let currentMode = 'closure';
-        let drawHandler = null;
+
+        // Snapping state
+        let isDrawing = false;
+        let currentPolyline = null;
+        let currentLatLngs = [];
+        let snappingCursor = null; // visual preview dot
 
         function setDrawMode(mode) {
+            if (isDrawing && mode !== currentMode) {
+                const confirmed = confirm('You have an unfinished line. Switching modes will discard it. Continue?');
+                if (!confirmed) return;
+            }
+
             currentMode = mode;
 
             document.getElementById('btn-closure').className = mode === 'closure'
@@ -152,20 +174,89 @@
                 ? 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-green-400 bg-green-100 text-green-700 transition'
                 : 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-500 hover:bg-green-50 hover:border-green-300 hover:text-green-600 transition';
 
-            if (drawHandler) {
-                drawHandler.disable();
-            }
-
-            const color = mode === 'closure' ? '#ef4444' : '#22c55e';
-
-            // Create a new polyline draw handler for the selected mode and enable it
-            drawHandler = new L.Draw.Polyline(map, {
-                shapeOptions: { color: color, weight: 4 },
-            });
-            drawHandler.enable();
+            cancelCurrentDrawing();
         }
 
+        function cancelCurrentDrawing() {
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+            }
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+            }
+            currentPolyline = null;
+            currentLatLngs = [];
+            snappingCursor = null;
+            isDrawing = false;
+            updateStatusHint();
+        }
+        function undoLastVertex() {
+            if (!isDrawing || currentLatLngs.length === 0) return;
+
+            // Remove the last point
+            currentLatLngs.pop();
+
+            // Remove the cursor dot
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+                snappingCursor = null;
+            }
+
+            // Remove and redraw the preview polyline
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+                currentPolyline = null;
+            }
+
+            if (currentLatLngs.length === 0) {
+                // Nothing left — fully cancel
+                isDrawing = false;
+                document.getElementById('btn-undo').disabled = true;
+                updateStatusHint();
+                return;
+            }
+
+            // Redraw preview with remaining points
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+
+            if (currentLatLngs.length >= 2) {
+                currentPolyline = L.polyline(currentLatLngs, {
+                    color: color,
+                    weight: 6,
+                    opacity: 0.9,
+                }).addTo(map);
+            }
+
+            // Re-place cursor dot at the new last point
+            const last = currentLatLngs[currentLatLngs.length - 1];
+            snappingCursor = L.circleMarker(last, {
+                radius: 5,
+                color: color,
+                fillColor: color,
+                fillOpacity: 1,
+                weight: 2,
+            }).addTo(map);
+
+            updateStatusHint();
+        }
+
+        function clearRed() {
+            if (isDrawing && currentMode === 'closure') {
+                cancelCurrentDrawing();
+            }
+            closureLayer.clearLayers();
+            updateMapData();
+        }
+
+        function clearGreen() {
+            if (isDrawing && currentMode === 'reroute') {
+                cancelCurrentDrawing();
+            }
+            rerouteLayer.clearLayers();
+            updateMapData();
+        }
         function clearAllDrawings() {
+            cancelCurrentDrawing();
             closureLayer.clearLayers();
             rerouteLayer.clearLayers();
             updateMapData();
@@ -176,14 +267,148 @@
             const reroutes = [];
 
             closureLayer.eachLayer(function (layer) {
-                closures.push({ type: 'polyline', color: 'red', coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng]) });
+                closures.push({
+                    type: 'polyline',
+                    color: 'red',
+                    coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng])
+                });
             });
 
             rerouteLayer.eachLayer(function (layer) {
-                reroutes.push({ type: 'polyline', color: 'green', coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng]) });
+                reroutes.push({
+                    type: 'polyline',
+                    color: 'green',
+                    coordinates: layer.getLatLngs().map(ll => [ll.lat, ll.lng])
+                });
             });
 
             document.getElementById('map_data_input').value = JSON.stringify({ closures, reroutes });
+        }
+
+        function updateStatusHint() {
+            const hint = document.getElementById('draw-hint');
+            const undoBtn = document.getElementById('btn-undo');
+
+            if (hint) {
+                if (!isDrawing) {
+                    hint.textContent = 'Click on the map to start drawing. Double-click to finish.';
+                } else {
+                    hint.textContent = `${currentLatLngs.length} point(s) placed. Click to add more. Double-click to finish.`;
+                }
+            }
+
+            if (undoBtn) {
+                undoBtn.disabled = !isDrawing || currentLatLngs.length === 0;
+            }
+        }
+
+        async function snapToRoad(lat, lng) {
+            try {
+                const url = `https://router.project-osrm.org/nearest/v1/driving/${lng},${lat}?number=1`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.code === 'Ok' && data.waypoints && data.waypoints.length > 0) {
+                    const snapped = data.waypoints[0].location; // [lng, lat]
+                    return { lat: snapped[1], lng: snapped[0] };
+                }
+            } catch (err) {
+                console.warn('OSRM snap failed, using raw coordinates:', err);
+            }
+
+            // Fallback: return original coords if OSRM fails
+            return { lat, lng };
+        }
+
+        async function handleMapClick(e) {
+            const rawLat = e.latlng.lat;
+            const rawLng = e.latlng.lng;
+
+            // Show a temporary loading dot while snapping
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+            }
+            snappingCursor = L.circleMarker([rawLat, rawLng], {
+                radius: 5,
+                color: '#94a3b8',
+                fillColor: '#cbd5e1',
+                fillOpacity: 0.8,
+                weight: 1,
+            }).addTo(map);
+
+            // Snap to nearest road
+            const snapped = await snapToRoad(rawLat, rawLng);
+
+            // Remove the loading dot and replace with snapped dot
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+            }
+
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+
+            snappingCursor = L.circleMarker([snapped.lat, snapped.lng], {
+                radius: 5,
+                color: color,
+                fillColor: color,
+                fillOpacity: 1,
+                weight: 2,
+            }).addTo(map);
+
+            currentLatLngs.push([snapped.lat, snapped.lng]);
+            isDrawing = true;
+
+            // Draw or update the live polyline preview
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+            }
+
+            if (currentLatLngs.length >= 2) {
+                currentPolyline = L.polyline(currentLatLngs, {
+                    color: color,
+                    weight: 6,
+                    opacity: 0.9,
+                }).addTo(map);
+            }
+
+            updateStatusHint();
+        }
+
+        function finishCurrentDrawing() {
+            if (currentLatLngs.length < 2) {
+                cancelCurrentDrawing();
+                return;
+            }
+
+            const color = currentMode === 'closure' ? '#ef4444' : '#22c55e';
+
+            // Finalize the polyline and add to the correct layer group
+            const finalPolyline = L.polyline(currentLatLngs, {
+                color: color,
+                weight: 6,
+                opacity: 0.9,
+            });
+
+            if (currentMode === 'closure') {
+                closureLayer.addLayer(finalPolyline);
+            } else {
+                rerouteLayer.addLayer(finalPolyline);
+            }
+
+            // Clean up working state
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+            }
+            if (snappingCursor) {
+                map.removeLayer(snappingCursor);
+            }
+
+            currentPolyline = null;
+            currentLatLngs = [];
+            snappingCursor = null;
+            isDrawing = false;
+
+            updateMapData();
+            updateStatusHint();
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -196,22 +421,37 @@
             closureLayer = new L.FeatureGroup().addTo(map);
             rerouteLayer = new L.FeatureGroup().addTo(map);
 
-            map.on(L.Draw.Event.CREATED, function (e) {
-                const layer = e.layer;
-                if (currentMode === 'closure') {
-                    layer.setStyle({ color: '#ef4444', weight: 4 });
-                    closureLayer.addLayer(layer);
-                } else {
-                    layer.setStyle({ color: '#22c55e', weight: 4 });
-                    rerouteLayer.addLayer(layer);
+            let clickTimer = null;
+
+            map.on('click', function (e) {
+                if (clickTimer) return;
+
+                clickTimer = setTimeout(function () {
+                    clickTimer = null;
+                    handleMapClick(e);
+                }, 250);
+            });
+
+            map.on('dblclick', function (e) {
+                L.DomEvent.stopPropagation(e);
+
+                if (clickTimer) {
+                    clearTimeout(clickTimer);
+                    clickTimer = null;
+                }
+
+                finishCurrentDrawing();
+            });
+
+            document.getElementById('advisory-form').addEventListener('submit', function () {
+                // Finalize any in-progress drawing before submitting
+                if (isDrawing) {
+                    finishCurrentDrawing();
                 }
                 updateMapData();
             });
 
-            document.getElementById('advisory-form').addEventListener('submit', function () {
-                updateMapData();
-            });
-
+            updateStatusHint();
             setDrawMode('closure');
         });
     </script>

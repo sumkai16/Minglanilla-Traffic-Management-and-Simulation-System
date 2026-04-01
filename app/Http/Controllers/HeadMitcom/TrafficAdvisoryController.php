@@ -78,7 +78,10 @@ class TrafficAdvisoryController extends Controller
             return redirect()->route('head-mitcom.advisories.index')
                 ->with('success', 'Advisory updated successfully.');
     }
-
+    public function edit(TrafficAdvisory $advisory)
+    {
+        return view('head-mitcom.advisories.edit', compact('advisory'));
+    }
     public function publish (TrafficAdvisory $advisory)
     {
          $advisory->update(['status' => 'published']);
