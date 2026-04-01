@@ -99,12 +99,28 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 
     Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
     Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
+
+
+    //Traffic Advisory routes
+    Route::get('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'index'])->name('advisories.index');
+    Route::get('/advisories/create', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'create'])->name('advisories.create');
+    Route::post('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'store'])->name('advisories.store');
+    Route::get('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'show'])->name('advisories.show');
+    Route::get('/advisories/{advisory}/edit', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'edit'])->name('advisories.edit');
+    Route::put('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'update'])->name('advisories.update');
+    Route::post('/advisories/{advisory}/publish', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'publish'])->name('advisories.publish');
+    Route::post('/advisories/{advisory}/unpublish', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'unpublish'])->name('advisories.unpublish');
+    Route::post('/advisories/{advisory}/archive', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'archive'])->name('advisories.archive');
+    Route::delete('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'destroy'])->name('advisories.destroy');
 });
 
 // Public report routes
 Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
 Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
 
+//public advisory routes
+Route::get('/advisories', [\App\Http\Controllers\AdvisoryController::class, 'index'])->name('advisories.index');
+Route::get('/advisories/{advisory}', [\App\Http\Controllers\AdvisoryController::class, 'show'])->name('advisories.show');
 
 //API endpoint for map data
 Route::get('/api/reports/map', [App\Http\Controllers\ReportController::class, 'mapData'])->name('reports.map');

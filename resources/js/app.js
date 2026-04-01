@@ -2,10 +2,15 @@ import './bootstrap';
 import './report';
 import Alpine from 'alpinejs';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
 import L from 'leaflet';
+import 'leaflet-draw';
 
 window.Alpine = Alpine;
 Alpine.start();
+
+// Expose Leaflet (with Draw plugin) globally for inline scripts
+window.L = L;
 
 // Fix for default marker icons in Leaflet with Vite
 delete L.Icon.Default.prototype._getIconUrl;
