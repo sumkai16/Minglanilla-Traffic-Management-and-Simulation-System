@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class DashboardController extends Controller
@@ -51,9 +52,17 @@ class DashboardController extends Controller
         ]);
 
         // Status counts for the stats cards
-        $pendingCount = $user->reports()->where('status', 'pending')->count();
-        $verifiedCount = $user->reports()->where('status', 'verified')->count();
-        $resolvedCount = $user->reports()->where('status', 'resolved')->count();
+        $reportStats = Cache::remember("dashboard:user:{$user->id}:report-stats", now()->addSeconds(30), function () use ($user) {
+            return $user->reports()
+                ->selectRaw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count")
+                ->selectRaw("SUM(CASE WHEN status = 'verified' THEN 1 ELSE 0 END) as verified_count")
+                ->selectRaw("SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count")
+                ->first();
+        });
+
+        $pendingCount = (int) ($reportStats->pending_count ?? 0);
+        $verifiedCount = (int) ($reportStats->verified_count ?? 0);
+        $resolvedCount = (int) ($reportStats->resolved_count ?? 0);
 
         $urgentAnnouncement = Announcement::with('author')
             ->published()

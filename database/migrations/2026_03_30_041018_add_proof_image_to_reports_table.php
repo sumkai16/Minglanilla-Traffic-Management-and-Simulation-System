@@ -16,7 +16,10 @@ return new class extends Migration
             //
             $table->string('proof_image')->nullable()->after('status');
         });
-        DB::statement("ALTER TABLE reports MODIFY COLUMN status ENUM('pending','verified','rejected','assigned','for_verification','resolved') DEFAULT 'pending'");
+
+        if (in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            DB::statement("ALTER TABLE reports MODIFY COLUMN status ENUM('pending','verified','rejected','assigned','for_verification','resolved') DEFAULT 'pending'");
+        }
     }
 
     /**
@@ -28,6 +31,8 @@ return new class extends Migration
             $table->dropColumn('proof_image');
         });
 
-        DB::statement("ALTER TABLE reports MODIFY COLUMN status ENUM('pending','verified','rejected','assigned','resolved') DEFAULT 'pending'");
+        if (in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            DB::statement("ALTER TABLE reports MODIFY COLUMN status ENUM('pending','verified','rejected','assigned','resolved') DEFAULT 'pending'");
+        }
     }
 };

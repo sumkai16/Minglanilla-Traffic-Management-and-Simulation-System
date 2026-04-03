@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ReportController extends Controller
 {
@@ -66,23 +67,37 @@ class ReportController extends Controller
    // Get reports for map display
     public function mapData()
     {
-        $reports = Report::with('user')
-            ->where('status', '!=', 'rejected')
-            ->latest()
-            ->limit(50)
-            ->get()
-            ->map(function ($report) {
-                return [
-                    'id' => $report->id,
-                    'latitude' => (float) $report->latitude,
-                    'longitude' => (float) $report->longitude,
-                    'issue_type' => $report->issue_type,
-                    'description' => $report->description,
-                    'location' => $report->location,
-                    'status' => $report->status,
-                    'created_at' => $report->created_at->diffForHumans(),
-                ];
-            });
+        $reports = Cache::remember('reports:map-data:latest-50', now()->addSeconds(30), function () {
+            return Report::query()
+                ->select([
+                    'id',
+                    'latitude',
+                    'longitude',
+                    'issue_type',
+                    'description',
+                    'location',
+                    'status',
+                    'created_at',
+                ])
+                ->where('status', '!=', 'rejected')
+                ->latest('created_at')
+                ->limit(50)
+                ->get()
+                ->map(function ($report) {
+                    return [
+                        'id' => $report->id,
+                        'latitude' => (float) $report->latitude,
+                        'longitude' => (float) $report->longitude,
+                        'issue_type' => $report->issue_type,
+                        'description' => $report->description,
+                        'location' => $report->location,
+                        'status' => $report->status,
+                        'created_at' => $report->created_at->diffForHumans(),
+                    ];
+                })
+                ->values()
+                ->all();
+        });
 
         return response()->json($reports);
     }
