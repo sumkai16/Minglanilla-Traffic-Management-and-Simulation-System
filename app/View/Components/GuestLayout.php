@@ -13,11 +13,17 @@ class GuestLayout extends Component
     public string $variant = 'default';
 
     /**
+     * Page title for guest-facing layouts.
+     */
+    public string $title = '';
+
+    /**
      * Create the component instance.
      */
-    public function __construct(string $variant = 'default')
+    public function __construct(string $variant = 'default', string $title = '')
     {
         $this->variant = $variant;
+        $this->title = $title;
     }
 
     /**

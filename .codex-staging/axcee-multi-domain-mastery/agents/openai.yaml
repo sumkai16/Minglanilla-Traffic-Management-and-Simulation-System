@@ -1,0 +1,4 @@
+interface:
+  display_name: "Axcee Multi-Domain Mastery"
+  short_description: "Cross-domain system for dev, fitness, and reasoning"
+  default_prompt: "Use $axcee-multi-domain-mastery to handle this request with the appropriate development, fitness, psychology, or scientific reasoning mode."
