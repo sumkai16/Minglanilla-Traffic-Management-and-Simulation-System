@@ -47,6 +47,19 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body.evidence-open #report-map .leaflet-pane,
+        body.evidence-open #report-map .leaflet-top,
+        body.evidence-open #report-map .leaflet-bottom,
+        body.evidence-open #report-map .leaflet-control-container,
+        body.evidence-open #report-map .leaflet-popup {
+            visibility: hidden !important;
+        }
+
+        body.evidence-open #report-map {
+            z-index: 0 !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-slate-100 text-slate-900">
@@ -198,7 +211,7 @@
                             </div>
                             <button type="button"
                                 class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-                                @click="openEvidence = true">
+                                @click="openEvidence = true; document.body.classList.add('evidence-open')">
                                 Open image
                             </button>
                         </div>
@@ -206,27 +219,32 @@
                         <div class="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-50">
                             <img src="{{ Storage::url($report->image_path) }}"
                                 alt="Photo evidence for report #{{ $report->id }}"
-                                class="h-[24rem] w-full cursor-zoom-in object-cover" @click="openEvidence = true">
+                                class="h-[24rem] w-full cursor-zoom-in object-cover"
+                                @click="openEvidence = true; document.body.classList.add('evidence-open')">
                         </div>
 
-                        <div x-show="openEvidence" x-cloak x-transition.opacity
-                            class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4"
-                            @click="openEvidence = false">
-                            <div class="relative max-w-5xl" @click.stop>
-                                <img src="{{ Storage::url($report->image_path) }}"
-                                    alt="Expanded photo evidence for report #{{ $report->id }}"
-                                    class="max-h-[85vh] w-full rounded-[1.5rem] object-contain shadow-2xl">
-                                <button type="button"
-                                    class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
-                                    @click="openEvidence = false">
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
+                        <template x-teleport="body">
+                            <div x-show="openEvidence" x-cloak x-transition.opacity
+                                class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 p-4"
+                                style="z-index: 99999;"
+                                @click="openEvidence = false; document.body.classList.remove('evidence-open')"
+                                @keydown.escape.window="openEvidence = false; document.body.classList.remove('evidence-open')">
+                                <div class="relative max-w-5xl" style="z-index: 100000;" @click.stop>
+                                    <img src="{{ Storage::url($report->image_path) }}"
+                                        alt="Expanded photo evidence for report #{{ $report->id }}"
+                                        class="max-h-[85vh] w-full rounded-[1.5rem] object-contain shadow-2xl">
+                                    <button type="button"
+                                        class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+                                        @click="openEvidence = false; document.body.classList.remove('evidence-open')">
+                                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 @endif
 
@@ -341,7 +359,7 @@
                                     @if($report->proof_image)
                                         <button type="button"
                                             class="mt-4 w-full overflow-hidden rounded-2xl border border-slate-200"
-                                            @click="openProof = true">
+                                            @click="openProof = true; document.body.classList.add('evidence-open')">
                                             <img src="{{ Storage::url($report->proof_image) }}"
                                                 alt="Resolution proof for report #{{ $report->id }}"
                                                 class="h-56 w-full object-cover">
@@ -369,24 +387,28 @@
                                 </div>
 
                                 @if($report->proof_image)
-                                    <div x-show="openProof" x-cloak x-transition.opacity
-                                        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4"
-                                        @click="openProof = false">
-                                        <div class="relative max-w-5xl" @click.stop>
-                                            <img src="{{ Storage::url($report->proof_image) }}"
-                                                alt="Expanded resolution proof for report #{{ $report->id }}"
-                                                class="max-h-[85vh] w-full rounded-[1.5rem] object-contain shadow-2xl">
-                                            <button type="button"
-                                                class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
-                                                @click="openProof = false">
-                                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
+                                    <template x-teleport="body">
+                                        <div x-show="openProof" x-cloak x-transition.opacity
+                                            class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 p-4"
+                                            style="z-index: 99999;"
+                                            @click="openProof = false; document.body.classList.remove('evidence-open')"
+                                            @keydown.escape.window="openProof = false; document.body.classList.remove('evidence-open')">
+                                            <div class="relative max-w-5xl" style="z-index: 100000;" @click.stop>
+                                                <img src="{{ Storage::url($report->proof_image) }}"
+                                                    alt="Expanded resolution proof for report #{{ $report->id }}"
+                                                    class="max-h-[85vh] w-full rounded-[1.5rem] object-contain shadow-2xl">
+                                                <button type="button"
+                                                    class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+                                                    @click="openProof = false; document.body.classList.remove('evidence-open')">
+                                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd"
+                                                            d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </template>
                                 @endif
                             </div>
                         @elseif($report->status === 'resolved')
