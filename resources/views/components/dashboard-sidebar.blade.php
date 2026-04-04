@@ -24,6 +24,17 @@
     ];
 @endphp
 
+<style>
+    .dashboard-sidebar-scroll {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .dashboard-sidebar-scroll::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
 <aside {{ $attributes->merge(['class' => 'fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-white/10 bg-slate-950 text-slate-100 shadow-2xl shadow-slate-950/40 transition-transform duration-300 ease-out']) }}>
     <div class="border-b border-white/10 px-6 py-6">
         <div class="flex items-center gap-3">
@@ -43,7 +54,7 @@
         </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-4 py-5">
+    <div class="dashboard-sidebar-scroll flex-1 overflow-y-auto px-4 py-5">
         <p class="px-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-500">Navigation</p>
         <nav class="mt-3 space-y-1.5">
             @foreach ($navItems as $item)
