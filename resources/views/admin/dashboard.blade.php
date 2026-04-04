@@ -1,205 +1,211 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $navItems = [
+        [
+            'label' => 'Dashboard',
+            'href' => route('admin.dashboard'),
+            'active' => request()->routeIs('admin.dashboard'),
+            'icon' => 'dashboard',
+        ],
+        [
+            'label' => 'Manage Users',
+            'href' => route('admin.users.index'),
+            'active' => request()->routeIs('admin.users.*'),
+            'icon' => 'users',
+        ],
+        [
+            'label' => 'Traffic Reports',
+            'href' => route('admin.reports.index'),
+            'active' => request()->routeIs('admin.reports.*'),
+            'icon' => 'reports',
+        ],
+        [
+            'label' => 'Live Traffic Map',
+            'href' => route('admin.map'),
+            'active' => request()->routeIs('admin.map'),
+            'icon' => 'map',
+        ],
+        [
+            'label' => 'Profile',
+            'href' => route('profile.edit'),
+            'active' => request()->routeIs('profile.*'),
+            'icon' => 'profile',
+        ],
+    ];
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+    $statCards = [
+        ['label' => 'Total Users', 'value' => $totalUsers, 'tone' => 'text-blue-700 bg-blue-50 border-blue-100'],
+        ['label' => 'Admins', 'value' => $adminCount, 'tone' => 'text-slate-900 bg-slate-100 border-slate-200'],
+        ['label' => 'Head MITCOM', 'value' => $headMitcomCount, 'tone' => 'text-violet-700 bg-violet-50 border-violet-100'],
+        ['label' => 'Enforcers', 'value' => $enforcerCount, 'tone' => 'text-emerald-700 bg-emerald-50 border-emerald-100'],
+    ];
+@endphp
 
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<x-dashboard-shell title="Admin Dashboard" page-title="Admin Dashboard" page-eyebrow="System Administration"
+    page-description="Oversee accounts, manage reports, and monitor the command center from one formal control panel."
+    :nav-items="$navItems" role-label="Admin Control">
+    <x-slot:actions>
+        <a href="{{ route('profile.edit') }}"
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                <path fill-rule="evenodd"
+                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            Profile
+        </a>
+        <a href="{{ route('admin.map') }}"
+            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.31-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.352 7.584a13.731 13.731 0 002.274 1.765 11.842 11.842 0 00.757.433l.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            Open Live Map
+        </a>
+    </x-slot:actions>
 
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
-        <x-app-nav pageTitle="Admin Dashboard" />
-
-        <main class="py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-              
-                <div class="relative overflow-hidden bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-8 mb-8 border border-blue-100">
-                    
-                 
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-teal-500 to-indigo-500"></div>
-
-                    <h2 class="text-2xl font-bold 
-                               bg-gradient-to-r from-blue-700 to-cyan-500 
-                               bg-clip-text text-transparent">
-                        Welcome, {{ auth()->user()->first_name }} 👋
-                    </h2>
-
-                    <p class="text-blue-700/80 text-sm mt-2">
-                        Minglanilla Traffic Management System - Admin Control Panel
+    <div class="mx-auto max-w-7xl space-y-6">
+        <section
+            class="overflow-hidden rounded-[2rem] border border-blue-100 bg-[linear-gradient(135deg,rgba(30,64,175,0.96),rgba(15,23,42,0.96))] px-6 py-7 text-white shadow-xl shadow-blue-900/10">
+            <div class="grid gap-6 lg:grid-cols-[1.3fr_0.9fr] lg:items-end">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">Formal Operations Overview</p>
+                    <h2 class="mt-3 text-3xl font-bold tracking-tight">Welcome back, {{ auth()->user()->first_name }}.</h2>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-blue-100/85">
+                        This admin workspace centralizes account governance, role assignments, and report monitoring for the Minglanilla Traffic Management and Simulation System.
                     </p>
                 </div>
-
-
-                <!-- Stats Section -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-                    <!-- Total Users -->
-                    <div class="relative bg-white rounded-lg border border-blue-100 shadow-sm p-6 text-center 
-                                transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                        <div class="text-3xl font-bold text-slate-900">
-                            {{ $totalUsers }}
-                        </div>
-                        <div class="text-xs text-blue-700/70 mt-2 uppercase tracking-widest">
-                            Total Users
-                        </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                        <p class="text-xs uppercase tracking-[0.28em] text-blue-100/70">Users</p>
+                        <p class="mt-3 text-3xl font-bold">{{ $totalUsers }}</p>
                     </div>
-
-                    <!-- Admins -->
-                    <div class="relative bg-white rounded-lg border border-blue-100 shadow-sm p-6 text-center 
-                                transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                        <div class="text-3xl font-bold text-slate-900">
-                            {{ $adminCount }}
-                        </div>
-                        <div class="text-xs text-blue-700/70 mt-2 uppercase tracking-widest">
-                            Admins
-                        </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                        <p class="text-xs uppercase tracking-[0.28em] text-blue-100/70">Operational Roles</p>
+                        <p class="mt-3 text-3xl font-bold">{{ $headMitcomCount + $enforcerCount }}</p>
                     </div>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Head MITCOM -->
-                    <div class="relative bg-white rounded-lg border border-blue-100 shadow-sm p-6 text-center 
-                                transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                        <div class="text-3xl font-bold text-slate-900">
-                            {{ $headMitcomCount }}
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            @foreach ($statCards as $card)
+                <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">{{ $card['label'] }}</p>
+                            <p class="mt-4 text-4xl font-bold text-slate-950">{{ $card['value'] }}</p>
                         </div>
-                        <div class="text-xs text-blue-700/70 mt-2 uppercase tracking-widest">
-                            Head MITCOM
-                        </div>
+                        <span class="rounded-2xl border px-3 py-2 text-xs font-semibold {{ $card['tone'] }}">
+                            Active
+                        </span>
                     </div>
+                </article>
+            @endforeach
+        </section>
 
-                    <!-- Enforcers -->
-                    <div class="relative bg-white rounded-lg border border-blue-100 shadow-sm p-6 text-center 
-                                transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                        <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                        <div class="text-3xl font-bold text-slate-900">
-                            {{ $enforcerCount }}
-                        </div>
-                        <div class="text-xs text-blue-700/70 mt-2 uppercase tracking-widest">
-                            Enforcers
-                        </div>
+        <section class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Quick Actions</p>
+                        <h3 class="mt-2 text-xl font-bold text-slate-950">Administrative tools</h3>
                     </div>
-
                 </div>
 
-    <!-- Quick Actions -->
-                <div class="bg-white shadow-xl rounded-2xl p-8 border border-blue-100">
-                    
-                    
-                    <h3 class="text-xl font-semibold text-slate-900 mb-6">
-                        Quick Actions
-                    </h3>
+                <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                    <a href="{{ route('admin.users.index') }}"
+                        class="group rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-300 hover:bg-blue-50">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M10 3a3 3 0 100 6 3 3 0 000-6zM4 15.5A3.5 3.5 0 017.5 12h5A3.5 3.5 0 0116 15.5v.25a.75.75 0 01-.75.75h-10.5a.75.75 0 01-.75-.75v-.25z" />
+                            </svg>
+                        </div>
+                        <h4 class="mt-4 text-lg font-semibold text-slate-900">Manage Users</h4>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">Create accounts, update roles, and keep the user base organized.</p>
+                    </a>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        
+                    <a href="{{ route('admin.reports.index') }}"
+                        class="group rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-300 hover:bg-blue-50">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M5.75 3.75A1.75 1.75 0 004 5.5v9A1.75 1.75 0 005.75 16.25h8.5A1.75 1.75 0 0016 14.5v-9a1.75 1.75 0 00-1.75-1.75h-8.5zM6.5 7a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h4.25a.75.75 0 010 1.5H6.5z" />
+                            </svg>
+                        </div>
+                        <h4 class="mt-4 text-lg font-semibold text-slate-900">Traffic Reports</h4>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">Inspect report activity and keep oversight on incident records.</p>
+                    </a>
 
-                        <!-- Manage Users -->
-                        <a href="{{ route('admin.users.index') }}"
-                            class="group block p-6 rounded-2xl border border-blue-100 bg-white
-                                   transition-all duration-300 
-                                   hover:border-blue-500 hover:shadow-xl hover:-translate-y-1">
-
-                            <div class="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition">
-                                👥 Manage Users
-                            </div>
-
-                            <div class="text-sm text-blue-700/70 mt-2">
-                                Add, edit, or remove users
-                            </div>
-                        </a>
-
-                        <!-- Traffic Reports -->
-                        <a href="{{ route('admin.reports.index') }}"
-                            class="group block p-6 rounded-2xl border border-blue-100 bg-white
-                                   transition-all duration-300 
-                                   hover:border-blue-500 hover:shadow-xl hover:-translate-y-1">
-
-                            <div class="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition">
-                                📋 Traffic Reports
-                            </div>
-
-                            <div class="text-sm text-blue-700/70 mt-2">
-                                View all traffic reports
-                            </div>
-                        </a>
-                        <a href="{{ route('admin.map') }}"
-                            class="block p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div
-                                    class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                    <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                        fill="currentColor">
+                    <a href="{{ route('admin.map') }}"
+                        class="group rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-300 hover:bg-blue-50 sm:col-span-2">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-600 text-white">
+                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd"
-                                            d="M8 1a.75.75 0 01.75.75V6h4.5V1.75a.75.75 0 011.5 0V6h1.25A2.75 2.75 0 0118.75 8.75v8.5A2.75 2.75 0 0116 20.25H4A2.75 2.75 0 011.25 17.25v-8.5A2.75 2.75 0 014 6h1.25V1.75A.75.75 0 018 1z"
+                                            d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.31-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.352 7.584a13.731 13.731 0 002.274 1.765 11.842 11.842 0 00.757.433l.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <div class="font-semibold text-slate-900">Live Traffic Map</div>
+                                <h4 class="mt-4 text-lg font-semibold text-slate-900">Live Traffic Map</h4>
+                                <p class="mt-2 text-sm leading-6 text-slate-500">Open the interactive map for a visual overview of incidents across Minglanilla.</p>
                             </div>
-                            <div class="text-sm text-slate-500">View all incidents on interactive map</div>
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- Live Map -->
-                <div class="relative overflow-hidden bg-white shadow-xl rounded-2xl p-6 mt-5 mb-8 border border-blue-100">
-                    <div class="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.25),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.25),transparent_55%)]"></div>
-                     <div class="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r from-blue-600 to-cyan-500"></div>
-                    <div class="relative">
-                        
-                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
-                            
-                            <div>
-                                <h3 class="text-xl font-semibold text-slate-900">Live Traffic Map</h3>
-                                <p class="text-sm text-blue-700/80">Real-time reports across Minglanilla</p>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 border border-blue-100">
-                                    <span class="h-2 w-2 rounded-full bg-blue-500"></span>
-                                    Verified
-                                </span>
-                                <span class="inline-flex items-center gap-2 rounded-full bg-yellow-50 px-3 py-1 border border-yellow-100">
-                                    <span class="h-2 w-2 rounded-full bg-yellow-500"></span>
-                                    Pending
-                                </span>
-                                <span class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 border border-green-100">
-                                    <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                                    Resolved
-                                </span>
-                            </div>
+                            <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">Interactive</span>
                         </div>
-
-                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-inner">
-                            <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-blue-500/10 via-transparent to-teal-500/10"></div>
-                            <div id="admin-map" class="w-full h-[420px]"></div>
-                            <div class="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
-                                Live Map
-                            </div>
-                        </div>
-                    </div>
+                    </a>
                 </div>
-
-            
-
             </div>
-        </main>
+
+            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Admin Notes</p>
+                <h3 class="mt-2 text-xl font-bold text-slate-950">Control room priorities</h3>
+                <div class="mt-6 space-y-4">
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-sm font-semibold text-slate-900">User governance</p>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">Review accounts regularly to ensure only the correct personnel have elevated access.</p>
+                    </div>
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-sm font-semibold text-slate-900">Route visibility</p>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">Use the map to quickly inspect report density before coordinating with MITCOM leadership.</p>
+                    </div>
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-sm font-semibold text-slate-900">Dashboard consistency</p>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">This admin view now shares the same reusable sidebar system used by the other role dashboards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Live Monitoring</p>
+                    <h3 class="mt-2 text-xl font-bold text-slate-950">Traffic map overview</h3>
+                    <p class="mt-2 text-sm leading-6 text-slate-500">Monitor live incident markers and status distribution without leaving the dashboard.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-600">
+                    <span class="rounded-full border border-blue-100 bg-blue-50 px-3 py-1">Verified</span>
+                    <span class="rounded-full border border-yellow-100 bg-yellow-50 px-3 py-1">Pending</span>
+                    <span class="rounded-full border border-green-100 bg-green-50 px-3 py-1">Resolved</span>
+                </div>
+            </div>
+
+            <div class="mt-6 overflow-hidden rounded-[1.75rem] border border-slate-200">
+                <div id="admin-map" class="h-[420px] w-full"></div>
+            </div>
+        </section>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (document.getElementById('admin-map')) {
-                initPublicMap('admin-map');
-            }
-        });
-    </script>
-
-</body>
-
-</html>
+    <x-slot:scripts>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (document.getElementById('admin-map')) {
+                    initPublicMap('admin-map');
+                }
+            });
+        </script>
+    </x-slot:scripts>
+</x-dashboard-shell>

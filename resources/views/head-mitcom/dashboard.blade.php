@@ -1,420 +1,317 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $navItems = [
+        [
+            'label' => 'Dashboard',
+            'href' => route('head-mitcom.dashboard'),
+            'active' => request()->routeIs('head-mitcom.dashboard'),
+            'icon' => 'dashboard',
+        ],
+        [
+            'label' => 'Reports',
+            'href' => route('head-mitcom.reports.index'),
+            'active' => request()->routeIs('head-mitcom.reports.*'),
+            'icon' => 'reports',
+        ],
+        [
+            'label' => 'Enforcers',
+            'href' => route('head-mitcom.enforcers.index'),
+            'active' => request()->routeIs('head-mitcom.enforcers.*'),
+            'icon' => 'enforcers',
+        ],
+        [
+            'label' => 'Announcements',
+            'href' => route('head-mitcom.announcements.index'),
+            'active' => request()->routeIs('head-mitcom.announcements.*'),
+            'icon' => 'announcements',
+        ],
+        [
+            'label' => 'Live Map',
+            'href' => route('head-mitcom.map'),
+            'active' => request()->routeIs('head-mitcom.map'),
+            'icon' => 'map',
+        ],
+        [
+            'label' => 'Advisories',
+            'href' => route('head-mitcom.advisories.index'),
+            'active' => request()->routeIs('head-mitcom.advisories.*'),
+            'icon' => 'advisories',
+        ],
+        [
+            'label' => 'Simulation',
+            'href' => route('head-mitcom.simulation.index'),
+            'active' => request()->routeIs('head-mitcom.simulation.*'),
+            'icon' => 'simulation',
+        ],
+        [
+            'label' => 'Profile',
+            'href' => route('profile.edit'),
+            'active' => request()->routeIs('profile.*'),
+            'icon' => 'profile',
+        ],
+    ];
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MITCOM Head Dashboard</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+    $stats = [
+        ['label' => 'Total Reports', 'value' => $totalReports, 'tone' => 'bg-slate-100 text-slate-900 border-slate-200'],
+        ['label' => 'Verified', 'value' => $verifiedReports, 'tone' => 'bg-blue-50 text-blue-700 border-blue-100'],
+        ['label' => 'Assigned', 'value' => $assignedReports, 'tone' => 'bg-violet-50 text-violet-700 border-violet-100'],
+        ['label' => 'Resolved', 'value' => $resolvedReports, 'tone' => 'bg-emerald-50 text-emerald-700 border-emerald-100'],
+        ['label' => 'Enforcers', 'value' => $activeEnforcers, 'tone' => 'bg-cyan-50 text-cyan-700 border-cyan-100'],
+        ['label' => 'Announcements', 'value' => $publishedAnnouncements, 'tone' => 'bg-indigo-50 text-indigo-700 border-indigo-100'],
+    ];
+@endphp
 
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
+<x-dashboard-shell title="MITCOM Head Dashboard" page-title="MITCOM Head Dashboard"
+    page-eyebrow="Command Center"
+    page-description="Coordinate incidents, direct enforcers, publish public information, and monitor live traffic operations from one formal leadership dashboard."
+    :nav-items="$navItems" role-label="Head MITCOM">
+    <x-slot:actions>
+        <a href="{{ route('profile.edit') }}"
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                <path fill-rule="evenodd"
+                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            Profile
+        </a>
+        <a href="{{ route('head-mitcom.announcements.index') }}"
+            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 2.75a3.75 3.75 0 00-3.75 3.75v1.046c0 .535-.133 1.062-.387 1.532l-.581 1.076A1.75 1.75 0 006.822 13h6.356a1.75 1.75 0 001.54-2.841l-.581-1.076a3.234 3.234 0 01-.387-1.532V6.5A3.75 3.75 0 0010 2.75zM8.25 14.5a1.75 1.75 0 103.5 0h-3.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            Announcement Center
+        </a>
+    </x-slot:actions>
 
-        <x-app-nav pageTitle="MITCOM Head Dashboard" />
-
-        <main class="py-8 relative">
-            <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6 -mt-4 relative z-10">
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Total Reports</div>
-                                <div class="text-3xl font-semibold text-slate-900 mt-3">{{ $totalReports }}</div>
-                            </div>
-                            <div class="h-10 w-10 rounded-xl bg-slate-900/5 flex items-center justify-center">
-                                <svg class="h-5 w-5 text-slate-700" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z" />
-                                    <path fill-rule="evenodd"
-                                        d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
+    <div class="mx-auto max-w-7xl space-y-6">
+        <section
+            class="overflow-hidden rounded-[2rem] border border-blue-100 bg-[linear-gradient(135deg,rgba(30,64,175,0.98),rgba(15,23,42,0.96))] px-6 py-7 text-white shadow-xl shadow-blue-900/10">
+            <div class="grid gap-6 lg:grid-cols-[1.25fr_0.85fr] lg:items-end">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">Leadership Overview</p>
+                    <h2 class="mt-3 text-3xl font-bold tracking-tight">Operational command at a glance.</h2>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-blue-100/85">
+                        Use this dashboard to oversee verification, assignments, public communication, advisory publishing, and the overall pace of traffic response work.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                        <p class="text-xs uppercase tracking-[0.28em] text-blue-100/70">Waiting For Assignment</p>
+                        <p class="mt-3 text-3xl font-bold">{{ $verifiedReports }}</p>
                     </div>
-
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Verified</div>
-                                <div class="text-3xl font-semibold text-blue-600 mt-3">{{ $verifiedReports }}</div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200 flex items-center justify-center">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Assigned</div>
-                                <div class="text-3xl font-semibold text-purple-600 mt-3">{{ $assignedReports }}</div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-xl bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-200 flex items-center justify-center">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zm8 0a2 2 0 11-4 0 2 2 0 014 0zm-8 5.5c0-.83.414-1.56 1.046-2H5a3 3 0 00-3 3v.5h3v-.5zm5 0v.5h3v-.5a3 3 0 00-3-3h-2.046A2.5 2.5 0 0111 13.5z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Resolved</div>
-                                <div class="text-3xl font-semibold text-green-600 mt-3">{{ $resolvedReports }}</div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-xl bg-green-50 text-green-700 ring-1 ring-inset ring-green-200 flex items-center justify-center">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Enforcers</div>
-                                <div class="text-3xl font-semibold text-slate-900 mt-3">{{ $activeEnforcers }}</div>
-                            </div>
-                            <div class="h-10 w-10 rounded-xl bg-slate-900/5 flex items-center justify-center">
-                                <svg class="h-5 w-5 text-slate-700" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zm-4.07 11c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 hover:-translate-y-0.5 hover:shadow-md transition">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <div class="text-xs uppercase tracking-widest text-slate-500">Announcements</div>
-                                <div class="text-3xl font-semibold text-indigo-600 mt-3">{{ $publishedAnnouncements }}
-                                </div>
-                            </div>
-                            <div
-                                class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200 flex items-center justify-center">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10 2.75a3.75 3.75 0 00-3.75 3.75v1.046c0 .535-.133 1.062-.387 1.532l-.581 1.076A1.75 1.75 0 006.822 13h6.356a1.75 1.75 0 001.54-2.841l-.581-1.076a3.234 3.234 0 01-.387-1.532V6.5A3.75 3.75 0 0010 2.75zM8.25 14.5a1.75 1.75 0 103.5 0h-3.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
+                    <div class="rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur">
+                        <p class="text-xs uppercase tracking-[0.28em] text-blue-100/70">Published Notices</p>
+                        <p class="mt-3 text-3xl font-bold">{{ $publishedAnnouncements }}</p>
                     </div>
                 </div>
-
-                <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
-                    <a href="{{ route('head-mitcom.reports.index') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4z" />
-                                    <path fill-rule="evenodd"
-                                        d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">View All Reports</div>
-                        </div>
-                        <div class="text-sm text-slate-500">Manage and assign incidents</div>
-                    </a>
-
-                    <a href="{{ route('head-mitcom.enforcers.index') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path
-                                        d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zm-4.07 11c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Manage Enforcers</div>
-                        </div>
-                        <div class="text-sm text-slate-500">View enforcer workload and assignments</div>
-                    </a>
-
-                    <a href="{{ route('head-mitcom.announcements.index') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M10 2.75a3.75 3.75 0 00-3.75 3.75v1.046c0 .535-.133 1.062-.387 1.532l-.581 1.076A1.75 1.75 0 006.822 13h6.356a1.75 1.75 0 001.54-2.841l-.581-1.076a3.234 3.234 0 01-.387-1.532V6.5A3.75 3.75 0 0010 2.75zM8.25 14.5a1.75 1.75 0 103.5 0h-3.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Announcements</div>
-                        </div>
-                        <div class="text-sm text-slate-500">Publish updates for citizens</div>
-                    </a>
-
-                    <a href="{{ route('head-mitcom.map') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.31-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.352 7.584a13.731 13.731 0 002.274 1.765 11.842 11.842 0 00.757.433l.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Live Traffic Map</div>
-                        </div>
-                        <div class="text-sm text-slate-500">View all incidents on map</div>
-                    </a>
-
-                    <a href="{{ route('head-mitcom.advisories.index') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Traffic Advisories</div>
-                        </div>
-                        <div class="text-sm text-slate-500">Manage closures and reroutes</div>
-                    </a>
-
-                    <a href="{{ route('head-mitcom.simulation.index') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Traffic Simulation</div>
-                        </div>
-                        <div class="text-sm text-slate-500">Replay incidents over time</div>
-                    </a>
-                </div>
-
-                <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden mb-6">
-                    <div class="px-6 py-5 border-b border-slate-200 bg-indigo-50">
-                        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                            <div>
-                                <h2 class="text-lg font-semibold text-slate-900">Citizen Announcement Board</h2>
-                                <p class="text-sm text-slate-500 mt-1">Your latest published and draft updates for the
-                                    public dashboard</p>
-                            </div>
-                            <a href="{{ route('head-mitcom.announcements.index') }}"
-                                class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">
-                                Open announcement center
-                            </a>
-                        </div>
-                    </div>
-
-                    @if($recentAnnouncements->count())
-                        <div class="grid gap-4 px-6 py-6 md:grid-cols-3">
-                            @foreach($recentAnnouncements as $announcement)
-                                <article class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <span
-                                            class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->is_published ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-600 ring-slate-200' }}">
-                                            {{ $announcement->is_published ? 'Published' : 'Draft' }}
-                                        </span>
-                                        <span
-                                            class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->priority === 'urgent' ? 'bg-rose-50 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-blue-50 text-blue-700 ring-blue-200') }}">
-                                            {{ ucfirst($announcement->priority) }}
-                                        </span>
-                                    </div>
-                                    <h3 class="mt-3 text-base font-bold text-slate-900">{{ $announcement->title }}</h3>
-                                    <p class="mt-2 text-sm leading-6 text-slate-500">
-                                        {{ \Illuminate\Support\Str::limit($announcement->content, 120) }}</p>
-                                    <p class="mt-3 text-xs text-slate-400">
-                                        {{ $announcement->published_at ? 'Published ' . $announcement->published_at->diffForHumans() : 'Saved as draft' }}
-                                    </p>
-                                </article>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="px-6 py-12 text-center">
-                            <p class="text-slate-500">No announcements yet. Publish the first citizen update from the
-                                announcement center.</p>
-                        </div>
-                    @endif
-                </div>
-
-                <!-- Recent Verified Reports (Ready for Assignment) -->
-                <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden mb-6">
-                    <div class="px-6 py-5 border-b border-slate-200 bg-blue-50">
-                        <h2 class="text-lg font-semibold text-slate-900">Verified Reports - Ready for Assignment</h2>
-                        <p class="text-sm text-slate-500 mt-1">{{ $verifiedReports }} reports waiting to be assigned</p>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-slate-200">
-                            <thead class="bg-slate-50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        #</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Issue Type</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Location</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Reporter</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Date</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-slate-100">
-                                @forelse($recentVerified as $report)
-                                    <tr class="hover:bg-slate-50/70 transition">
-                                        <td class="px-6 py-4 text-sm text-gray-500">#{{ $report->id }}</td>
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-900">{{ Str::limit($report->location, 30) }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-900">
-                                            @if($report->user)
-                                                {{ $report->user->first_name }} {{ $report->user->last_name }}
-                                            @else
-                                                {{ $report->reporter_name ?? 'Guest' }}
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500">
-                                            {{ $report->created_at->format('M d, Y') }}
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
-                                                class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                                Assign →
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-8 text-center text-slate-500">
-                                            No verified reports waiting for assignment
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Recent Assigned Reports -->
-                <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-slate-200 bg-purple-50">
-                        <h2 class="text-lg font-semibold text-slate-900">Recently Assigned Reports</h2>
-                        <p class="text-sm text-slate-500 mt-1">Track enforcer assignments</p>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-slate-200">
-                            <thead class="bg-slate-50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        #</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Issue Type</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Location</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Assigned To</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Assigned</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-slate-100">
-                                @forelse($recentAssigned as $report)
-                                    <tr class="hover:bg-slate-50/70 transition">
-                                        <td class="px-6 py-4 text-sm text-gray-500">#{{ $report->id }}</td>
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-900">{{ Str::limit($report->location, 30) }}
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-900">
-                                            @if($report->assignedEnforcer)
-                                                {{ $report->assignedEnforcer->first_name }}
-                                                {{ $report->assignedEnforcer->last_name }}
-                                            @else
-                                                <span class="text-slate-400">Not assigned</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
-                                                class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                                View →
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-8 text-center text-slate-500">
-                                            No assigned reports yet
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
             </div>
-        </main>
-    </div>
-</body>
+        </section>
 
-</html>
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+            @foreach ($stats as $stat)
+                <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}</p>
+                            <p class="mt-4 text-4xl font-bold text-slate-950">{{ $stat['value'] }}</p>
+                        </div>
+                        <span class="rounded-2xl border px-3 py-2 text-xs font-semibold {{ $stat['tone'] }}">
+                            Live
+                        </span>
+                    </div>
+                </article>
+            @endforeach
+        </section>
+
+        <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <a href="{{ route('head-mitcom.reports.index') }}"
+                class="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50">
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                            d="M5.75 3.75A1.75 1.75 0 004 5.5v9A1.75 1.75 0 005.75 16.25h8.5A1.75 1.75 0 0016 14.5v-9a1.75 1.75 0 00-1.75-1.75h-8.5zM6.5 7a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h4.25a.75.75 0 010 1.5H6.5z" />
+                    </svg>
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-slate-950">View All Reports</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-500">Manage verification, assignments, and escalation decisions from the reports center.</p>
+            </a>
+
+            <a href="{{ route('head-mitcom.enforcers.index') }}"
+                class="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50">
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                            d="M10 3a3 3 0 100 6 3 3 0 000-6zM4 15.5A3.5 3.5 0 017.5 12h5A3.5 3.5 0 0116 15.5v.25a.75.75 0 01-.75.75h-10.5a.75.75 0 01-.75-.75v-.25z" />
+                    </svg>
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-slate-950">Manage Enforcers</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-500">Review workloads, assignments, and team readiness for field response.</p>
+            </a>
+
+            <a href="{{ route('head-mitcom.simulation.index') }}"
+                class="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:bg-blue-50">
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-600 text-white">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <h3 class="mt-4 text-lg font-semibold text-slate-950">Traffic Simulation</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-500">Replay incidents and review how road activity evolves over time.</p>
+            </a>
+        </section>
+
+        <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 bg-indigo-50 px-6 py-5">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900">Citizen Announcement Board</h2>
+                        <p class="mt-1 text-sm text-slate-500">Your latest published and draft updates for the public dashboard</p>
+                    </div>
+                    <a href="{{ route('head-mitcom.announcements.index') }}"
+                        class="inline-flex items-center gap-2 rounded-2xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">
+                        Open announcement center
+                    </a>
+                </div>
+            </div>
+
+            @if($recentAnnouncements->count())
+                <div class="grid gap-4 px-6 py-6 md:grid-cols-3">
+                    @foreach($recentAnnouncements as $announcement)
+                        <article class="rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span
+                                    class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->is_published ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-600 ring-slate-200' }}">
+                                    {{ $announcement->is_published ? 'Published' : 'Draft' }}
+                                </span>
+                                <span
+                                    class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->priority === 'urgent' ? 'bg-rose-50 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-blue-50 text-blue-700 ring-blue-200') }}">
+                                    {{ ucfirst($announcement->priority) }}
+                                </span>
+                            </div>
+                            <h3 class="mt-3 text-base font-bold text-slate-900">{{ $announcement->title }}</h3>
+                            <p class="mt-2 text-sm leading-6 text-slate-500">
+                                {{ \Illuminate\Support\Str::limit($announcement->content, 120) }}
+                            </p>
+                            <p class="mt-3 text-xs text-slate-400">
+                                {{ $announcement->published_at ? 'Published ' . $announcement->published_at->diffForHumans() : 'Saved as draft' }}
+                            </p>
+                        </article>
+                    @endforeach
+                </div>
+            @else
+                <div class="px-6 py-12 text-center">
+                    <p class="text-slate-500">No announcements yet. Publish the first citizen update from the announcement center.</p>
+                </div>
+            @endif
+        </section>
+
+        <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 bg-blue-50 px-6 py-5">
+                <h2 class="text-lg font-semibold text-slate-900">Verified Reports - Ready for Assignment</h2>
+                <p class="mt-1 text-sm text-slate-500">{{ $verifiedReports }} reports waiting to be assigned</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Issue Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Location</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Reporter</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        @forelse($recentVerified as $report)
+                            <tr class="transition hover:bg-slate-50">
+                                <td class="px-6 py-4 text-sm text-slate-500">#{{ $report->id }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-slate-900">
+                                    {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-700">{{ Str::limit($report->location, 30) }}</td>
+                                <td class="px-6 py-4 text-sm text-slate-700">
+                                    @if($report->user)
+                                        {{ $report->user->first_name }} {{ $report->user->last_name }}
+                                    @else
+                                        {{ $report->reporter_name ?? 'Guest' }}
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-500">{{ $report->created_at->format('M d, Y') }}</td>
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
+                                        class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                                        Assign report
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+                                    No verified reports waiting for assignment
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 bg-violet-50 px-6 py-5">
+                <h2 class="text-lg font-semibold text-slate-900">Recently Assigned Reports</h2>
+                <p class="mt-1 text-sm text-slate-500">Track enforcer assignments</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Issue Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Location</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Assigned To</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Assigned</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        @forelse($recentAssigned as $report)
+                            <tr class="transition hover:bg-slate-50">
+                                <td class="px-6 py-4 text-sm text-slate-500">#{{ $report->id }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-slate-900">
+                                    {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-700">{{ Str::limit($report->location, 30) }}</td>
+                                <td class="px-6 py-4 text-sm text-slate-700">
+                                    @if($report->assignedEnforcer)
+                                        {{ $report->assignedEnforcer->first_name }} {{ $report->assignedEnforcer->last_name }}
+                                    @else
+                                        <span class="text-slate-400">Not assigned</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    <a href="{{ route('head-mitcom.reports.show', $report->id) }}"
+                                        class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                                        View report
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-slate-500">
+                                    No assigned reports yet
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</x-dashboard-shell>

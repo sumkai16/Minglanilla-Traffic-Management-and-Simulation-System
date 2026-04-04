@@ -1,238 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $navItems = [
+        [
+            'label' => 'Dashboard',
+            'href' => route('enforcer.dashboard'),
+            'active' => request()->routeIs('enforcer.dashboard'),
+            'icon' => 'dashboard',
+        ],
+        [
+            'label' => 'Assigned Reports',
+            'href' => route('enforcer.reports.index'),
+            'active' => request()->routeIs('enforcer.reports.*'),
+            'icon' => 'reports',
+        ],
+        [
+            'label' => 'Profile',
+            'href' => route('profile.edit'),
+            'active' => request()->routeIs('profile.*'),
+            'icon' => 'profile',
+        ],
+    ];
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enforcer Dashboard</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
+    $stats = [
+        [
+            'label' => 'Assigned',
+            'value' => $assignedCount,
+            'description' => 'Cases currently under your response queue.',
+            'accent' => 'bg-amber-50 text-amber-700 border-amber-100',
+        ],
+        [
+            'label' => 'For Verification',
+            'value' => $forVerificationCount,
+            'description' => 'Proof submitted and pending MITCOM review.',
+            'accent' => 'bg-blue-50 text-blue-700 border-blue-100',
+        ],
+        [
+            'label' => 'Resolved',
+            'value' => $resolvedCount,
+            'description' => 'Reports confirmed as completed.',
+            'accent' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+        ],
+    ];
+@endphp
 
-        body {
-            font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-        }
+<x-dashboard-shell title="Enforcer Dashboard" page-title="Enforcer Dashboard" page-eyebrow="Field Operations"
+    page-description="Review your assignments, monitor verification status, and keep response work organized from one formal enforcer workspace."
+    :nav-items="$navItems" role-label="Enforcer Portal">
+    <x-slot:actions>
+        <a href="{{ route('profile.edit') }}"
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                <path fill-rule="evenodd"
+                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            Profile
+        </a>
+        <a href="{{ route('enforcer.reports.index') }}"
+            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                    d="M5.75 3.75A1.75 1.75 0 004 5.5v9A1.75 1.75 0 005.75 16.25h8.5A1.75 1.75 0 0016 14.5v-9a1.75 1.75 0 00-1.75-1.75h-8.5zM6.5 7a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h4.25a.75.75 0 010 1.5H6.5z" />
+            </svg>
+            Open Reports
+        </a>
+    </x-slot:actions>
 
-        .fade-up {
-            opacity: 0;
-            transform: translateY(12px);
-            animation: fadeUp 0.45s ease forwards;
-        }
-
-        .fade-up:nth-child(1) {
-            animation-delay: 0.04s;
-        }
-
-        .fade-up:nth-child(2) {
-            animation-delay: 0.10s;
-        }
-
-        .fade-up:nth-child(3) {
-            animation-delay: 0.16s;
-        }
-
-        .fade-up:nth-child(4) {
-            animation-delay: 0.22s;
-        }
-
-        .fade-up:nth-child(5) {
-            animation-delay: 0.28s;
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1;
-            letter-spacing: -0.02em;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .action-card {
-            transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
-        }
-
-        .action-card:hover {
-            box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.07);
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-
-    <x-app-nav pageTitle="Dashboard" />
-
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
-
-        {{-- Header --}}
-        <div class="fade-up">
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Enforcer Portal</p>
-            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight">
-                Good day, {{ auth()->user()->first_name }}.
-            </h1>
-            <p class="text-slate-500 text-sm mt-1">Here's your current assignment overview.</p>
-        </div>
-
-        {{-- Stat Cards --}}
-        <div class="grid grid-cols-3 gap-3 sm:gap-4 fade-up">
-
-            {{-- Assigned --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col gap-3">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-semibold uppercase tracking-widest text-slate-400 hidden sm:block">Assigned</span>
-                    <div
-                        class="h-8 w-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center">
-                        <svg class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
-                        </svg>
-                    </div>
-                </div>
+    <div class="mx-auto max-w-6xl space-y-6">
+        <section
+            class="overflow-hidden rounded-[2rem] border border-slate-200 bg-[linear-gradient(135deg,rgba(15,23,42,0.98),rgba(30,64,175,0.94))] px-6 py-7 text-white shadow-xl shadow-slate-900/10">
+            <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
                 <div>
-                    <p class="stat-number text-amber-600">{{ $assignedCount }}</p>
-                    <p class="text-xs text-slate-400 mt-1 font-medium">Assigned</p>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">On-Site Response</p>
+                    <h2 class="mt-3 text-3xl font-bold tracking-tight">Good day, {{ auth()->user()->first_name }}.</h2>
+                    <p class="mt-3 max-w-2xl text-sm leading-6 text-blue-100/85">
+                        Keep track of assigned incidents, submit proof quickly, and stay aligned with Head MITCOM review workflows.
+                    </p>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
+                    <p class="text-xs uppercase tracking-[0.3em] text-blue-100/70">Current Workload</p>
+                    <p class="mt-3 text-4xl font-bold">{{ $assignedCount + $forVerificationCount }}</p>
+                    <p class="mt-2 text-sm text-blue-100/80">Active items across field response and review.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid gap-4 md:grid-cols-3">
+            @foreach ($stats as $stat)
+                <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}</p>
+                            <p class="mt-4 text-4xl font-bold text-slate-950">{{ $stat['value'] }}</p>
+                            <p class="mt-3 text-sm leading-6 text-slate-500">{{ $stat['description'] }}</p>
+                        </div>
+                        <span class="rounded-2xl border px-3 py-2 text-xs font-semibold {{ $stat['accent'] }}">
+                            Status
+                        </span>
+                    </div>
+                </article>
+            @endforeach
+        </section>
+
+        <section class="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Quick Actions</p>
+                <h3 class="mt-2 text-xl font-bold text-slate-950">Field workflow shortcuts</h3>
+
+                <div class="mt-6 grid gap-4">
+                    <a href="{{ route('enforcer.reports.index') }}"
+                        class="group flex items-start gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-300 hover:bg-blue-50">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    d="M5.75 3.75A1.75 1.75 0 004 5.5v9A1.75 1.75 0 005.75 16.25h8.5A1.75 1.75 0 0016 14.5v-9a1.75 1.75 0 00-1.75-1.75h-8.5zM6.5 7a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h7a.75.75 0 010 1.5h-7zm0 3.75a.75.75 0 010-1.5h4.25a.75.75 0 010 1.5H6.5z" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span class="block text-lg font-semibold text-slate-900">My Assigned Reports</span>
+                            <span class="mt-2 block text-sm leading-6 text-slate-500">Open incident records, upload proof, and continue active case handling.</span>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('profile.edit') }}"
+                        class="group flex items-start gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-300 hover:bg-blue-50">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                                <path fill-rule="evenodd"
+                                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span class="block text-lg font-semibold text-slate-900">Profile Management</span>
+                            <span class="mt-2 block text-sm leading-6 text-slate-500">Update your account details and keep field contact information current.</span>
+                        </span>
+                    </a>
                 </div>
             </div>
 
-            {{-- For Verification --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col gap-3">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-semibold uppercase tracking-widest text-slate-400 hidden sm:block">Review</span>
-                    <div class="h-8 w-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-                        <svg class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
+            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Status Guide</p>
+                <h3 class="mt-2 text-xl font-bold text-slate-950">Resolution workflow</h3>
+
+                <div class="mt-6 space-y-4">
+                    <div class="rounded-3xl border border-amber-100 bg-amber-50 p-4">
+                        <p class="text-sm font-semibold text-amber-900">Assigned</p>
+                        <p class="mt-2 text-sm leading-6 text-amber-800/80">Report is routed to you for response. Proceed on-site and document your action.</p>
                     </div>
-                </div>
-                <div>
-                    <p class="stat-number text-blue-600">{{ $forVerificationCount }}</p>
-                    <p class="text-xs text-slate-400 mt-1 font-medium">For Verification</p>
+                    <div class="rounded-3xl border border-blue-100 bg-blue-50 p-4">
+                        <p class="text-sm font-semibold text-blue-900">For Verification</p>
+                        <p class="mt-2 text-sm leading-6 text-blue-800/80">Proof has been submitted and is awaiting confirmation from Head MITCOM.</p>
+                    </div>
+                    <div class="rounded-3xl border border-emerald-100 bg-emerald-50 p-4">
+                        <p class="text-sm font-semibold text-emerald-900">Resolved</p>
+                        <p class="mt-2 text-sm leading-6 text-emerald-800/80">The case is closed after leadership confirms the submitted completion evidence.</p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            {{-- Resolved --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col gap-3">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-semibold uppercase tracking-widest text-slate-400 hidden sm:block">Resolved</span>
-                    <div
-                        class="h-8 w-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                        <svg class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                </div>
-                <div>
-                    <p class="stat-number text-emerald-600">{{ $resolvedCount }}</p>
-                    <p class="text-xs text-slate-400 mt-1 font-medium">Resolved</p>
-                </div>
-            </div>
-
-        </div>
-
-        {{-- Quick Actions --}}
-        <div class="fade-up bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
-            <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Quick Actions</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
-                <a href="{{ route('enforcer.reports.index') }}"
-                    class="action-card group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50">
-                    <div
-                        class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-150">
-                        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
-                        </svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-slate-800 text-sm">My Assigned Reports</p>
-                        <p class="text-xs text-slate-400 mt-0.5 truncate">View and manage your cases</p>
-                    </div>
-                    <svg class="h-4 w-4 text-slate-300 ml-auto flex-shrink-0 group-hover:text-blue-400 transition-colors"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-
-                <a href="{{ route('enforcer.reports.index') }}"
-                    class="action-card group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50">
-                    <div
-                        class="h-10 w-10 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-150">
-                        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-semibold text-slate-800 text-sm">Pending Verification</p>
-                        <p class="text-xs text-slate-400 mt-0.5 truncate">Proof submitted, awaiting MITCOM</p>
-                    </div>
-                    <svg class="h-4 w-4 text-slate-300 ml-auto flex-shrink-0 group-hover:text-amber-400 transition-colors"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-
-            </div>
-        </div>
-
-        {{-- Status Guide --}}
-        <div class="fade-up bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
-            <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4">Report Status Guide</h2>
-            <div class="divide-y divide-slate-100">
-
-                <div class="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-amber-400 flex-shrink-0"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-slate-700">Assigned</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Report is assigned to you. Respond on-site and upload
-                            proof when resolved.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-blue-400 flex-shrink-0"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-slate-700">For Verification</p>
-                        <p class="text-xs text-slate-400 mt-0.5">You submitted proof. Head MITCOM is reviewing your
-                            resolution.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                    <span class="mt-1.5 h-2.5 w-2.5 rounded-full bg-emerald-400 flex-shrink-0"></span>
-                    <div>
-                        <p class="text-sm font-semibold text-slate-700">Resolved</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Head MITCOM confirmed your proof. Case is officially
-                            closed.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </main>
-
-    <x-toast />
-</body>
-
-</html>
+        <x-toast />
+    </div>
+</x-dashboard-shell>
