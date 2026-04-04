@@ -16,7 +16,7 @@
         default => route('user.dashboard'),
     };
 
-    $showEnforcerProfileLink = auth()->user()->role === 'enforcer';
+    $showEnforcerProfileLink = in_array(auth()->user()->role, ['enforcer', 'head-mitcom']);
 
     $userDisplayName = auth()->user()->role === 'user'
         ? 'Citizen'
@@ -25,7 +25,8 @@
 
 <div class="relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-950"></div>
-    <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_55%)]"></div>
+    <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_55%)]">
+    </div>
     <div class="absolute -top-20 -left-20 h-56 w-56 rounded-full bg-blue-500/25 blur-3xl"></div>
     <div class="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl"></div>
 
@@ -69,8 +70,7 @@
                         <a href="{{ route('profile.edit') }}"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 hover:-translate-y-0.5 transition shadow-sm">
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path
-                                    d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
+                                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
                                 <path fill-rule="evenodd"
                                     d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
                                     clip-rule="evenodd" />
@@ -81,7 +81,8 @@
 
                     {{ $slot }}
 
-                    <div class="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-4 py-2 shadow">
+                    <div
+                        class="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-4 py-2 shadow">
                         <span class="text-white text-sm whitespace-nowrap">
                             {{ $userDisplayName }}
                         </span>

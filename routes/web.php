@@ -100,7 +100,6 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
     Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
 
-
     //Traffic Advisory routes
     Route::get('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'index'])->name('advisories.index');
     Route::get('/advisories/create', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'create'])->name('advisories.create');
@@ -112,6 +111,10 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     Route::post('/advisories/{advisory}/unpublish', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'unpublish'])->name('advisories.unpublish');
     Route::post('/advisories/{advisory}/archive', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'archive'])->name('advisories.archive');
     Route::delete('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'destroy'])->name('advisories.destroy');
+
+    //simulation
+    Route::get('/simulation', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'index'])->name('simulation.index');
+    Route::get('/simulation/data', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'data'])->name('simulation.data');
 });
 
 // Public report routes

@@ -51,6 +51,43 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
+        // Additional Enforcers
+        User::create([
+            'first_name' => 'Marco',
+            'last_name' => 'Reyes',
+            'email' => 'enforcer2@minglanilla.gov.ph',
+            'role' => 'enforcer',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
+            'first_name' => 'Dana',
+            'last_name' => 'Villanueva',
+            'email' => 'enforcer3@minglanilla.gov.ph',
+            'role' => 'enforcer',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        // Additional Citizens
+        User::create([
+            'first_name' => 'Juan',
+            'last_name' => 'dela Cruz',
+            'email' => 'juan@example.com',
+            'role' => 'user',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
+            'first_name' => 'Maria',
+            'last_name' => 'Santos',
+            'email' => 'maria@example.com',
+            'role' => 'user',
+            'password' => Hash::make('password'),
+            'email_verified_at' => now(),
+        ]);
         $this->command->info('Created 3 test users successfully!');
         $this->command->info('Admin: admin@minglanilla.gov.ph / password');
         $this->command->info('Enforcer: enforcer@minglanilla.gov.ph / password');

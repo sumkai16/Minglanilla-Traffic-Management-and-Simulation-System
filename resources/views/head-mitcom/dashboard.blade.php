@@ -113,7 +113,8 @@
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="text-xs uppercase tracking-widest text-slate-500">Announcements</div>
-                                <div class="text-3xl font-semibold text-indigo-600 mt-3">{{ $publishedAnnouncements }}</div>
+                                <div class="text-3xl font-semibold text-indigo-600 mt-3">{{ $publishedAnnouncements }}
+                                </div>
                             </div>
                             <div
                                 class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200 flex items-center justify-center">
@@ -128,7 +129,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
                     <a href="{{ route('head-mitcom.reports.index') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
@@ -163,25 +164,6 @@
                         <div class="text-sm text-slate-500">View enforcer workload and assignments</div>
                     </a>
 
-                    <a href="{{ route('profile.edit') }}"
-                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div
-                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
-                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path
-                                        d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
-                                    <path fill-rule="evenodd"
-                                        d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="font-semibold text-slate-900">Profile Management</div>
-                        </div>
-                        <div class="text-sm text-slate-500">Update your account details and password</div>
-                    </a>
-
                     <a href="{{ route('head-mitcom.announcements.index') }}"
                         class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
                         <div class="flex items-center gap-3 mb-2">
@@ -194,7 +176,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <div class="font-semibold text-slate-900">Manage Announcements</div>
+                            <div class="font-semibold text-slate-900">Announcements</div>
                         </div>
                         <div class="text-sm text-slate-500">Publish updates for citizens</div>
                     </a>
@@ -207,13 +189,47 @@
                                 <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
-                                        d="M8 1a.75.75 0 01.75.75V6h4.5V1.75a.75.75 0 011.5 0V6h1.25A2.75 2.75 0 0118.75 8.75v8.5A2.75 2.75 0 0116 20.25H4A2.75 2.75 0 011.25 17.25v-8.5A2.75 2.75 0 014 6h1.25V1.75A.75.75 0 018 1z"
+                                        d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.31-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.352 7.584a13.731 13.731 0 002.274 1.765 11.842 11.842 0 00.757.433l.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
                             <div class="font-semibold text-slate-900">Live Traffic Map</div>
                         </div>
                         <div class="text-sm text-slate-500">View all incidents on map</div>
+                    </a>
+
+                    <a href="{{ route('head-mitcom.advisories.index') }}"
+                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div
+                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
+                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="font-semibold text-slate-900">Traffic Advisories</div>
+                        </div>
+                        <div class="text-sm text-slate-500">Manage closures and reroutes</div>
+                    </a>
+
+                    <a href="{{ route('head-mitcom.simulation.index') }}"
+                        class="block p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition group">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div
+                                class="h-10 w-10 rounded-lg bg-slate-900/5 group-hover:bg-blue-50 flex items-center justify-center transition">
+                                <svg class="h-5 w-5 text-slate-700 group-hover:text-blue-700" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="font-semibold text-slate-900">Traffic Simulation</div>
+                        </div>
+                        <div class="text-sm text-slate-500">Replay incidents over time</div>
                     </a>
                 </div>
 
@@ -222,7 +238,8 @@
                         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                             <div>
                                 <h2 class="text-lg font-semibold text-slate-900">Citizen Announcement Board</h2>
-                                <p class="text-sm text-slate-500 mt-1">Your latest published and draft updates for the public dashboard</p>
+                                <p class="text-sm text-slate-500 mt-1">Your latest published and draft updates for the
+                                    public dashboard</p>
                             </div>
                             <a href="{{ route('head-mitcom.announcements.index') }}"
                                 class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50">
@@ -236,15 +253,18 @@
                             @foreach($recentAnnouncements as $announcement)
                                 <article class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <span class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->is_published ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-600 ring-slate-200' }}">
+                                        <span
+                                            class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->is_published ? 'bg-emerald-50 text-emerald-700 ring-emerald-200' : 'bg-slate-100 text-slate-600 ring-slate-200' }}">
                                             {{ $announcement->is_published ? 'Published' : 'Draft' }}
                                         </span>
-                                        <span class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->priority === 'urgent' ? 'bg-rose-50 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-blue-50 text-blue-700 ring-blue-200') }}">
+                                        <span
+                                            class="rounded-full px-3 py-1 text-xs font-semibold ring-1 {{ $announcement->priority === 'urgent' ? 'bg-rose-50 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-blue-50 text-blue-700 ring-blue-200') }}">
                                             {{ ucfirst($announcement->priority) }}
                                         </span>
                                     </div>
                                     <h3 class="mt-3 text-base font-bold text-slate-900">{{ $announcement->title }}</h3>
-                                    <p class="mt-2 text-sm leading-6 text-slate-500">{{ \Illuminate\Support\Str::limit($announcement->content, 120) }}</p>
+                                    <p class="mt-2 text-sm leading-6 text-slate-500">
+                                        {{ \Illuminate\Support\Str::limit($announcement->content, 120) }}</p>
                                     <p class="mt-3 text-xs text-slate-400">
                                         {{ $announcement->published_at ? 'Published ' . $announcement->published_at->diffForHumans() : 'Saved as draft' }}
                                     </p>
@@ -253,7 +273,8 @@
                         </div>
                     @else
                         <div class="px-6 py-12 text-center">
-                            <p class="text-slate-500">No announcements yet. Publish the first citizen update from the announcement center.</p>
+                            <p class="text-slate-500">No announcements yet. Publish the first citizen update from the
+                                announcement center.</p>
                         </div>
                     @endif
                 </div>
