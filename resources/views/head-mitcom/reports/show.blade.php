@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 @php
     use Illuminate\Support\Facades\Storage;
 
@@ -40,39 +38,34 @@
     };
 @endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report #{{ $report->id }} - MITCOM Head</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>
-        body.evidence-open #report-map .leaflet-pane,
-        body.evidence-open #report-map .leaflet-top,
-        body.evidence-open #report-map .leaflet-bottom,
-        body.evidence-open #report-map .leaflet-control-container,
-        body.evidence-open #report-map .leaflet-popup {
-            visibility: hidden !important;
-        }
+<x-app-nav title="Report #{{ $report->id }} - MITCOM Head" page-title="Report #{{ $report->id }}"
+    page-eyebrow="Command Center">
+    @push('styles')
+        <style>
+            body.evidence-open #report-map .leaflet-pane,
+            body.evidence-open #report-map .leaflet-top,
+            body.evidence-open #report-map .leaflet-bottom,
+            body.evidence-open #report-map .leaflet-control-container,
+            body.evidence-open #report-map .leaflet-popup {
+                visibility: hidden !important;
+            }
 
-        body.evidence-open #report-map {
-            z-index: 0 !important;
-        }
-    </style>
-</head>
+            body.evidence-open #report-map {
+                z-index: 0 !important;
+            }
+        </style>
+    @endpush
 
-<body class="min-h-screen bg-slate-100 text-slate-900">
-    <x-app-nav pageTitle="Report #{{ $report->id }}">
+    <x-slot:actions>
         <a href="{{ route('head-mitcom.reports.index') }}"
-            class="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" />
             </svg>
             All Reports
         </a>
-    </x-app-nav>
+    </x-slot:actions>
 
     <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         <section class="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
@@ -517,22 +510,23 @@
         </section>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const map = L.map('report-map').setView([{{ $report->latitude }}, {{ $report->longitude }}], 16);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            L.marker([{{ $report->latitude }}, {{ $report->longitude }}])
-                .addTo(map)
-                .bindPopup('<b>{{ $issueType }}</b><br>{{ $report->location }}')
-                .openPopup();
-        });
-    </script>
     <x-toast />
-</body>
 
-</html>
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const map = L.map('report-map').setView([{{ $report->latitude }}, {{ $report->longitude }}], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+
+                L.marker([{{ $report->latitude }}, {{ $report->longitude }}])
+                    .addTo(map)
+                    .bindPopup('<b>{{ $issueType }}</b><br>{{ $report->location }}')
+                    .openPopup();
+            });
+        </script>
+    @endpush
+</x-app-nav>

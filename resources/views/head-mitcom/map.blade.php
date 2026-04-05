@@ -1,23 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Traffic Map - MITCOM Head</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</head>
-
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
-
-        <x-app-nav pageTitle="Live Traffic Map" />
-
-        <main class="py-8 relative">
+<x-app-nav title="Live Traffic Map - MITCOM Head" page-title="Live Traffic Map" page-eyebrow="Command Center">
+    <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -153,10 +135,10 @@
                 </div>
 
             </div>
-        </main>
-    </div>
+    </main>
 
-    <script>
+    @push('scripts')
+        <script>
         const refreshIntervalMs = 60000;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -287,7 +269,6 @@
             };
             return classes[status] || 'bg-gray-100 text-gray-800';
         }
-    </script>
-</body>
-
-</html>
+        </script>
+    @endpush
+</x-app-nav>

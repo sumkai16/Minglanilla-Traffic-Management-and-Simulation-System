@@ -1,27 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Advisories</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        body {
-            font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-    <x-app-nav pageTitle="Traffic Advisories" />
-
+<x-app-nav title="Traffic Advisories" page-title="Traffic Advisories" page-eyebrow="Command Center">
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
 
         {{-- Header --}}
@@ -101,6 +78,4 @@
     </main>
 
     <x-toast />
-</body>
-
-</html>
+</x-app-nav>

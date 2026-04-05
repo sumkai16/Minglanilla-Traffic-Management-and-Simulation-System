@@ -1,25 +1,4 @@
 @php
-    $navItems = [
-        [
-            'label' => 'Dashboard',
-            'href' => route('enforcer.dashboard'),
-            'active' => request()->routeIs('enforcer.dashboard'),
-            'icon' => 'dashboard',
-        ],
-        [
-            'label' => 'Assigned Reports',
-            'href' => route('enforcer.reports.index'),
-            'active' => request()->routeIs('enforcer.reports.*'),
-            'icon' => 'reports',
-        ],
-        [
-            'label' => 'Profile',
-            'href' => route('profile.edit'),
-            'active' => request()->routeIs('profile.*'),
-            'icon' => 'profile',
-        ],
-    ];
-
     $stats = [
         [
             'label' => 'Assigned',
@@ -43,8 +22,7 @@
 @endphp
 
 <x-dashboard-shell title="Enforcer Dashboard" page-title="Enforcer Dashboard" page-eyebrow="Field Operations"
-    page-description="Review your assignments, monitor verification status, and keep response work organized from one formal enforcer workspace."
-    :nav-items="$navItems" role-label="Enforcer Portal">
+    page-description="Review your assignments, monitor verification status, and keep response work organized from one formal enforcer workspace.">
     <x-slot:actions>
         <a href="{{ route('profile.edit') }}"
             class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">

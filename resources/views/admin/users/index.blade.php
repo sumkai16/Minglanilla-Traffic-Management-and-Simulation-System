@@ -1,35 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-app-nav title="User Management" page-title="User Management" page-eyebrow="System Administration">
+    <x-slot:actions>
+        <button type="button" @click="$dispatch('open-admin-user-create')"
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path
+                    d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
+            </svg>
+            Add User
+        </button>
+    </x-slot:actions>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100"
+    <div class="min-h-0 bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100"
         x-data="{ showCreateModal: {{ $errors->any() ? 'true' : 'false' }} }"
+        @open-admin-user-create.window="showCreateModal = true"
         @keydown.escape.window="showCreateModal = false">
-        <x-app-nav pageTitle="User Management">
-            <button type="button" @click="showCreateModal = true"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-blue-900 text-sm font-semibold hover:bg-blue-50 hover:-translate-y-0.5 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
-                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path
-                        d="M10 5.75a.75.75 0 01.75.75v2.75h2.75a.75.75 0 010 1.5h-2.75v2.75a.75.75 0 01-1.5 0v-2.75H6.5a.75.75 0 010-1.5h2.75V6.5A.75.75 0 0110 5.75z" />
-                </svg>
-                Add User
-            </button>
-        </x-app-nav>
-
         <main class="py-8 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -488,6 +472,4 @@
             });
         </script>
     </div>
-</body>
-
-</html>
+</x-app-nav>

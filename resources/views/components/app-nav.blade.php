@@ -1,109 +1,106 @@
-@props(['pageTitle' => 'Dashboard'])
+@props([
+    'title' => 'Dashboard',
+    'pageTitle' => null,
+    'pageEyebrow' => null,
+    'pageDescription' => null,
+])
 
 @php
-    $showDashboardLink = !request()->routeIs([
-        'admin.dashboard*',
-        'user.dashboard*',
-        'head-mitcom.dashboard*',
-        'enforcer.dashboard*',
-    ]);
+    use App\Support\RoleNavigation;
 
-    $dashboardRoute = match (auth()->user()->role) {
-        'admin' => route('admin.dashboard'),
-        'head-mitcom' => route('head-mitcom.dashboard'),
-        'enforcer' => route('enforcer.dashboard'),
-        'user' => route('user.dashboard'),
-        default => route('user.dashboard'),
-    };
-
-    $showEnforcerProfileLink = in_array(auth()->user()->role, ['enforcer', 'head-mitcom']);
-
-    $userDisplayName = auth()->user()->role === 'user'
-        ? 'Citizen'
-        : trim(auth()->user()->first_name . ' ' . auth()->user()->last_name);
+    $pageTitle = $pageTitle ?? $title;
+    $navItems = RoleNavigation::items();
+    $roleLabel = RoleNavigation::roleLabel();
+    $eyebrow = $pageEyebrow ?? 'Minglanilla Traffic Command';
 @endphp
 
-<div class="relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-800 via-blue-900 to-slate-950"></div>
-    <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.35),transparent_55%)]">
-    </div>
-    <div class="absolute -top-20 -left-20 h-56 w-56 rounded-full bg-blue-500/25 blur-3xl"></div>
-    <div class="absolute -bottom-16 -right-16 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl"></div>
+<!DOCTYPE html>
+<html lang="en">
 
-    <!-- Header -->
-    <header class="relative">
-        <div class="max-w-7xl mx-auto p-5 lg:px-8">
-            <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="h-17 w-17 rounded-2xl bg-white/10 border border-white/20 shadow-lg flex items-center justify-center overflow-hidden">
-                            <img src="{{ asset('images/second_logo-removebg-preview.png') }}"
-                                alt="Minglanilla Official Seal" class="h-20 w-20 object-contain">
-                        </div>
-                        <div
-                            class="h-17 w-17 rounded-2xl bg-white/10 border border-white/20 shadow-lg flex items-center justify-center overflow-hidden">
-                            <img src="{{ asset('images/first_logo-removebg-preview.png') }}"
-                                alt="Minglanilla Shield Logo" class="h-20 w-20 object-contain">
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-xs font-semibold tracking-[0.2em] text-blue-100">LIHOK PADULONG</p>
-                        <p class="text-xs uppercase tracking-[0.3em] text-blue-200">Minglanilla Traffic Command</p>
-                        <h1 class="text-3xl md:text-4xl font-black text-white">{{ $pageTitle }}</h1>
-                    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title }}</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+    @stack('styles')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-900"
+    style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
+
+<div x-data="{ sidebarOpen: false, sidebarCollapsed: false }" @keydown.window.escape="sidebarOpen = true"
+    class="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.08),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.08),transparent_20%),linear-gradient(to_bottom,#f8fafc,#eef2ff)]">
+
+    <div x-cloak x-show="sidebarOpen" x-transition.opacity
+        class="fixed inset-0 z-30 bg-slate-950/50 backdrop-blur-sm lg:hidden" @click="sidebarOpen = false"></div>
+
+    <x-dashboard-sidebar :nav-items="$navItems" :role-label="$roleLabel"
+        class="fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/10 bg-slate-950 text-slate-100 shadow-2xl shadow-slate-950/40 transition-all duration-300 ease-out w-72 max-w-[min(18rem,100vw)]"
+        x-bind:class="[
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+            sidebarCollapsed ? 'lg:w-20 lg:max-w-none' : '',
+        ]" />
+
+    <div class="min-h-screen transition-[padding] duration-300 ease-out"
+        x-bind:class="sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-72'">
+
+        <header class="px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <div
+                class="relative overflow-hidden rounded-[2rem] border border-blue-200/40 bg-[linear-gradient(135deg,rgba(30,64,175,0.96),rgba(29,78,216,0.9)_42%,rgba(15,23,42,0.96))] shadow-xl shadow-blue-900/15">
+                <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.18),transparent_24%)]">
                 </div>
-                <div class="flex flex-wrap items-center gap-3">
-                    @if ($showDashboardLink)
-                        <a href="{{ $dashboardRoute }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 hover:-translate-y-0.5 transition">
-                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M11.78 4.22a.75.75 0 010 1.06L7.56 9.5H16a.75.75 0 010 1.5H7.56l4.22 4.22a.75.75 0 11-1.06 1.06l-5.5-5.5a.75.75 0 010-1.06l5.5-5.5a.75.75 0 011.06 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            Back to Dashboard
-                        </a>
-                    @endif
+                <div class="absolute -left-16 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
+                <div class="absolute -right-10 bottom-0 h-36 w-36 rounded-full bg-cyan-300/20 blur-3xl"></div>
 
-                    @if($showEnforcerProfileLink)
-                        <a href="{{ route('profile.edit') }}"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/30 text-white text-sm hover:bg-white/10 hover:-translate-y-0.5 transition shadow-sm">
-                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10 8a3 3 0 100-6 3 3 0 000 6z" />
-                                <path fill-rule="evenodd"
-                                    d="M2 16.5A4.5 4.5 0 016.5 12h7a4.5 4.5 0 014.5 4.5.75.75 0 01-.75.75H2.75A.75.75 0 012 16.5z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            Profile Management
-                        </a>
-                    @endif
-
-                    {{ $slot }}
-
-                    <div
-                        class="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-4 py-2 shadow">
-                        <span class="text-white text-sm whitespace-nowrap">
-                            {{ $userDisplayName }}
-                        </span>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit"
-                                class="inline-flex items-center gap-2 bg-white text-blue-900 px-4 py-2 rounded-full text-xs font-semibold hover:bg-blue-50 hover:-translate-y-0.5 transition shadow">
-                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M7.5 3.25A2.25 2.25 0 005.25 5.5v9A2.25 2.25 0 007.5 16.75h3a.75.75 0 000-1.5h-3a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75h3a.75.75 0 000-1.5h-3z"
-                                        clip-rule="evenodd" />
-                                    <path fill-rule="evenodd"
-                                        d="M11.72 6.22a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9.5a.75.75 0 010-1.5h3.94l-1.72-1.72a.75.75 0 010-1.06z"
-                                        clip-rule="evenodd" />
+                <div class="relative px-5 py-5 sm:px-6 lg:px-8 lg:py-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="flex items-start gap-3">
+                            <button type="button"
+                                class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white shadow-sm transition hover:bg-white/15 lg:hidden"
+                                @click="sidebarOpen = true" aria-label="Open menu">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.75 7.75h14.5M4.75 12h14.5m-14.5 4.25h14.5" />
                                 </svg>
-                                Logout
                             </button>
-                        </form>
+
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-100/80">
+                                    {{ $eyebrow }}</p>
+                                <h1 class="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                                    {{ $pageTitle }}</h1>
+                                @if ($pageDescription)
+                                    <p class="mt-2 max-w-3xl text-sm leading-6 text-blue-50/85">{{ $pageDescription }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            @isset($actions)
+                                {{ $actions }}
+                            @endisset
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
+
+        {{ $slot }}
+    </div>
 </div>
+
+    @stack('scripts')
+</body>
+
+</html>

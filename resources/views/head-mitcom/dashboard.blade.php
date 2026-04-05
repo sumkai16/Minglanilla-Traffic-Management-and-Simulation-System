@@ -1,55 +1,4 @@
 @php
-    $navItems = [
-        [
-            'label' => 'Dashboard',
-            'href' => route('head-mitcom.dashboard'),
-            'active' => request()->routeIs('head-mitcom.dashboard'),
-            'icon' => 'dashboard',
-        ],
-        [
-            'label' => 'Reports',
-            'href' => route('head-mitcom.reports.index'),
-            'active' => request()->routeIs('head-mitcom.reports.*'),
-            'icon' => 'reports',
-        ],
-        [
-            'label' => 'Enforcers',
-            'href' => route('head-mitcom.enforcers.index'),
-            'active' => request()->routeIs('head-mitcom.enforcers.*'),
-            'icon' => 'enforcers',
-        ],
-        [
-            'label' => 'Announcements',
-            'href' => route('head-mitcom.announcements.index'),
-            'active' => request()->routeIs('head-mitcom.announcements.*'),
-            'icon' => 'announcements',
-        ],
-        [
-            'label' => 'Live Map',
-            'href' => route('head-mitcom.map'),
-            'active' => request()->routeIs('head-mitcom.map'),
-            'icon' => 'map',
-        ],
-        [
-            'label' => 'Advisories',
-            'href' => route('head-mitcom.advisories.index'),
-            'active' => request()->routeIs('head-mitcom.advisories.*'),
-            'icon' => 'advisories',
-        ],
-        [
-            'label' => 'Simulation',
-            'href' => route('head-mitcom.simulation.index'),
-            'active' => request()->routeIs('head-mitcom.simulation.*'),
-            'icon' => 'simulation',
-        ],
-        [
-            'label' => 'Profile',
-            'href' => route('profile.edit'),
-            'active' => request()->routeIs('profile.*'),
-            'icon' => 'profile',
-        ],
-    ];
-
     $stats = [
         ['label' => 'Total Reports', 'value' => $totalReports, 'tone' => 'bg-slate-100 text-slate-900 border-slate-200'],
         ['label' => 'Verified', 'value' => $verifiedReports, 'tone' => 'bg-blue-50 text-blue-700 border-blue-100'],
@@ -62,8 +11,7 @@
 
 <x-dashboard-shell title="MITCOM Head Dashboard" page-title="MITCOM Head Dashboard"
     page-eyebrow="Command Center"
-    page-description="Coordinate incidents, direct enforcers, publish public information, and monitor live traffic operations from one formal leadership dashboard."
-    :nav-items="$navItems" role-label="Head MITCOM">
+    page-description="Coordinate incidents, direct enforcers, publish public information, and monitor live traffic operations from one formal leadership dashboard.">
     <x-slot:actions>
         <a href="{{ route('profile.edit') }}"
             class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
@@ -112,13 +60,13 @@
 
         <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
             @foreach ($stats as $stat)
-                <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}</p>
+                <article class="overflow-hidden rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="text-[0.57rem] font-semibold uppercase tracking-[0.2em] text-slate-400">{{ $stat['label'] }}</p>
                             <p class="mt-4 text-4xl font-bold text-slate-950">{{ $stat['value'] }}</p>
                         </div>
-                        <span class="rounded-2xl border px-3 py-2 text-xs font-semibold {{ $stat['tone'] }}">
+                        <span class="shrink-0 rounded-2xl border px-3 py-2 text-xs font-semibold {{ $stat['tone'] }}">
                             Live
                         </span>
                     </div>

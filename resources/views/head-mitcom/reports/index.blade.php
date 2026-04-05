@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Reports - MITCOM Head</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-100 min-h-screen">
-
-    <x-app-nav pageTitle="Traffic Reports" />
-
+<x-app-nav title="Traffic Reports - MITCOM Head" page-title="Traffic Reports" page-eyebrow="Command Center">
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
 
         {{-- Stats Row --}}
@@ -105,7 +92,6 @@
             </div>
         </div>
     </main>
-    <x-toast />
-</body>
 
-</html>
+    <x-toast />
+</x-app-nav>

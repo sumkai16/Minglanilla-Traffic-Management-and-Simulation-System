@@ -1,31 +1,4 @@
 @php
-    $navItems = [
-        [
-            'label' => 'Dashboard',
-            'href' => route('user.dashboard'),
-            'active' => request()->routeIs('user.dashboard'),
-            'icon' => 'dashboard',
-        ],
-        [
-            'label' => 'Report Incident',
-            'href' => route('user.reports.create'),
-            'active' => request()->routeIs('user.reports.create'),
-            'icon' => 'create',
-        ],
-        [
-            'label' => 'Announcements',
-            'href' => route('user.announcements.index'),
-            'active' => request()->routeIs('user.announcements.*'),
-            'icon' => 'announcements',
-        ],
-        [
-            'label' => 'Profile',
-            'href' => route('user.profile.edit'),
-            'active' => request()->routeIs('user.profile.*') || request()->routeIs('profile.*'),
-            'icon' => 'profile',
-        ],
-    ];
-
     $stats = [
         [
             'label' => 'Pending',
@@ -49,8 +22,7 @@
 @endphp
 
 <x-dashboard-shell title="My Dashboard" page-title="Citizen Dashboard" page-eyebrow="Public Reporting"
-    page-description="Track your incident submissions, review public announcements, and monitor live traffic activity from one organized citizen dashboard."
-    :nav-items="$navItems" role-label="Citizen Portal">
+    page-description="Track your incident submissions, review public announcements, and monitor live traffic activity from one organized citizen dashboard.">
     <x-slot:actions>
         <a href="{{ route('user.announcements.index') }}"
             class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">

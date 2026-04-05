@@ -1,38 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $roleLabel = match ($user->role) {
+        'admin' => 'Administrator Account',
+        'head-mitcom' => 'Head MITCOM Account',
+        'enforcer' => 'Traffic Enforcer Account',
+        default => 'Citizen Account',
+    };
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Management</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+    $roleBadge = match ($user->role) {
+        'admin' => 'Administrator',
+        'head-mitcom' => 'Head MITCOM',
+        'enforcer' => 'Traffic Enforcer',
+        default => 'Citizen',
+    };
 
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    @php
-        $roleLabel = match ($user->role) {
-            'admin' => 'Administrator Account',
-            'head-mitcom' => 'Head MITCOM Account',
-            'enforcer' => 'Traffic Enforcer Account',
-            default => 'Citizen Account',
-        };
+    $pageTitle = $user->role === 'enforcer' ? 'Profile Management' : 'My Profile';
+    $pageEyebrow = match ($user->role) {
+        'admin' => 'System Administration',
+        'head-mitcom' => 'Command Center',
+        'enforcer' => 'Field Operations',
+        default => 'Public Reporting',
+    };
+@endphp
 
-        $roleBadge = match ($user->role) {
-            'admin' => 'Administrator',
-            'head-mitcom' => 'Head MITCOM',
-            'enforcer' => 'Traffic Enforcer',
-            default => 'Citizen',
-        };
-
-        $pageTitle = $user->role === 'enforcer' ? 'Profile Management' : 'My Profile';
-    @endphp
-
-    <div class="min-h-screen">
-        <x-app-nav :pageTitle="$pageTitle" />
-
-        <main class="py-10 relative">
+<x-app-nav title="Profile Management" :page-title="$pageTitle" :page-eyebrow="$pageEyebrow">
+    <main class="py-10 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-blue-100/80 via-slate-50 to-transparent"></div>
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -207,8 +198,5 @@
                     </section>
                 </div>
             </div>
-        </main>
-    </div>
-</body>
-
-</html>
+    </main>
+</x-app-nav>

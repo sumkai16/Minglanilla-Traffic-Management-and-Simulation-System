@@ -1,21 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Details</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900 overflow-x-hidden" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
-        
-        <x-app-nav pageTitle="Report #{{ $report->id }}" />
-
-        <main class="py-12 relative">
+<x-app-nav title="Report #{{ $report->id }}" page-title="Report #{{ $report->id }}"
+    page-eyebrow="Public Reporting">
+    <main class="py-12 relative">
             <div class="absolute inset-x-0 top-0 -z-10 h-72 bg-gradient-to-b from-blue-200/40 via-blue-50 to-transparent"></div>
             <div class="absolute -z-10 -top-16 -right-24 h-72 w-72 rounded-full bg-blue-200/30 blur-3xl"></div>
             <div class="absolute -z-10 top-24 -left-24 h-72 w-72 rounded-full bg-cyan-200/30 blur-3xl"></div>
@@ -203,28 +188,27 @@
                 </div>
 
             </div>
-        </main>
-    </div>
+    </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const map = L.map('report-map').setView([{{ $report->latitude }}, {{ $report->longitude }}], 16);
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const map = L.map('report-map').setView([{{ $report->latitude }}, {{ $report->longitude }}], 16);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19,
-            }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19,
+                }).addTo(map);
 
-            L.marker([{{ $report->latitude }}, {{ $report->longitude }}])
-                .addTo(map)
-                .bindPopup(`
+                L.marker([{{ $report->latitude }}, {{ $report->longitude }}])
+                    .addTo(map)
+                    .bindPopup(`
                     <div class="p-2">
                         <h3 class="font-bold">{{ ucwords(str_replace('_', ' ', $report->issue_type)) }}</h3>
                         <p class="text-sm">{{ $report->location }}</p>
                     </div>
                 `).openPopup();
-        });
-    </script>
-</body>
-
-</html>
+            });
+        </script>
+    @endpush
+</x-app-nav>

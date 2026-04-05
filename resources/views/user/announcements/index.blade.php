@@ -1,31 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $typeLabels = [
+        'traffic_advisory' => 'Traffic Advisory',
+        'road_closure' => 'Road Closure',
+        'emergency' => 'Emergency',
+        'system_notice' => 'System Notice',
+    ];
+@endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Announcements</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    @php
-        $typeLabels = [
-            'traffic_advisory' => 'Traffic Advisory',
-            'road_closure' => 'Road Closure',
-            'emergency' => 'Emergency',
-            'system_notice' => 'System Notice',
-        ];
-    @endphp
-
-    <x-app-nav pageTitle="Announcements">
+<x-app-nav title="Announcements" page-title="Announcements" page-eyebrow="Public Reporting">
+    <x-slot:actions>
         <a href="{{ route('user.reports.create') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-500 transition">
+            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
             Report Incident
         </a>
-    </x-app-nav>
+    </x-slot:actions>
 
     <main class="py-10 relative">
         <div class="absolute inset-x-0 top-0 -z-10 h-60 bg-gradient-to-b from-blue-100/70 via-blue-50 to-transparent"></div>
@@ -93,6 +81,4 @@
     </main>
 
     <x-toast />
-</body>
-
-</html>
+</x-app-nav>

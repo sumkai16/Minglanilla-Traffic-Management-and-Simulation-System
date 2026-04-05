@@ -1,37 +1,4 @@
 @php
-    $navItems = [
-        [
-            'label' => 'Dashboard',
-            'href' => route('admin.dashboard'),
-            'active' => request()->routeIs('admin.dashboard'),
-            'icon' => 'dashboard',
-        ],
-        [
-            'label' => 'Manage Users',
-            'href' => route('admin.users.index'),
-            'active' => request()->routeIs('admin.users.*'),
-            'icon' => 'users',
-        ],
-        [
-            'label' => 'Traffic Reports',
-            'href' => route('admin.reports.index'),
-            'active' => request()->routeIs('admin.reports.*'),
-            'icon' => 'reports',
-        ],
-        [
-            'label' => 'Live Traffic Map',
-            'href' => route('admin.map'),
-            'active' => request()->routeIs('admin.map'),
-            'icon' => 'map',
-        ],
-        [
-            'label' => 'Profile',
-            'href' => route('profile.edit'),
-            'active' => request()->routeIs('profile.*'),
-            'icon' => 'profile',
-        ],
-    ];
-
     $statCards = [
         ['label' => 'Total Users', 'value' => $totalUsers, 'tone' => 'text-blue-700 bg-blue-50 border-blue-100'],
         ['label' => 'Admins', 'value' => $adminCount, 'tone' => 'text-slate-900 bg-slate-100 border-slate-200'],
@@ -41,8 +8,7 @@
 @endphp
 
 <x-dashboard-shell title="Admin Dashboard" page-title="Admin Dashboard" page-eyebrow="System Administration"
-    page-description="Oversee accounts, manage reports, and monitor the command center from one formal control panel."
-    :nav-items="$navItems" role-label="Admin Control">
+    page-description="Oversee accounts, manage reports, and monitor the command center from one formal control panel.">
     <x-slot:actions>
         <a href="{{ route('profile.edit') }}"
             class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">

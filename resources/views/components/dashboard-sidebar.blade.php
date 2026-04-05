@@ -35,27 +35,57 @@
     }
 </style>
 
-<aside {{ $attributes->merge(['class' => 'fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-white/10 bg-slate-950 text-slate-100 shadow-2xl shadow-slate-950/40 transition-transform duration-300 ease-out']) }}>
-    <div class="border-b border-white/10 px-6 py-6">
-        <div class="flex items-center gap-3">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+<aside {{ $attributes->merge(['class' => 'flex flex-col border-r border-white/10 bg-slate-950 text-slate-100 shadow-2xl shadow-slate-950/40']) }}>
+    <div class="border-b border-white/10 px-6 py-6 lg:px-4 lg:py-5">
+        <div class="flex items-center gap-3" x-bind:class="sidebarCollapsed ? 'lg:justify-center' : ''">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
                 <img src="{{ asset('images/second_logo-removebg-preview.png') }}" alt="Minglanilla seal"
                     class="h-12 w-12 object-contain">
             </div>
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 lg:flex"
+                x-bind:class="sidebarCollapsed ? 'lg:hidden' : ''">
                 <img src="{{ asset('images/first_logo-removebg-preview.png') }}" alt="Minglanilla traffic command logo"
                     class="h-12 w-12 object-contain">
             </div>
+
+            {{-- Collapse toggle — inline with logos, right-aligned --}}
+            <button type="button"
+                class="ml-auto hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white lg:inline-flex"
+                x-show="!sidebarCollapsed"
+                @click="sidebarCollapsed = !sidebarCollapsed"
+                aria-label="Collapse sidebar">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M14.25 6.75 8.25 12l6 6.25" />
+                </svg>
+            </button>
         </div>
-        <div class="mt-5">
+
+        {{-- Expand toggle — centered below logo when collapsed --}}
+        <div class="mt-3 hidden justify-center lg:flex" x-show="sidebarCollapsed" x-cloak>
+            <button type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:bg-white/10 hover:text-white"
+                @click="sidebarCollapsed = false"
+                aria-label="Expand sidebar">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9.75 6.75 15.75 12l-6 6.25" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-5 space-y-2" x-show="!sidebarCollapsed" x-cloak>
             <p class="text-[11px] font-semibold uppercase tracking-[0.35em] text-cyan-300/80">Minglanilla Traffic</p>
-            <h2 class="mt-2 text-xl font-bold leading-tight text-white">{{ $roleLabel }}</h2>
-            <p class="mt-2 text-sm text-slate-400">Formal command center navigation for reports, advisories, and user actions.</p>
+            <h2 class="text-xl font-bold leading-tight text-white">{{ $roleLabel }}</h2>
+            <p class="text-sm text-slate-400">Formal command center navigation for reports, advisories, and user actions.</p>
         </div>
     </div>
 
     <div class="dashboard-sidebar-scroll flex-1 overflow-y-auto px-4 py-5">
-        <p class="px-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-500">Navigation</p>
+        <p class="px-3 text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-500" x-show="!sidebarCollapsed"
+            x-cloak>Navigation</p>
         <nav class="mt-3 space-y-1.5">
             @foreach ($navItems as $item)
                 @php
@@ -63,17 +93,18 @@
                     $active = $item['active'] ?? false;
                 @endphp
 
-                <a href="{{ $item['href'] }}"
-                    class="{{ $active ? 'bg-blue-600/20 text-white ring-1 ring-inset ring-blue-400/40' : 'text-slate-300 hover:bg-white/5 hover:text-white' }} flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition">
+                <a href="{{ $item['href'] }}" title="{{ $item['label'] }}" @click="sidebarOpen = false"
+                    class="{{ $active ? 'bg-blue-600/20 text-white ring-1 ring-inset ring-blue-400/40' : 'text-slate-300 hover:bg-white/5 hover:text-white' }} flex items-center rounded-2xl py-3 text-sm font-medium transition"
+                    x-bind:class="sidebarCollapsed ? 'lg:justify-center lg:px-2 lg:gap-0' : 'gap-3 px-3'">
                     <span
-                        class="{{ $active ? 'bg-blue-500/20 text-blue-200' : 'bg-white/5 text-slate-400' }} flex h-10 w-10 items-center justify-center rounded-xl transition">
+                        class="{{ $active ? 'bg-blue-500/20 text-blue-200' : 'bg-white/5 text-slate-400' }} flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                             {!! $icon !!}
                         </svg>
                     </span>
-                    <span class="flex-1">{{ $item['label'] }}</span>
+                    <span class="flex-1 truncate" x-show="!sidebarCollapsed" x-cloak>{{ $item['label'] }}</span>
                     @if (!empty($item['badge']))
-                        <span
+                        <span x-show="!sidebarCollapsed" x-cloak
                             class="rounded-full bg-white/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">
                             {{ $item['badge'] }}
                         </span>
@@ -84,16 +115,13 @@
     </div>
 
     <div class="border-t border-white/10 px-4 py-4">
-        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4" x-show="!sidebarCollapsed" x-cloak>
             <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Logged In</p>
             <p class="mt-2 text-sm font-semibold text-white">{{ $displayName }}</p>
             <p class="mt-1 text-sm text-slate-400">{{ $user->email }}</p>
 
             <div class="mt-4 grid grid-cols-2 gap-2">
-                <a href="{{ route('profile.edit') }}"
-                    class="inline-flex items-center justify-center rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:bg-white/10">
-                    Profile
-                </a>
+               
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
@@ -102,6 +130,24 @@
                     </button>
                 </form>
             </div>
+        </div>
+
+        <div class="hidden flex-col gap-2 lg:flex" x-show="sidebarCollapsed" x-cloak>
+           
+            <form method="POST" action="{{ route('logout') }}" class="self-center">
+                @csrf
+                <button type="submit" title="Logout"
+                    class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white text-slate-950 transition hover:bg-blue-50">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M7.5 3.25A2.25 2.25 0 005.25 5.5v9A2.25 2.25 0 007.5 16.75h3a.75.75 0 000-1.5h-3a.75.75 0 01-.75-.75v-9a.75.75 0 01.75-.75h3a.75.75 0 000-1.5h-3z"
+                            clip-rule="evenodd" />
+                        <path fill-rule="evenodd"
+                            d="M11.72 6.22a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9.5a.75.75 0 010-1.5h3.94l-1.72-1.72a.75.75 0 010-1.06z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 </aside>

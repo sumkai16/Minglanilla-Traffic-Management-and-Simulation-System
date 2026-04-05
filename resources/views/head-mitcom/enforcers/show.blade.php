@@ -1,35 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $fullName = trim($enforcer->first_name . ' ' . $enforcer->last_name);
+    $initials = strtoupper(substr($enforcer->first_name, 0, 1) . substr($enforcer->last_name, 0, 1));
+    $totalAssigned = $assignedReports->total();
+    $resolvedCount = $enforcer->assignedReports()->where('status', 'resolved')->count();
+    $activeCount = $enforcer->assignedReports()->where('status', 'assigned')->count();
+    $reviewCount = $enforcer->assignedReports()->where('status', 'for_verification')->count();
+    $completionRate = $totalAssigned > 0 ? round(($resolvedCount / $totalAssigned) * 100) : 0;
+    $latestAssignment = $assignedReports->first();
+@endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $enforcer->first_name }} {{ $enforcer->last_name }} - MITCOM Head</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="min-h-screen bg-slate-100 text-slate-900">
-    @php
-        $fullName = trim($enforcer->first_name . ' ' . $enforcer->last_name);
-        $initials = strtoupper(substr($enforcer->first_name, 0, 1) . substr($enforcer->last_name, 0, 1));
-        $totalAssigned = $assignedReports->total();
-        $resolvedCount = $enforcer->assignedReports()->where('status', 'resolved')->count();
-        $activeCount = $enforcer->assignedReports()->where('status', 'assigned')->count();
-        $reviewCount = $enforcer->assignedReports()->where('status', 'for_verification')->count();
-        $completionRate = $totalAssigned > 0 ? round(($resolvedCount / $totalAssigned) * 100) : 0;
-        $latestAssignment = $assignedReports->first();
-    @endphp
-
-    <x-app-nav pageTitle="Enforcer Profile">
+<x-app-nav title="{{ $fullName }} - MITCOM Head" page-title="Enforcer Profile" page-eyebrow="Command Center">
+    <x-slot:actions>
         <a href="{{ route('head-mitcom.enforcers.index') }}"
-            class="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" />
             </svg>
             All Enforcers
         </a>
-    </x-app-nav>
+    </x-slot:actions>
 
     <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         <section class="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
@@ -321,6 +311,4 @@
     </main>
 
     <x-toast />
-</body>
-
-</html>
+</x-app-nav>

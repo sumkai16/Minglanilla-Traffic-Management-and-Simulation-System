@@ -1,34 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $advisory->title }}</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        body {
-            font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
-        }
-
-        #advisory-map {
-            height: 380px;
-            width: 100%;
-            border-radius: 1rem;
-            z-index: 0;
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-    <x-app-nav pageTitle="Advisory Detail" />
+<x-app-nav :title="$advisory->title" page-title="Advisory Detail" page-eyebrow="Command Center">
+    @push('styles')
+        <style>
+            #advisory-map {
+                height: 380px;
+                width: 100%;
+                border-radius: 1rem;
+                z-index: 0;
+            }
+        </style>
+    @endpush
 
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-5">
 
@@ -129,8 +109,8 @@
 
     <x-toast />
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
+    @push('scripts')
+        <script>
         document.addEventListener('DOMContentLoaded', function () {
             const map = L.map('advisory-map').setView([10.2731, 123.7956], 14);
 
@@ -153,7 +133,6 @@
                 }
             }
         });
-    </script>
-</body>
-
-</html>
+        </script>
+    @endpush
+</x-app-nav>

@@ -1,36 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Management</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-    </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-50 text-slate-900" style="font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;">
-    <div class="min-h-screen">
-        <div class="relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-700 via-blue-900 to-slate-900"></div>
-            <div
-                class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.4),transparent_55%)]">
-            </div>
-            <div class="absolute inset-0 bg-black/20"></div>
-
-            <!-- Header -->
-            <x-app-nav pageTitle="Report Management" />
-        </div>
-
-        <main class="py-8 relative">
-            <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<x-app-nav title="Report Management" page-title="Report Management" page-eyebrow="System Administration">
+    <main class="py-8 relative">
+        <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 @if(session('success'))
                     <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg mb-6">
@@ -259,8 +230,5 @@
                 </div>
 
             </div>
-        </main>
-    </div>
-</body>
-
-</html>
+    </main>
+</x-app-nav>

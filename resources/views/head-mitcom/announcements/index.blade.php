@@ -1,25 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+@php
+    $typeLabels = [
+        'traffic_advisory' => 'Traffic Advisory',
+        'road_closure' => 'Road Closure',
+        'emergency' => 'Emergency',
+        'system_notice' => 'System Notice',
+    ];
+@endphp
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Announcements - MITCOM Head</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="bg-slate-100 min-h-screen">
-    @php
-        $typeLabels = [
-            'traffic_advisory' => 'Traffic Advisory',
-            'road_closure' => 'Road Closure',
-            'emergency' => 'Emergency',
-            'system_notice' => 'System Notice',
-        ];
-    @endphp
-
-    <x-app-nav pageTitle="Announcement Center" />
-
+<x-app-nav title="Announcements - MITCOM Head" page-title="Announcement Center" page-eyebrow="Command Center">
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr,1.6fr]">
             <section class="space-y-6">
@@ -202,6 +190,4 @@
     </main>
 
     <x-toast />
-</body>
-
-</html>
+</x-app-nav>
