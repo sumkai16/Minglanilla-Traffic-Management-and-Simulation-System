@@ -101,7 +101,7 @@
                         style="width:22px;height:4px;background:#22c55e"></span><span>Reroute</span></span>
             </div>
             {{-- Map --}}
-            <div id="map"></div>
+            <div id="map" class="z-0 overflow-hidden" style="height: 520px; min-height: 520px;"></div>
         </div>
 
     </main>
@@ -111,184 +111,184 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @push('scripts')
         <script>
-        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {
 
-            const map = L.map('map').setView([10.2700, 123.7850], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+                const map = L.map('map').setView([10.2700, 123.7850], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
 
-            let allReports = [];
-            let allAdvisories = [];
-            let startTime = null;
-            let endTime = null;
-            let simTime = null;
-            let simInterval = null;
-            let isPlaying = false;
-            let activeMarkers = {};
-            let advisoryLayers = {};
+                let allReports = [];
+                let allAdvisories = [];
+                let startTime = null;
+                let endTime = null;
+                let simTime = null;
+                let simInterval = null;
+                let isPlaying = false;
+                let activeMarkers = {};
+                let advisoryLayers = {};
 
-            const statusColors = {
-                pending: '#facc15',
-                verified: '#3b82f6',
-                assigned: '#f97316',
-                resolved: '#22c55e',
-                rejected: '#ef4444',
-            };
+                const statusColors = {
+                    pending: '#facc15',
+                    verified: '#3b82f6',
+                    assigned: '#f97316',
+                    resolved: '#22c55e',
+                    rejected: '#ef4444',
+                };
 
-            function makeCircleMarker(report, color) {
-                return L.circleMarker([report.latitude, report.longitude], {
-                    radius: 8,
-                    fillColor: color,
-                    color: '#fff',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.9,
-                }).bindPopup(
-                    '<strong>' + report.issue_type.replace(/_/g, ' ') + '</strong><br>' +
-                    report.location + '<br>' +
-                    '<span style="text-transform:capitalize">' + report.status + '</span>'
-                );
-            }
+                function makeCircleMarker(report, color) {
+                    return L.circleMarker([report.latitude, report.longitude], {
+                        radius: 8,
+                        fillColor: color,
+                        color: '#fff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9,
+                    }).bindPopup(
+                        '<strong>' + report.issue_type.replace(/_/g, ' ') + '</strong><br>' +
+                        report.location + '<br>' +
+                        '<span style="text-transform:capitalize">' + report.status + '</span>'
+                    );
+                }
 
-            function getColorAtTime(report, time) {
-                const created = new Date(report.created_at);
-                const verified = report.verified_at ? new Date(report.verified_at) : null;
-                const assigned = report.assigned_at ? new Date(report.assigned_at) : null;
-                const resolved = report.resolved_at ? new Date(report.resolved_at) : null;
-
-                if (report.status === 'rejected' && verified && time >= verified) return statusColors.rejected;
-                if (resolved && time >= resolved) return statusColors.resolved;
-                if (assigned && time >= assigned) return statusColors.assigned;
-                if (verified && time >= verified) return statusColors.verified;
-                if (time >= created) return statusColors.pending;
-                return null;
-            }
-
-            function updateMap() {
-                allReports.forEach(function (report) {
+                function getColorAtTime(report, time) {
                     const created = new Date(report.created_at);
+                    const verified = report.verified_at ? new Date(report.verified_at) : null;
+                    const assigned = report.assigned_at ? new Date(report.assigned_at) : null;
+                    const resolved = report.resolved_at ? new Date(report.resolved_at) : null;
 
-                    if (simTime < created) {
+                    if (report.status === 'rejected' && verified && time >= verified) return statusColors.rejected;
+                    if (resolved && time >= resolved) return statusColors.resolved;
+                    if (assigned && time >= assigned) return statusColors.assigned;
+                    if (verified && time >= verified) return statusColors.verified;
+                    if (time >= created) return statusColors.pending;
+                    return null;
+                }
+
+                function updateMap() {
+                    allReports.forEach(function (report) {
+                        const created = new Date(report.created_at);
+
+                        if (simTime < created) {
+                            if (activeMarkers[report.id]) {
+                                map.removeLayer(activeMarkers[report.id]);
+                                delete activeMarkers[report.id];
+                            }
+                            return;
+                        }
+
+                        const color = getColorAtTime(report, simTime);
+                        if (!color) return;
+
                         if (activeMarkers[report.id]) {
-                            map.removeLayer(activeMarkers[report.id]);
-                            delete activeMarkers[report.id];
+                            activeMarkers[report.id].setStyle({ fillColor: color });
+                        } else {
+                            activeMarkers[report.id] = makeCircleMarker(report, color).addTo(map);
                         }
-                        return;
-                    }
-
-                    const color = getColorAtTime(report, simTime);
-                    if (!color) return;
-
-                    if (activeMarkers[report.id]) {
-                        activeMarkers[report.id].setStyle({ fillColor: color });
-                    } else {
-                        activeMarkers[report.id] = makeCircleMarker(report, color).addTo(map);
-                    }
-                });
-
-                allAdvisories.forEach(function (advisory) {
-                    const start = new Date(advisory.start_date);
-                    const end = new Date(advisory.end_date);
-
-                    if (simTime >= start && simTime <= end) {
-                        if (!advisoryLayers[advisory.id] && advisory.map_data) {
-                            const group = L.layerGroup();
-                            const data = advisory.map_data;
-                            if (data.closures) {
-                                data.closures.forEach(function (item) {
-                                    L.polyline(item.coordinates, { color: '#ef4444', weight: 6, opacity: 0.9 }).addTo(group);
-                                });
-                            }
-                            if (data.reroutes) {
-                                data.reroutes.forEach(function (item) {
-                                    L.polyline(item.coordinates, { color: '#22c55e', weight: 6, opacity: 0.9 }).addTo(group);
-                                });
-                            }
-                            group.addTo(map);
-                            advisoryLayers[advisory.id] = group;
-                        }
-                    } else {
-                        if (advisoryLayers[advisory.id]) {
-                            map.removeLayer(advisoryLayers[advisory.id]);
-                            delete advisoryLayers[advisory.id];
-                        }
-                    }
-                });
-
-                const total = endTime - startTime;
-                const elapsed = simTime - startTime;
-                const pct = Math.min(100, (elapsed / total) * 100);
-                document.getElementById('timelineProgress').style.width = pct + '%';
-                document.getElementById('currentTimeLabel').textContent = simTime.toLocaleDateString('en-PH', {
-                    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-
-                if (simTime >= endTime) pauseSimulation();
-            }
-
-            function playSimulation() {
-                if (isPlaying) return;
-                isPlaying = true;
-                simInterval = setInterval(function () {
-                    const speed = parseInt(document.getElementById('speedSelect').value);
-                    simTime = new Date(simTime.getTime() + speed * 10 * 60 * 1000);
-                    updateMap();
-                }, 1000);
-                document.getElementById('playBtn').disabled = true;
-                document.getElementById('pauseBtn').disabled = false;
-            }
-
-            function pauseSimulation() {
-                isPlaying = false;
-                clearInterval(simInterval);
-                document.getElementById('playBtn').disabled = false;
-                document.getElementById('pauseBtn').disabled = true;
-            }
-
-            function resetSimulation() {
-                pauseSimulation();
-                simTime = new Date(startTime);
-                Object.values(activeMarkers).forEach(m => map.removeLayer(m));
-                activeMarkers = {};
-                Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
-                advisoryLayers = {};
-                document.getElementById('timelineProgress').style.width = '0%';
-                document.getElementById('currentTimeLabel').textContent = 'Not started';
-                updateMap();
-            }
-
-            document.getElementById('loadBtn').addEventListener('click', function () {
-                const start = document.getElementById('startDate').value;
-                const end = document.getElementById('endDate').value;
-
-                fetch('{{ route("head-mitcom.simulation.data") }}?start=' + start + '&end=' + end)
-                    .then(r => r.json())
-                    .then(function (data) {
-                        allReports = data.reports;
-                        allAdvisories = data.advisories;
-                        startTime = new Date(data.start);
-                        endTime = new Date(data.end);
-                        simTime = new Date(startTime);
-
-                        Object.values(activeMarkers).forEach(m => map.removeLayer(m));
-                        activeMarkers = {};
-                        Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
-                        advisoryLayers = {};
-
-                        document.getElementById('reportCountLabel').textContent = allReports.length + ' reports loaded';
-                        document.getElementById('playBtn').disabled = false;
-                        document.getElementById('resetBtn').disabled = false;
-                        document.getElementById('pauseBtn').disabled = true;
-                        document.getElementById('timelineProgress').style.width = '0%';
-                        document.getElementById('currentTimeLabel').textContent = 'Ready — press Play';
                     });
-            });
 
-            document.getElementById('playBtn').addEventListener('click', playSimulation);
-            document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
-            document.getElementById('resetBtn').addEventListener('click', resetSimulation);
-        });
+                    allAdvisories.forEach(function (advisory) {
+                        const start = new Date(advisory.start_date);
+                        const end = new Date(advisory.end_date);
+
+                        if (simTime >= start && simTime <= end) {
+                            if (!advisoryLayers[advisory.id] && advisory.map_data) {
+                                const group = L.layerGroup();
+                                const data = advisory.map_data;
+                                if (data.closures) {
+                                    data.closures.forEach(function (item) {
+                                        L.polyline(item.coordinates, { color: '#ef4444', weight: 6, opacity: 0.9 }).addTo(group);
+                                    });
+                                }
+                                if (data.reroutes) {
+                                    data.reroutes.forEach(function (item) {
+                                        L.polyline(item.coordinates, { color: '#22c55e', weight: 6, opacity: 0.9 }).addTo(group);
+                                    });
+                                }
+                                group.addTo(map);
+                                advisoryLayers[advisory.id] = group;
+                            }
+                        } else {
+                            if (advisoryLayers[advisory.id]) {
+                                map.removeLayer(advisoryLayers[advisory.id]);
+                                delete advisoryLayers[advisory.id];
+                            }
+                        }
+                    });
+
+                    const total = endTime - startTime;
+                    const elapsed = simTime - startTime;
+                    const pct = Math.min(100, (elapsed / total) * 100);
+                    document.getElementById('timelineProgress').style.width = pct + '%';
+                    document.getElementById('currentTimeLabel').textContent = simTime.toLocaleDateString('en-PH', {
+                        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    if (simTime >= endTime) pauseSimulation();
+                }
+
+                function playSimulation() {
+                    if (isPlaying) return;
+                    isPlaying = true;
+                    simInterval = setInterval(function () {
+                        const speed = parseInt(document.getElementById('speedSelect').value);
+                        simTime = new Date(simTime.getTime() + speed * 10 * 60 * 1000);
+                        updateMap();
+                    }, 1000);
+                    document.getElementById('playBtn').disabled = true;
+                    document.getElementById('pauseBtn').disabled = false;
+                }
+
+                function pauseSimulation() {
+                    isPlaying = false;
+                    clearInterval(simInterval);
+                    document.getElementById('playBtn').disabled = false;
+                    document.getElementById('pauseBtn').disabled = true;
+                }
+
+                function resetSimulation() {
+                    pauseSimulation();
+                    simTime = new Date(startTime);
+                    Object.values(activeMarkers).forEach(m => map.removeLayer(m));
+                    activeMarkers = {};
+                    Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
+                    advisoryLayers = {};
+                    document.getElementById('timelineProgress').style.width = '0%';
+                    document.getElementById('currentTimeLabel').textContent = 'Not started';
+                    updateMap();
+                }
+
+                document.getElementById('loadBtn').addEventListener('click', function () {
+                    const start = document.getElementById('startDate').value;
+                    const end = document.getElementById('endDate').value;
+
+                    fetch('{{ route("head-mitcom.simulation.data") }}?start=' + start + '&end=' + end)
+                        .then(r => r.json())
+                        .then(function (data) {
+                            allReports = data.reports;
+                            allAdvisories = data.advisories;
+                            startTime = new Date(data.start);
+                            endTime = new Date(data.end);
+                            simTime = new Date(startTime);
+
+                            Object.values(activeMarkers).forEach(m => map.removeLayer(m));
+                            activeMarkers = {};
+                            Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
+                            advisoryLayers = {};
+
+                            document.getElementById('reportCountLabel').textContent = allReports.length + ' reports loaded';
+                            document.getElementById('playBtn').disabled = false;
+                            document.getElementById('resetBtn').disabled = false;
+                            document.getElementById('pauseBtn').disabled = true;
+                            document.getElementById('timelineProgress').style.width = '0%';
+                            document.getElementById('currentTimeLabel').textContent = 'Ready — press Play';
+                        });
+                });
+
+                document.getElementById('playBtn').addEventListener('click', playSimulation);
+                document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
+                document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+            });
         </script>
     @endpush
 </x-app-nav>
