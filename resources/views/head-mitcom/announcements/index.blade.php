@@ -18,7 +18,7 @@
                         Share traffic advisories, road closures, emergency notices, and service updates with citizens.
                     </p>
 
-                    <form method="POST" action="{{ route('head-mitcom.announcements.store') }}" class="mt-6 space-y-4">
+                    <form method="POST" action="{{ route('head-mitcom.announcements.store') }}" enctype="multipart/form-data" class="mt-6 space-y-4">
                         @csrf
 
                         <div>
@@ -37,6 +37,44 @@
                                 class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
                                 placeholder="Write the full announcement message for citizens..." required>{{ old('content') }}</textarea>
                             @error('content')
+                                <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div x-data="{ preview: null }">
+                            <label class="text-sm font-semibold text-slate-700">Attach Image (Optional)</label>
+                            <div class="mt-2 relative">
+                                <input type="file" id="announcement_image" name="image" accept="image/*" class="hidden"
+                                    @change="const file = $event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = (e) => preview = e.target.result; reader.readAsDataURL(file); } else { preview = null; }">
+
+                                <label for="announcement_image"
+                                    class="flex flex-col items-center justify-center w-full rounded-xl border-2 border-dashed border-slate-300 cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-200 overflow-hidden"
+                                    :class="preview ? 'p-0' : 'py-8'">
+
+                                    <template x-if="!preview">
+                                        <div class="text-center">
+                                            <svg class="w-8 h-8 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
+                                            </svg>
+                                            <p class="text-sm font-medium text-slate-600">Click to upload an image</p>
+                                            <p class="text-xs text-slate-400 mt-1">PNG, JPG, GIF, WebP up to 5MB</p>
+                                        </div>
+                                    </template>
+
+                                    <template x-if="preview">
+                                        <img :src="preview" class="w-full max-h-48 object-cover rounded-xl">
+                                    </template>
+                                </label>
+
+                                <button type="button" x-show="preview" @click="preview = null; document.getElementById('announcement_image').value = '';"
+                                    class="absolute top-2 right-2 rounded-full bg-slate-900/60 p-1.5 text-white hover:bg-slate-900/80 transition"
+                                    title="Remove image">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            @error('image')
                                 <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                             @enderror
                         </div>

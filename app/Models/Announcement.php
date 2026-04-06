@@ -13,6 +13,7 @@ class Announcement extends Model
     protected $fillable = [
         'title',
         'content',
+        'image',
         'type',
         'priority',
         'is_published',

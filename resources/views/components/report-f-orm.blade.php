@@ -60,16 +60,10 @@
                 <option value="traffic_signal_problem" {{ old('issue_type') == 'traffic_signal_problem' ? 'selected' : '' }}>Traffic Signal Problem</option>
                 <option value="road_damage" {{ old('issue_type') == 'road_damage' ? 'selected' : '' }}>Road Damage /
                     Hazard</option>
-                <option value="illegal_parking" {{ old('issue_type') == 'illegal_parking' ? 'selected' : '' }}>Illegal
-                    Parking</option>
                 <option value="traffic_obstruction" {{ old('issue_type') == 'traffic_obstruction' ? 'selected' : '' }}>
                     Traffic Obstruction</option>
                 <option value="accident" {{ old('issue_type') == 'accident' ? 'selected' : '' }}>Accident / Incident
                 </option>
-                <option value="traffic_violation" {{ old('issue_type') == 'traffic_violation' ? 'selected' : '' }}>Traffic
-                    Violation</option>
-                <option value="reckless_driving" {{ old('issue_type') == 'reckless_driving' ? 'selected' : '' }}>Reckless
-                    Driving</option>
                 <option value="public_safety" {{ old('issue_type') == 'public_safety' ? 'selected' : '' }}>Public Safety
                     Concern</option>
                 <option value="infrastructure" {{ old('issue_type') == 'infrastructure' ? 'selected' : '' }}>
@@ -165,10 +159,11 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="flex items-center justify-center gap-4">
-        <a href="{{ url('/') }}" class="px-6 py-3 text-blue-700/80 font-semibold hover:text-blue-900 transition">
+    <div class="flex items-center justify-center gap-4" x-data="{ showCancelModal: false }">
+        <button type="button" @click="showCancelModal = true"
+            class="px-6 py-3 text-blue-700/80 font-semibold hover:text-blue-900 transition cursor-pointer">
             Cancel
-        </a>
+        </button>
         <button type="submit" id="submitReportBtn"
             class="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
             <span id="submitText">Submit Report</span>
@@ -182,6 +177,66 @@
                 Submitting...
             </span>
         </button>
+
+        <!-- Cancel Confirmation Modal -->
+        <div x-show="showCancelModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+            style="display: none;"
+            @keydown.escape.window="showCancelModal = false">
+
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showCancelModal = false"></div>
+
+            <!-- Modal Content -->
+            <div x-show="showCancelModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-90 translate-y-4"
+                class="relative w-full max-w-md bg-gradient-to-br from-[#0c1e3a] to-[#132d5e] rounded-2xl shadow-2xl border border-blue-500/20 overflow-hidden">
+
+                <!-- Decorative top glow -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent rounded-full"></div>
+
+                <div class="p-8 text-center">
+                    <!-- Warning Icon -->
+                    <div class="mx-auto w-16 h-16 rounded-full bg-amber-500/15 border border-amber-400/30 flex items-center justify-center mb-5">
+                        <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                        </svg>
+                    </div>
+
+                    <!-- Title -->
+                    <h3 class="text-xl font-bold text-white mb-2">Cancel Report?</h3>
+
+                    <!-- Message -->
+                    <p class="text-blue-200/70 text-sm leading-relaxed mb-8">
+                        Are you sure you want to cancel this report? All the information you've entered will be lost and cannot be recovered.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-center gap-3">
+                        <button type="button" @click="showCancelModal = false"
+                            class="px-6 py-2.5 rounded-xl text-sm font-semibold text-blue-200 bg-white/5 border border-blue-400/20 hover:bg-white/10 hover:border-blue-400/40 transition-all duration-200 cursor-pointer">
+                            Go Back
+                        </button>
+                        <a href="{{ url('/') }}"
+                            class="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-200 transform hover:-translate-y-0.5">
+                            Yes, Cancel Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

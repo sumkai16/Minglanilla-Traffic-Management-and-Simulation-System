@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AnnouncementController extends Controller
@@ -35,12 +36,18 @@ class AnnouncementController extends Controller
         $validated = $this->validateAnnouncement($request);
         $shouldPublish = $request->boolean('publish_now');
 
-        Announcement::create([
+        $data = [
             ...$validated,
             'created_by' => $request->user()->id,
             'is_published' => $shouldPublish,
             'published_at' => $shouldPublish ? now() : null,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('announcements', 'public');
+        }
+
+        Announcement::create($data);
 
         return back()->with('success', 'Announcement created successfully.');
     }
@@ -55,13 +62,28 @@ class AnnouncementController extends Controller
         $validated = $this->validateAnnouncement($request);
         $shouldPublish = $request->boolean('publish_now');
 
-        $announcement->update([
+        $data = [
             ...$validated,
             'is_published' => $shouldPublish,
             'published_at' => $shouldPublish
                 ? ($announcement->published_at ?? now())
                 : null,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($announcement->image) {
+                Storage::disk('public')->delete($announcement->image);
+            }
+            $data['image'] = $request->file('image')->store('announcements', 'public');
+        }
+
+        if ($request->boolean('remove_image') && $announcement->image) {
+            Storage::disk('public')->delete($announcement->image);
+            $data['image'] = null;
+        }
+
+        $announcement->update($data);
 
         return redirect()
             ->route('head-mitcom.announcements.index')
@@ -93,6 +115,7 @@ class AnnouncementController extends Controller
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:5000'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
             'type' => ['required', 'in:traffic_advisory,road_closure,emergency,system_notice'],
             'priority' => ['required', 'in:normal,important,urgent'],
         ]);
