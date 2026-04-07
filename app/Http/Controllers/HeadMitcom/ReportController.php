@@ -11,13 +11,15 @@ class ReportController extends Controller
 {
     public function index()
     {
-        $reports = Report::with('user')
+        $reports = Report::with(['user', 'duplicates'])
+            ->whereNull('parent_id')
             ->latest()
             ->paginate(15);
         return view('head-mitcom.reports.index', compact('reports'));
     }
     public function show(Report $report)
     {
+        $report->load(['user', 'duplicates.user', 'duplicates.verifier']);
         $enforcers = User::where('role', 'enforcer')->get();
         return view('head-mitcom.reports.show', compact('report', 'enforcers'));
     }
