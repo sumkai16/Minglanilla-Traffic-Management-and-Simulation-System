@@ -14,19 +14,12 @@ class ReportManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Report::with(['user', 'verifier', 'duplicates'])->whereNull('parent_id')->latest();
-
-        // Filter by status
-        if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by issue type
-        if ($request->filled('issue_type') && $request->issue_type !== 'all') {
-            $query->where('issue_type', $request->issue_type);
-        }
-
-        $reports = $query->paginate(20)->withQueryString(); 
+        $reports = Report::with(['user', 'verifier', 'duplicates'])
+            ->whereNull('parent_id')
+            ->filter($request->only(['search', 'status', 'issue_type']))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.reports.index', compact('reports'));
     }

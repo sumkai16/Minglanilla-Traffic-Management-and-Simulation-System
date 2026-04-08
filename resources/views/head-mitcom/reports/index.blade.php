@@ -4,13 +4,13 @@
         {{-- Stats Row --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             @php
-                $statuses = ['pending' => 'yellow', 'verified' => 'blue', 'assigned' => 'purple', 'resolved' => 'green'];
+                $statusColors = ['pending' => 'yellow', 'verified' => 'blue', 'assigned' => 'purple', 'resolved' => 'green'];
             @endphp
-            @foreach($statuses as $status => $color)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            @foreach($statusColors as $status => $color)
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition cursor-default">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ ucfirst($status) }}</p>
                     <p class="text-3xl font-bold text-{{ $color }}-600 mt-1">
-                        {{ $reports->where('status', $status)->count() }}
+                        {{ $stats[$status] ?? 0 }}
                     </p>
                 </div>
             @endforeach
@@ -20,9 +20,68 @@
 
         {{-- Table Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-slate-900">All Reports</h2>
-                <span class="text-sm text-slate-400">{{ $reports->total() }} total</span>
+            <div class="px-6 py-5 border-b border-slate-200">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">All Reports</h2>
+                        <p class="text-xs text-slate-500 mt-1">Search through civilian reports and filter by status or type</p>
+                    </div>
+                    <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                        {{ $reports->total() }} total reports
+                    </span>
+                </div>
+
+                {{-- Filter Bar --}}
+                <form method="GET" action="{{ route('head-mitcom.reports.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search reporter, location..." 
+                            class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-400">
+                    </div>
+                    
+                    <div>
+                        <select name="status" class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="all">All Statuses</option>
+                            <option value="pending" @selected(request('status') === 'pending')>Pending</option>
+                            <option value="verified" @selected(request('status') === 'verified')>Verified</option>
+                            <option value="assigned" @selected(request('status') === 'assigned')>Assigned</option>
+                            <option value="resolved" @selected(request('status') === 'resolved')>Resolved</option>
+                            <option value="rejected" @selected(request('status') === 'rejected')>Rejected</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select name="issue_type" class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600 text-ellipsis overflow-hidden">
+                            <option value="all">All Issue Types</option>
+                            <option value="traffic_signal_problem" @selected(request('issue_type') === 'traffic_signal_problem')>Traffic Signal Problem</option>
+                            <option value="road_damage" @selected(request('issue_type') === 'road_damage')>Road Damage / Hazard</option>
+                            <option value="illegal_parking" @selected(request('issue_type') === 'illegal_parking')>Illegal Parking</option>
+                            <option value="traffic_obstruction" @selected(request('issue_type') === 'traffic_obstruction')>Traffic Obstruction</option>
+                            <option value="accident" @selected(request('issue_type') === 'accident')>Accident / Incident</option>
+                            <option value="traffic_violation" @selected(request('issue_type') === 'traffic_violation')>Traffic Violation</option>
+                            <option value="reckless_driving" @selected(request('issue_type') === 'reckless_driving')>Reckless Driving</option>
+                            <option value="public_safety" @selected(request('issue_type') === 'public_safety')>Public Safety Concern</option>
+                            <option value="infrastructure" @selected(request('issue_type') === 'infrastructure')>Infrastructure Issue</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl transition text-sm">
+                            Apply
+                        </button>
+                        @if(request()->anyFilled(['search', 'status', 'issue_type']))
+                            <a href="{{ route('head-mitcom.reports.index') }}" class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition" title="Clear Filters">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
 
             <div class="overflow-x-auto">

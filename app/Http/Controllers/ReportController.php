@@ -49,18 +49,15 @@ class ReportController extends Controller
         }
 
         $validated['image_path'] = $imagePath;
-        // If logged in, use user_id and clear guest fields
-        if (Auth::check()) {
-            $validated['user_id'] = Auth::id();
-            $validated['reporter_name'] = null;
-            $validated['reporter_email'] = null;
-            $validated['reporter_phone'] = null;
-        } else {
-            // Guest report
-            $validated['user_id'] = null;
-        }
-
-        Report::create($validated);
+        Report::create([
+            ...$validated,
+            'image_path' => $imagePath,
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'parent_id' => Report::findDuplicate($validated['issue_type'], $validated['latitude'], $validated['longitude'])?->id,
+            'reporter_name' => Auth::check() ? null : $validated['reporter_name'],
+            'reporter_email' => Auth::check() ? null : $validated['reporter_email'],
+            'reporter_phone' => Auth::check() ? null : $validated['reporter_phone'],
+        ]);
 
         return redirect()->back()->with('success', 'Report submitted successfully.');
     }
@@ -103,8 +100,33 @@ class ReportController extends Controller
     }
 
 
- public function confirmation()
+    public function confirmation()
     {
         return view('reports.confirmation');
+    }
+
+    public function checkDuplicate(Request $request)
+    {
+        $request->validate([
+            'issue_type' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $duplicate = Report::findDuplicate(
+            $request->issue_type,
+            $request->latitude,
+            $request->longitude
+        );
+
+        if ($duplicate) {
+            return response()->json([
+                'found' => true,
+                'location' => $duplicate->location,
+                'created_at' => $duplicate->created_at->diffForHumans() ?? $duplicate->created_at->toDateTimeString(),
+            ]);
+        }
+
+        return response()->json(['found' => false]);
     }
 }

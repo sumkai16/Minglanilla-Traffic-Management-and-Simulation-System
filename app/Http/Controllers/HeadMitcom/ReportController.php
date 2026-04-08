@@ -9,13 +9,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class ReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $reports = Report::with(['user', 'duplicates'])
             ->whereNull('parent_id')
+            ->filter($request->only(['search', 'status', 'issue_type']))
             ->latest()
-            ->paginate(15);
-        return view('head-mitcom.reports.index', compact('reports'));
+            ->paginate(15)
+            ->withQueryString();
+
+        $stats = [
+            'pending' => Report::whereNull('parent_id')->where('status', 'pending')->count(),
+            'verified' => Report::whereNull('parent_id')->where('status', 'verified')->count(),
+            'assigned' => Report::whereNull('parent_id')->where('status', 'assigned')->count(),
+            'resolved' => Report::whereNull('parent_id')->where('status', 'resolved')->count(),
+        ];
+
+        return view('head-mitcom.reports.index', compact('reports', 'stats'));
     }
     public function show(Report $report)
     {
@@ -92,5 +102,44 @@ class ReportController extends Controller
             $report->assignedEnforcer->notify(new ReportAssigned($report));
         }
         return back()->with('success', 'Proof rejected. Report sent back to enforcer.');
+    }
+
+    public function create()
+    {
+        return view('head-mitcom.reports.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'issue_type' => 'required|string|max:255',
+            'description' => 'required|string',
+            'location' => 'required|string|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'reporter_name' => 'required|string|max:255',
+            'reporter_email' => 'required|email|max:255',
+            'reporter_phone' => 'required|string|max:20',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('reports', 'public');
+        }
+
+        Report::create([
+            ...$validated,
+            'image_path' => $imagePath,
+            'user_id' => null,
+            'parent_id' => Report::findDuplicate($validated['issue_type'], $validated['latitude'], $validated['longitude'])?->id,
+            'status' => 'verified',
+            'verified_by' => $request->user()->id,
+            'verified_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('head-mitcom.reports.index')
+            ->with('success', 'Incident report created and verified successfully.');
     }
 }
