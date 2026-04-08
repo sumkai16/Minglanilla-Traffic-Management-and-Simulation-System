@@ -45,8 +45,22 @@
                                 <td class="px-6 py-4 font-medium text-slate-900">
                                     {{ $report->user?->first_name ?? $report->reporter_name ?? 'Guest' }}
                                 </td>
-                                <td class="px-6 py-4 text-slate-700">
-                                    {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col gap-1">
+                                        <span class="text-slate-700">
+                                            {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                                        </span>
+                                        @if($report->all_reporters_count > 1)
+                                            <div class="flex">
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-600 ring-1 ring-blue-100">
+                                                    <svg class="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                                    </svg>
+                                                    {{ $report->all_reporters_count }} Reporters
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-500 max-w-[180px] truncate">
                                     {{ $report->location }}

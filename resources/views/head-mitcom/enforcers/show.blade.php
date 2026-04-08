@@ -23,11 +23,11 @@
 
     <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
         <section class="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-            <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-blue-800 via-slate-900 to-cyan-700"></div>
-            <div class="absolute right-0 top-0 h-44 w-44 rounded-full bg-white/10 blur-3xl"></div>
-            <div class="absolute left-10 top-10 h-28 w-28 rounded-full bg-cyan-300/20 blur-3xl"></div>
+            <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-blue-800 via-slate-900 to-cyan-700"></div>
+            <div class="absolute right-0 top-0 h-28 w-28 rounded-full bg-white/10 blur-3xl"></div>
+            <div class="absolute left-10 top-6 h-20 w-20 rounded-full bg-cyan-300/20 blur-3xl"></div>
 
-            <div class="relative px-6 pb-8 pt-44 sm:px-8 sm:pt-48">
+            <div class="relative px-6 pb-6 pt-28 sm:px-8 sm:pt-28">
                 <div class="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                     <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
                         <div

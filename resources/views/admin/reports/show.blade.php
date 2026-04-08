@@ -3,6 +3,26 @@
         <div class="absolute inset-x-0 top-0 -z-10 h-56 bg-gradient-to-b from-blue-50 to-transparent"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            @if($report->parent_id)
+                <div class="mb-6 flex items-center justify-between gap-4 rounded-xl border border-blue-200 bg-blue-50/50 p-4 shadow-sm backdrop-blur-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-blue-900">Duplicate Report</p>
+                            <p class="text-[10px] text-blue-700 uppercase tracking-widest font-semibold">Linked Incident</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.reports.show', $report->parent_id) }}" 
+                    class="inline-flex items-center gap-2 rounded-lg bg-blue-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-800 shadow-md">
+                        Return to Main Incident
+                    </a>
+                </div>
+            @endif
+
             @if (session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-800 rounded">
                     <p class="font-semibold">{{ session('success') }}</p>
@@ -46,6 +66,36 @@
                             @endif
                         </div>
                     </div>
+
+                    @if($report->duplicates->isNotEmpty())
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-xl font-bold text-gray-900 mb-4">Additional Reporters ({{ $report->duplicates->count() }})</h2>
+                            <div class="space-y-4">
+                                @foreach($report->duplicates as $duplicate)
+                                    <div class="p-4 border border-gray-100 rounded-lg bg-gray-50 flex flex-col gap-3">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-semibold text-gray-800">
+                                                {{ $duplicate->user ? $duplicate->user->first_name . ' ' . $duplicate->user->last_name : ($duplicate->reporter_name ?: 'Guest') }}
+                                            </span>
+                                            <div class="flex items-center gap-4">
+                                                <span class="text-xs text-gray-500">{{ $duplicate->created_at->diffForHumans() }}</span>
+                                                <a href="{{ route('admin.reports.show', $duplicate) }}" 
+                                                   class="text-xs font-bold text-blue-700 hover:text-blue-900 transition underline underline-offset-4 decoration-blue-200">
+                                                    Full Report
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-700 italic">"{{ $duplicate->description }}"</p>
+                                        @if($duplicate->image_path)
+                                            <div class="mt-2">
+                                                <img src="{{ Storage::url($duplicate->image_path) }}" class="h-24 rounded-lg shadow-sm" alt="Duplicate image">
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h2 class="text-xl font-bold text-gray-900 mb-4">Location on Map</h2>

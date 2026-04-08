@@ -14,7 +14,7 @@ class ReportManagementController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Report::with(['user', 'verifier'])->latest();
+        $query = Report::with(['user', 'verifier', 'duplicates'])->whereNull('parent_id')->latest();
 
         // Filter by status
         if ($request->filled('status') && $request->status !== 'all') {
@@ -54,7 +54,7 @@ class ReportManagementController extends Controller
     {
         //
 
-        $report->load(['user','verifier']);
+        $report->load(['user','verifier', 'duplicates.user', 'duplicates.verifier']);
         return view('admin.reports.show', compact('report'));
     }
 

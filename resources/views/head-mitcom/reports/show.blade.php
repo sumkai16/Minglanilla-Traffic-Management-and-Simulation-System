@@ -68,6 +68,28 @@
     </x-slot:actions>
 
     <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        @if($report->parent_id)
+            <div class="mb-6 flex items-center justify-between gap-4 rounded-3xl border border-blue-200 bg-blue-50/50 p-5 shadow-sm backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 ring-4 ring-blue-50">
+                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-lg font-black text-blue-900">Duplicate Report</p>
+                        <p class="text-sm text-blue-700/80">This case is part of a larger incident grouping.</p>
+                    </div>
+                </div>
+                <a href="{{ route('head-mitcom.reports.show', $report->parent_id) }}" 
+                   class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 hover:shadow-blue-300">
+                    View Main Incident
+                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </div>
+        @endif
         <section class="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
             <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-blue-800 via-slate-900 to-cyan-700"></div>
             <div class="absolute -right-8 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
@@ -192,6 +214,75 @@
                         </div>
                     </div>
                 </div>
+
+                @if($report->duplicates->isNotEmpty())
+                    <div class="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+                        <div class="border-b border-slate-200 pb-5">
+                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Community Input</p>
+                            <h2 class="mt-2 text-2xl font-bold text-slate-900">Additional Reporters ({{ $report->duplicates->count() }})</h2>
+                            <p class="mt-1 text-sm text-slate-500">Other users reported this same incident. Review their descriptions and evidence below.</p>
+                        </div>
+                        <div class="mt-6 space-y-4">
+                            @foreach($report->duplicates as $duplicate)
+                                <div class="flex flex-col gap-4 p-5 rounded-2xl bg-slate-50 border border-slate-100 sm:flex-row sm:items-start">
+                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm text-slate-900 font-bold ring-1 ring-slate-200">
+                                        @php
+                                            $dName = $duplicate->user ? trim($duplicate->user->first_name . ' ' . $duplicate->user->last_name) : ($duplicate->reporter_name ?: 'Guest');
+                                            $dParts = preg_split('/\s+/', trim($dName)) ?: [];
+                                            echo strtoupper(substr($dParts[0] ?? 'G', 0, 1) . substr($dParts[count($dParts) - 1] ?? 'R', 0, 1));
+                                        @endphp
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <p class="font-bold text-slate-900">{{ $dName }}</p>
+                                            <div class="flex items-center gap-4 text-xs font-semibold">
+                                                <span class="text-slate-400">{{ $duplicate->created_at->diffForHumans() }}</span>
+                                                <a href="{{ route('head-mitcom.reports.show', $duplicate) }}" 
+                                                   class="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-2.5 py-1.5 text-blue-700 transition hover:bg-blue-100">
+                                                    Full Report
+                                                    <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="mt-1 text-sm leading-6 text-slate-600">"{{ $duplicate->description }}"</p>
+                                        
+                                        @if($duplicate->image_path)
+                                            <div class="mt-4" x-data="{ openDupEvidence: false }">
+                                                <img src="{{ Storage::url($duplicate->image_path) }}" 
+                                                     class="h-32 w-full sm:w-48 object-cover rounded-xl border border-slate-200 shadow-sm cursor-zoom-in transition hover:opacity-90" 
+                                                     alt="Duplicate evidence"
+                                                     @click="openDupEvidence = true; document.body.classList.add('evidence-open')">
+                                                
+                                                <template x-teleport="body">
+                                                    <div x-show="openDupEvidence" x-cloak x-transition.opacity
+                                                        class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 p-4"
+                                                        @click="openDupEvidence = false; document.body.classList.remove('evidence-open')"
+                                                        @keydown.escape.window="openDupEvidence = false; document.body.classList.remove('evidence-open')">
+                                                        <div class="relative max-w-5xl" @click.stop>
+                                                            <img src="{{ Storage::url($duplicate->image_path) }}"
+                                                                alt="Expanded duplicate evidence"
+                                                                class="max-h-[85vh] w-full rounded-[1.5rem] object-contain shadow-2xl">
+                                                            <button type="button"
+                                                                class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+                                                                @click="openDupEvidence = false; document.body.classList.remove('evidence-open')">
+                                                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 @if($report->image_path)
                     <div class="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm"

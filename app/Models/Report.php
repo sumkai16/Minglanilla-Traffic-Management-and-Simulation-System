@@ -27,6 +27,7 @@ class Report extends Model
         'assigned_at',
         'proof_image',
         'resolved_at',
+        'parent_id',
     ];
 
     protected $casts = [
@@ -62,6 +63,21 @@ class Report extends Model
     public function assignedEnforcer(){
         
     return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Report::class, 'parent_id');
+    }
+
+    public function duplicates()
+    {
+        return $this->hasMany(Report::class, 'parent_id');
+    }
+
+    public function getAllReportersCountAttribute()
+    {
+        return $this->duplicates->count() + 1;
     }
     
 }
