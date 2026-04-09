@@ -183,6 +183,20 @@
                         <div class="w-3 h-3 rounded-full bg-red-500"></div>
                         <span class="text-slate-600">Rejected</span>
                     </div>
+                     <div class="w-px h-4 bg-slate-300 mx-2"></div>
+                        <span class="font-semibold text-slate-700">Traffic Flow:</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-2 rounded-sm" style="background-color: #06c167;"></div>
+                            <span class="text-slate-600">Free Flow</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-2 rounded-sm" style="background-color: #ff8c00;"></div>
+                            <span class="text-slate-600">Slow</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-2 rounded-sm" style="background-color: #ff0000;"></div>
+                            <span class="text-slate-600">Congested</span>
+                        </div>
                 </div>
             </div>
         </div>

@@ -65,6 +65,15 @@
                         <option value="30">30x</option>
                     </select>
                 </div>
+                {{-- Divider --}}
+                <div class="w-px h-8 bg-slate-200 hidden sm:block"></div>
+                {{-- Traffic Flow Toggle --}}
+                <button id="traffic-toggle" onclick="toggleTrafficLayer()"
+                    class="px-3 py-2 rounded-xl text-sm font-semibold transition bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full inline-block"
+                        style="background: linear-gradient(to right, #22c55e, #ef4444);"></span>
+                    Traffic Flow
+                </button>
             </div>
 
             {{-- Timeline --}}
@@ -99,7 +108,22 @@
                         style="width:22px;height:4px;background:#ef4444"></span><span>Road Closure</span></span>
                 <span class="flex items-center gap-1.5 p-2"><span class="inline-block rounded shrink-0"
                         style="width:22px;height:4px;background:#22c55e"></span><span>Reroute</span></span>
+                <div class="w-px h-4 bg-slate-300 mx-2"></div>
+                <span class="font-semibold text-slate-700">Traffic Flow:</span>
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-2 rounded-sm" style="background-color: #06c167;"></div>
+                    <span class="text-slate-600">Free Flow</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-2 rounded-sm" style="background-color: #ff8c00;"></div>
+                    <span class="text-slate-600">Slow</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-2 rounded-sm" style="background-color: #ff0000;"></div>
+                    <span class="text-slate-600">Congested</span>
+                </div>
             </div>
+
             {{-- Map --}}
             <div id="map" class="z-0 overflow-hidden" style="height: 520px; min-height: 520px;"></div>
         </div>
@@ -111,13 +135,24 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     @push('scripts')
         <script>
+            let map;
+            let trafficLayer;
+            let trafficVisible = false;
+
             document.addEventListener('DOMContentLoaded', function () {
 
-                const map = L.map('map').setView([10.2700, 123.7850], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                map = L.map('map').setView([10.2700, 123.7850], 13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
-
+                const tomtomApiKey = 'ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z';
+                trafficLayer = L.tileLayer(
+                    `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${tomtomApiKey}`,
+                    {
+                        attribution: '© TomTom',
+                        maxZoom: 19,
+                        opacity: 1,
+                    }
+                );
                 let allReports = [];
                 let allAdvisories = [];
                 let startTime = null;
@@ -288,7 +323,24 @@
                 document.getElementById('playBtn').addEventListener('click', playSimulation);
                 document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
                 document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
             });
+            function toggleTrafficLayer() {
+                const btn = document.getElementById('traffic-toggle');
+                if (trafficVisible) {
+                    map.removeLayer(trafficLayer);
+                    trafficVisible = false;
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                } else {
+                    trafficLayer.addTo(map);
+                    trafficVisible = true;
+                    btn.classList.remove('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                    btn.classList.add('bg-blue-600', 'text-white');
+                }
+            }
+            window.toggleTrafficLayer = toggleTrafficLayer;
         </script>
+
     @endpush
 </x-app-nav>
