@@ -106,8 +106,6 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 
     Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
     Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
-
-    //Traffic Advisory routes
     Route::get('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'index'])->name('advisories.index');
     Route::get('/advisories/create', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'create'])->name('advisories.create');
     Route::post('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'store'])->name('advisories.store');

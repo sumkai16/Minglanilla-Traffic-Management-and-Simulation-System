@@ -91,13 +91,16 @@ class ReportController extends Controller
     }
     public function rejectResolved(Report $report)
     {
+       
         if ($report->status !== 'for_verification') {
             return back()->with('error', 'This report is not pending verification.');
         }
-        $report->update([
+         $report->update([
             'status' => 'assigned',
             'proof_image' => null,
+            'rejection_count' => $report->rejection_count + 1,
         ]);
+       
         if ($report->assignedEnforcer) {
             $report->assignedEnforcer->notify(new ReportAssigned($report));
         }
