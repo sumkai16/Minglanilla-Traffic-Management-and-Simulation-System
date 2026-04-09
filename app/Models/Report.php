@@ -79,5 +79,69 @@ class Report extends Model
     {
         return $this->duplicates->count() + 1;
     }
-    
+
+    /**
+     * Scope a query to filter reports.
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('location', 'like', '%' . $search . '%')
+                    ->orWhere('issue_type', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('reporter_name', 'like', '%' . $search . '%')
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('first_name', 'like', '%' . $search . '%')
+                            ->orWhere('last_name', 'like', '%' . $search . '%')
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                    });
+            });
+        });
+
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            if ($status !== 'all') {
+                $query->where('status', $status);
+            }
+        });
+
+        $query->when($filters['issue_type'] ?? null, function ($query, $issueType) {
+            if ($issueType !== 'all') {
+                $query->where('issue_type', $issueType);
+            }
+        });
+    }
+
+    /**
+     * Centralized logic to find a potential duplicate parent report.
+     */
+    public static function findDuplicate($issueType, $lat, $lng, $radiusMeters = 50, $hoursBack = 12)
+    {
+        $potentialParents = self::where('issue_type', $issueType)
+            ->whereNull('parent_id')
+            ->whereNotIn('status', ['resolved', 'rejected'])
+            ->where('created_at', '>=', now()->subHours($hoursBack))
+            ->get();
+
+        foreach ($potentialParents as $parent) {
+            $distance = self::calculateDistance($lat, $lng, $parent->latitude, $parent->longitude);
+            if ($distance <= $radiusMeters) {
+                return $parent;
+            }
+        }
+
+        return null;
+    }
+
+    public static function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // meters
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
+    }
 }

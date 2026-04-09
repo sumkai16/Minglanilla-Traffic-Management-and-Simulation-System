@@ -93,6 +93,8 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     Route::patch('/announcements/{announcement}/publish', [HeadMitcomAnnouncementController::class, 'publish'])->name('announcements.publish');
     Route::patch('/announcements/{announcement}/unpublish', [HeadMitcomAnnouncementController::class, 'unpublish'])->name('announcements.unpublish');
     Route::get('/reports', [HeadMitcomReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/create', [HeadMitcomReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports', [HeadMitcomReportController::class, 'store'])->name('reports.store');
     Route::get('/reports/{report}', [HeadMitcomReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/assign', [HeadMitcomReportController::class, 'assign'])->name('reports.assign');
     Route::post('/reports/{report}/reassign', [HeadMitcomReportController::class, 'reassign'])->name('reports.reassign');
@@ -125,6 +127,7 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
 // Public report routes
 Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
 Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
+Route::post('/reports/check-duplicate', [App\Http\Controllers\ReportController::class, 'checkDuplicate'])->name('reports.check-duplicate');
 
 //public advisory routes
 Route::get('/advisories', [\App\Http\Controllers\AdvisoryController::class, 'index'])->name('advisories.index');

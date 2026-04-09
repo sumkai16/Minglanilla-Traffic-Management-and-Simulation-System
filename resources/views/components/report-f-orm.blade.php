@@ -1,11 +1,67 @@
-@props(['action' => ''])
+@props(['action' => '', 'showReporterFields' => false])
 
-<form method="POST" action="{{ $action ?: route('report.store') }}" enctype="multipart/form-data"
-    class="p-8 bg-white/90 backdrop-blur rounded-3xl border border-blue-100 shadow-[0_20px_50px_rgba(12,38,88,0.15)]">
+<div x-data="{ 
+    showDuplicateModal: false, 
+    showCancelModal: false, 
+    duplicateInfo: null, 
+    confirmedDuplicate: false,
+    
+    async handleSubmit() {
+        const form = this.$refs.reportForm;
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Only check for duplicates if we haven't already confirmed this is a desired duplicate
+        if (!this.confirmedDuplicate) {
+            try {
+                const response = await fetch('{{ route('reports.check-duplicate') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        issue_type: document.getElementById('issue_type').value,
+                        latitude: document.getElementById('latitude').value,
+                        longitude: document.getElementById('longitude').value
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.found) {
+                    this.duplicateInfo = data;
+                    this.showDuplicateModal = true;
+                    return;
+                }
+            } catch (error) {
+                console.error('Duplicate check failed:', error);
+            }
+        }
+
+        this.submitForm();
+    },
+
+    submitForm() {
+        const btn = document.getElementById('submitReportBtn');
+        const text = document.getElementById('submitText');
+        const loading = document.getElementById('submitLoading');
+        
+        if (btn && text && loading) {
+            btn.disabled = true;
+            text.classList.add('hidden');
+            loading.classList.remove('hidden');
+        }
+        this.$refs.reportForm.submit();
+    }
+}" @keydown.escape.window="showCancelModal = false; showDuplicateModal = false">
+    <form x-ref="reportForm" method="POST" action="{{ $action ?: route('report.store') }}" enctype="multipart/form-data"
+        class="p-8 bg-white/90 backdrop-blur rounded-3xl border border-blue-100 shadow-[0_20px_50px_rgba(12,38,88,0.15)]">
     @csrf
     ...
 
-    @guest
+    @if(!Auth::check() || $showReporterFields)
         <!-- Guest Reporter Info -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -46,7 +102,7 @@
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
-    @endguest
+    @endif
 
     <!-- Incident Type & Location -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -159,12 +215,12 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="flex items-center justify-center gap-4" x-data="{ showCancelModal: false }">
+    <div class="flex items-center justify-center gap-4">
         <button type="button" @click="showCancelModal = true"
             class="px-6 py-3 text-blue-700/80 font-semibold hover:text-blue-900 transition cursor-pointer">
             Cancel
         </button>
-        <button type="submit" id="submitReportBtn"
+        <button type="button" id="submitReportBtn" @click="handleSubmit()"
             class="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
             <span id="submitText">Submit Report</span>
             <span id="submitLoading" class="hidden inline-flex items-center">
@@ -238,23 +294,52 @@
             </div>
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const form = document.querySelector('form[action*="report"]');
-                if (form) {
-                    form.addEventListener('submit', function () {
-                        const btn = document.getElementById('submitReportBtn');
-                        const text = document.getElementById('submitText');
-                        const loading = document.getElementById('submitLoading');
+        <!-- Duplicate Confirmation Modal -->
+        <div x-show="showDuplicateModal" 
+            class="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+            x-cloak
+            style="display: none;">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showDuplicateModal = false"></div>
+            
+            <!-- Modal Content -->
+            <div x-show="showDuplicateModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl border border-blue-100 overflow-hidden">
+                
+                <div class="p-8 text-center">
+                    <!-- Warning icon -->
+                    <div class="mx-auto w-20 h-20 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
 
-                        if (btn && text && loading) {
-                            btn.disabled = true;
-                            text.classList.add('hidden');
-                            loading.classList.remove('hidden');
-                        }
-                    });
-                }
-            });
-        </script>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Duplicate Incident?</h3>
+                    <p class="text-slate-600 leading-relaxed mb-8">
+                        There's already an existing Report Incident on this location reported <span x-text="duplicateInfo?.created_at" class="font-bold text-blue-600"></span>.
+                        <br><br>
+                        Are you sure you still want to report it?
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button type="button" @click="showDuplicateModal = false"
+                            class="flex-1 px-6 py-3.5 rounded-2xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">
+                            No, Cancel
+                        </button>
+                        <button type="button" @click="confirmedDuplicate = true; submitForm()"
+                            class="flex-1 px-6 py-3.5 rounded-2xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
+                            Yes, Report Anyway
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </form>
+</div>

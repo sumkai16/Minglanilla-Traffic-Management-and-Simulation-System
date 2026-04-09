@@ -27,26 +27,9 @@ class ReportController extends Controller
         $validated['user_id'] = Auth::user()->id;
         $validated['status'] = 'pending';
 
-        // Duplicate detection
-        $parentReport = Report::where('issue_type', $validated['issue_type'])
-            ->whereNull('parent_id')
-            ->whereNotIn('status', ['resolved', 'rejected'])
-            ->where('created_at', '>=', now()->subHours(12))
-            ->orderByRaw("(POW(latitude - ?, 2) + POW(longitude - ?, 2)) ASC", [$validated['latitude'], $validated['longitude']])
-            ->first();
-
-        if ($parentReport) {
-            $distance = $this->calculateDistance(
-                $validated['latitude'],
-                $validated['longitude'],
-                $parentReport->latitude,
-                $parentReport->longitude
-            );
-
-            if ($distance <= 50) { // 50 meters threshold
-                $validated['parent_id'] = $parentReport->id;
-            }
-        }
+        $validated['user_id'] = Auth::user()->id;
+        $validated['status'] = 'pending';
+        $validated['parent_id'] = Report::findDuplicate($validated['issue_type'], $validated['latitude'], $validated['longitude'])?->id;
 
         if($request->hasFile('image')){
             $path = $request->file('image')->store('reports', 'public');
@@ -58,17 +41,6 @@ class ReportController extends Controller
         return redirect()->route('user.dashboard')->with('success', 'Report submitted successfully.');
     }
 
-    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
-    {
-        $earthRadius = 6371000; // meters
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-            sin($dLon / 2) * sin($dLon / 2);
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        return $earthRadius * $c;
-    }
 
     public function show(Report $report){
             

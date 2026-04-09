@@ -102,7 +102,18 @@
 
                         <!-- Filters -->
                         <form method="GET" action="{{ route('admin.reports.index') }}"
-                            class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                            class="flex flex-col gap-3 lg:flex-row lg:items-center">
+                            
+                            <div class="flex-[1.5] relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search reporter, location, or issue..."
+                                    class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-400 bg-white">
+                            </div>
+
                             <div class="flex-1">
                                 <select name="status" x-model="status"
                                     class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:ring-blue-500">
@@ -129,10 +140,20 @@
                                     <option value="infrastructure">Infrastructure Issue</option>
                                 </select>
                             </div>
-                            <button type="submit"
-                                class="px-6 py-2 rounded-xl bg-blue-700 text-white text-sm font-semibold hover:bg-blue-800 transition shadow-sm">
-                                Apply Filters
-                            </button>
+                            <div class="flex gap-2">
+                                <button type="submit"
+                                    class="flex-1 lg:flex-none px-6 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition shadow-sm whitespace-nowrap">
+                                    Filter
+                                </button>
+                                @if(request()->anyFilled(['search', 'status', 'issue_type']))
+                                    <a href="{{ route('admin.reports.index') }}" 
+                                        class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition" title="Clear Filters">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </a>
+                                @endif
+                            </div>
                         </form>
                     </div>
 
