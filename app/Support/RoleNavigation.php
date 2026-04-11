@@ -28,7 +28,16 @@ class RoleNavigation
             'head-mitcom' => [
                 self::item('Dashboard', route('head-mitcom.dashboard'), ['head-mitcom.dashboard'], 'dashboard'),
                 self::item('Report Incident', route('head-mitcom.reports.create'), ['head-mitcom.reports.create'], 'create'),
-                self::item('Reports', route('head-mitcom.reports.index'), ['head-mitcom.reports.*'], 'reports'),
+                self::item('Reports', route('head-mitcom.reports.index'), [
+                    'head-mitcom.reports.index',
+                    'head-mitcom.reports.show',
+                    'head-mitcom.reports.assign',
+                    'head-mitcom.reports.reassign',
+                    'head-mitcom.reports.verify',
+                    'head-mitcom.reports.reject',
+                    'head-mitcom.reports.confirm-resolved',
+                    'head-mitcom.reports.reject-resolved'
+                ], 'reports'),
                 self::item('Enforcers', route('head-mitcom.enforcers.index'), ['head-mitcom.enforcers.*'], 'enforcers'),
                 self::item('Announcements', route('head-mitcom.announcements.index'), ['head-mitcom.announcements.*'], 'announcements'),
                 self::item('Live Map', route('head-mitcom.map'), ['head-mitcom.map'], 'map'),
