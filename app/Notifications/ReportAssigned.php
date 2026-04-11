@@ -26,4 +26,5 @@ class ReportAssigned extends Notification
             'message'   => 'You have been assigned a new traffic report: ' . $this->report->title,
         ];
     }
+    
 }

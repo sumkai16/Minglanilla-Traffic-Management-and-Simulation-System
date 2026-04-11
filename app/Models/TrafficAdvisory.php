@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 class TrafficAdvisory extends Model
 {
     //
-    protected $fillable = [
+    use LogsActivity;
+  protected $fillable = [
         'title',
         'description',
         'start_date',
@@ -15,6 +17,7 @@ class TrafficAdvisory extends Model
         'status',
         'map_data',
         'created_by',
+        'expires_at',
     ];
 
     protected $casts = [
@@ -26,5 +29,13 @@ class TrafficAdvisory extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'status', 'start_date', 'end_date', 'expires_at'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Advisory {$eventName}");
     }
 }

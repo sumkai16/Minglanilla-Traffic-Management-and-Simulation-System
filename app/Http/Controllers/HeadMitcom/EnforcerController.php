@@ -15,33 +15,55 @@ class EnforcerController extends Controller{
 
         return view('head-mitcom.enforcers.index', compact('enforcers'));
     }
-  public function show(User $user)
-{
-    $enforcer = $user;
+    public function show(User $user)
+    {
+        $enforcer = $user;
 
-    $assignedReports = $enforcer->assignedReports()
-        ->latest()
-        ->paginate(10);
+        $assignedReports = $enforcer->assignedReports()
+            ->latest()
+            ->paginate(10);
 
-    $resolvedReports = $enforcer->assignedReports()
-        ->whereNotNull('assigned_at')
-        ->whereNotNull('resolved_at')
-        ->where('status', 'resolved')
-        ->get(['assigned_at', 'resolved_at']);
+        $totalAssigned = $enforcer->assignedReports()->count();
 
-    $avgResolutionMinutes = $resolvedReports->avg(function ($r) {
-        return $r->assigned_at->diffInMinutes($r->resolved_at);
-    });
+        $activeCount = $enforcer->assignedReports()
+            ->where('status', 'assigned')
+            ->count();
 
-    $avgResolutionMinutes = $avgResolutionMinutes ? round($avgResolutionMinutes) : null;
+        $reviewCount = $enforcer->assignedReports()
+            ->where('status', 'for_verification')
+            ->count();
 
-    $totalRejections = $enforcer->assignedReports()->sum('rejection_count');
+        $resolvedCount = $enforcer->assignedReports()
+            ->where('status', 'resolved')
+            ->count();
 
-    return view('head-mitcom.enforcers.show', compact(
-        'enforcer',
-        'assignedReports',
-        'avgResolutionMinutes',
-        'totalRejections'
-    ));
-}
+        $completionRate = $totalAssigned > 0
+            ? round(($resolvedCount / $totalAssigned) * 100)
+            : 0;
+
+        $resolvedReports = $enforcer->assignedReports()
+            ->whereNotNull('assigned_at')
+            ->whereNotNull('resolved_at')
+            ->where('status', 'resolved')
+            ->get(['assigned_at', 'resolved_at']);
+
+        $avgResolutionMinutes = $resolvedReports->avg(function ($r) {
+            return $r->assigned_at->diffInMinutes($r->resolved_at);
+        });
+        $avgResolutionMinutes = $avgResolutionMinutes ? round($avgResolutionMinutes) : null;
+
+        $totalRejections = $enforcer->assignedReports()->sum('rejection_count');
+
+        return view('head-mitcom.enforcers.show', compact(
+            'enforcer',
+            'assignedReports',
+            'totalAssigned',
+            'activeCount',
+            'reviewCount',
+            'resolvedCount',
+            'completionRate',
+            'avgResolutionMinutes',
+            'totalRejections'
+        ));
+    }
 }

@@ -97,6 +97,9 @@ class AnnouncementController extends Controller
             'published_at' => $announcement->published_at ?? now(),
         ]);
 
+        $citizens = User::where('role', 'user')->get();
+        \Illuminate\Support\Facades\Notification::send($citizens, new AnnouncementPublished($announcement));
+
         return back()->with('success', 'Announcement published.');
     }
 

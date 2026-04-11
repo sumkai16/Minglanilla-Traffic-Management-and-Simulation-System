@@ -59,7 +59,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/reports/{report}',[App\Http\Controllers\Admin\ReportManagementController::class, 'show'])->name('reports.show');
     Route::patch('reports/{report}/status',[App\Http\Controllers\Admin\ReportManagementController::class, 'updateStatus'])->name('reports.updateStatus');
 
-    Route::get('/map', [\App\Http\Controllers\Admin\DashboardController::class, 'map'])->name('map');
+    Route::get('/map', [AdminDashboardController::class, 'map'])->name('map');
+    Route::get('/system', [AdminDashboardController::class, 'system'])->name('system');
+    Route::get('/audit-log', [AdminDashboardController::class, 'auditLog'])->name('audit-log');
 });
 
 // Enforcer routes

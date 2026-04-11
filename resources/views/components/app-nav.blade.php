@@ -28,8 +28,8 @@
             display: none !important;
         }
     </style>
-    @stack('styles')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 
 <body class="min-h-screen bg-slate-100 text-slate-900"
@@ -132,9 +132,9 @@
                                                                 : route('enforcer.reports.show', $reportId);
                                                         }
                                                     @endphp
-                                                    <a href="{{ $url }}"
-                                                    onclick="fetch('{{ route('notifications.read', $notification->id) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' } })"
-                                                    class="block px-4 py-3 hover:bg-slate-50 transition {{ is_null($notification->read_at) ? 'bg-blue-50' : '' }}">
+                                                        <a href="{{ $url }}"
+                                                        onclick="event.preventDefault(); fetch('{{ route('notifications.read', $notification->id) }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' } }).finally(() => { window.location.href = '{{ $url }}'; })"
+                                                        class="block px-4 py-3 hover:bg-slate-50 transition {{ is_null($notification->read_at) ? 'bg-blue-50' : '' }}">
                                                         <p class="text-xs text-slate-700">{{ $notification->data['message'] }}</p>
                                                         <p class="text-[10px] text-slate-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                                                     </a>

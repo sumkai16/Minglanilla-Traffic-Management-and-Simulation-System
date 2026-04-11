@@ -20,7 +20,10 @@ class RoleNavigation
                 self::item('Manage Users', route('admin.users.index'), ['admin.users.*'], 'users'),
                 self::item('Traffic Reports', route('admin.reports.index'), ['admin.reports.*'], 'reports'),
                 self::item('Live Traffic Map', route('admin.map'), ['admin.map'], 'map'),
+                self::item('System Overview', route('admin.system'), ['admin.system'], 'system'),
+                self::item('Audit Log', route('admin.audit-log'), ['admin.audit-log'], 'audit'),
                 self::item('Profile', route('profile.edit'), ['profile.*'], 'profile'),
+                
             ],
             'head-mitcom' => [
                 self::item('Dashboard', route('head-mitcom.dashboard'), ['head-mitcom.dashboard'], 'dashboard'),
