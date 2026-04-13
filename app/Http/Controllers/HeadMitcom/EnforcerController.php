@@ -7,11 +7,37 @@ use App\Models\User;
 
 class EnforcerController extends Controller{
     public function index(){
-       
-    $enforcers = user::where('role', 'enforcer')
-        ->withCount('assignedReports')
-        ->latest()
-        ->paginate(10);
+        $query = User::where('role', 'enforcer')
+            ->withCount('assignedReports');
+
+        // Search by name or email
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by assignment status
+        if (request('assignment') === 'has_assignments') {
+            $query->has('assignedReports');
+        } elseif (request('assignment') === 'no_assignments') {
+            $query->doesntHave('assignedReports');
+        }
+
+        // Sort
+        $sortField = request('sort', 'created_at');
+        $sortDir = request('dir', 'desc');
+        $allowedSorts = ['first_name', 'created_at', 'assigned_reports_count'];
+        $allowedDirs = ['asc', 'desc'];
+
+        if (!in_array($sortField, $allowedSorts)) $sortField = 'created_at';
+        if (!in_array($sortDir, $allowedDirs)) $sortDir = 'desc';
+
+        $query->orderBy($sortField, $sortDir);
+
+        $enforcers = $query->paginate(10)->withQueryString();
 
         return view('head-mitcom.enforcers.index', compact('enforcers'));
     }

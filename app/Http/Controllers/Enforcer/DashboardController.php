@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Enforcer;
 use App\Http\Controllers\Controller;
 use App\Models\Report;
 use Illuminate\Support\Facades\Cache;
-
+use App\Models\EnforcerStation;
 class DashboardController extends Controller
 {
     public function index()
@@ -40,14 +40,18 @@ class DashboardController extends Controller
         $activeCount = (int) ($reportStats->active_count ?? 0);
         $forVerificationCount = (int) ($reportStats->for_verification_count ?? 0);
         $resolvedCount = (int) ($reportStats->resolved_count ?? 0);
-
+        $currentStation = EnforcerStation::where('enforcer_id', $enforcerId)
+            ->where('is_active', true)
+            ->latest('assigned_at')
+            ->first();
         return view('enforcer.dashboard', compact(
             'currentAssigned',
             'assignmentHistory',
             'assignedCount',
             'activeCount',
             'forVerificationCount',
-            'resolvedCount'
+            'resolvedCount',
+            'currentStation',
         ));
     }
 }

@@ -27,8 +27,8 @@ class RoleNavigation
             ],
             'head-mitcom' => [
                 self::item('Dashboard', route('head-mitcom.dashboard'), ['head-mitcom.dashboard'], 'dashboard'),
-                self::item('Report Incident', route('head-mitcom.reports.create'), ['head-mitcom.reports.create'], 'create'),
                 self::item('Reports', route('head-mitcom.reports.index'), [
+                    'head-mitcom.reports.create',
                     'head-mitcom.reports.index',
                     'head-mitcom.reports.show',
                     'head-mitcom.reports.assign',
@@ -43,6 +43,7 @@ class RoleNavigation
                 self::item('Live Map', route('head-mitcom.map'), ['head-mitcom.map'], 'map'),
                 self::item('Advisories', route('head-mitcom.advisories.index'), ['head-mitcom.advisories.*'], 'advisories'),
                 self::item('Simulation', route('head-mitcom.simulation.index'), ['head-mitcom.simulation.*'], 'simulation'),
+                self::item('Stations', route('head-mitcom.enforcer-stations.index'), ['head-mitcom.enforcer-stations'], 'enforcer-stations'),
                 self::item('Profile', route('profile.edit'), ['profile.*'], 'profile'),
             ],
             'enforcer' => [

@@ -12,12 +12,43 @@ class TrafficAdvisoryController extends Controller
 
     public function index()
     {
-        $advisories = TrafficAdvisory::where('created_by', auth()->user()->id)
-            ->orderByRaw("FIELD(status, 'published', 'draft', 'archived')")
-            ->latest()
-            ->get();
+        $query = TrafficAdvisory::where('created_by', auth()->user()->id);
 
-        return view('head-mitcom.advisories.index', compact('advisories'));
+        // Search by title
+        if ($search = request('search')) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        // Filter by status
+        if (request('status') && request('status') !== 'all') {
+            $query->where('status', request('status'));
+        }
+
+        // Sort
+        $sortField = request('sort', 'created_at');
+        $sortDir = request('dir', 'desc');
+        $allowedSorts = ['title', 'created_at', 'start_date', 'status'];
+        $allowedDirs = ['asc', 'desc'];
+
+        if (!in_array($sortField, $allowedSorts)) $sortField = 'created_at';
+        if (!in_array($sortDir, $allowedDirs)) $sortDir = 'desc';
+
+        // Always keep status priority ordering, then apply user sort
+        $query->orderByRaw("FIELD(status, 'published', 'draft', 'archived')")
+              ->orderBy($sortField, $sortDir);
+
+        $advisories = $query->paginate(10)->withQueryString();
+
+        // Stats for cards
+        $userId = auth()->user()->id;
+        $stats = [
+            'total'     => TrafficAdvisory::where('created_by', $userId)->count(),
+            'published' => TrafficAdvisory::where('created_by', $userId)->where('status', 'published')->count(),
+            'draft'     => TrafficAdvisory::where('created_by', $userId)->where('status', 'draft')->count(),
+            'archived'  => TrafficAdvisory::where('created_by', $userId)->where('status', 'archived')->count(),
+        ];
+
+        return view('head-mitcom.advisories.index', compact('advisories', 'stats'));
     }
 
     public function create()

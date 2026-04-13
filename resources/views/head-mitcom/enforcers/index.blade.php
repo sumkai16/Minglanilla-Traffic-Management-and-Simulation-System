@@ -23,9 +23,61 @@
 
         {{-- Table --}}
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-slate-900">All Enforcers</h2>
-                <span class="text-sm text-slate-400">{{ $enforcers->total() }} total</span>
+            <div class="px-6 py-5 border-b border-slate-200">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">All Enforcers</h2>
+                        <p class="text-xs text-slate-500 mt-1">Search, filter, and sort enforcers by name, email, or assignment status</p>
+                    </div>
+                    <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                        {{ $enforcers->total() }} total
+                    </span>
+                </div>
+
+                {{-- Filter Bar --}}
+                <form method="GET" action="{{ route('head-mitcom.enforcers.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div class="relative md:col-span-2">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or email..."
+                            class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-400">
+                    </div>
+
+                    <div>
+                        <select name="assignment"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="all">All Assignments</option>
+                            <option value="has_assignments" @selected(request('assignment') === 'has_assignments')>Has Assignments</option>
+                            <option value="no_assignments" @selected(request('assignment') === 'no_assignments')>No Assignments</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select name="sort"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="created_at" @selected(request('sort', 'created_at') === 'created_at')>Sort: Newest First</option>
+                            <option value="first_name" @selected(request('sort') === 'first_name')>Sort: Name (A-Z)</option>
+                            <option value="assigned_reports_count" @selected(request('sort') === 'assigned_reports_count')>Sort: Most Assignments</option>
+                        </select>
+                        <input type="hidden" name="dir" value="{{ request('sort') === 'first_name' ? 'asc' : (request('sort') === 'assigned_reports_count' ? 'desc' : 'desc') }}">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl transition text-sm">
+                            Apply
+                        </button>
+                        @if(request()->anyFilled(['search', 'assignment', 'sort']))
+                            <a href="{{ route('head-mitcom.enforcers.index') }}" class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition" title="Clear Filters">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
 
             <div class="overflow-x-auto">
@@ -59,7 +111,7 @@
                                                 <td class="px-6 py-4 text-slate-500">{{ $enforcer->email }}</td>
                                                 <td class="px-6 py-4">
                                                     <span class="px-2.5 py-1 rounded-full text-xs font-semibold
-                                                    {{ $enforcer->assigned_reports_count > 0
+                                                                        {{ $enforcer->assigned_reports_count > 0
                             ? 'bg-purple-100 text-purple-700'
                             : 'bg-slate-100 text-slate-400' }}">
                                                         {{ $enforcer->assigned_reports_count }} assigned
@@ -69,14 +121,25 @@
                                                     {{ $enforcer->created_at->format('M d, Y') }}
                                                 </td>
                                                 <td class="px-6 py-4">
-                                                    <a href="{{ route('head-mitcom.enforcers.show', $enforcer) }}"
-                                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition">
-                                                        View
-                                                        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fill-rule="evenodd"
-                                                                d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
-                                                        </svg>
-                                                    </a>
+                                                    <div class="flex items-center gap-2">
+                                                        <a href="{{ route('head-mitcom.enforcers.show', $enforcer) }}"
+                                                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition">
+                                                            View
+                                                            <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
+                                                            </svg>
+                                                        </a>
+                                                        <a href="{{ route('head-mitcom.enforcer-stations.create', ['enforcer_id' => $enforcer->id]) }}"
+                                                            class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 font-semibold text-xs border border-emerald-200 hover:border-emerald-400 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition">
+                                                            <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 15.012 17 12.343 17 9A7 7 0 103 9c0 3.343 1.698 6.012 3.354 7.385a13.31 13.31 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                            Deploy
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                         @empty

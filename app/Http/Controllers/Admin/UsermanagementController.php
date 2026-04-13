@@ -16,8 +16,32 @@ class UsermanagementController extends Controller
      */
     public function index()
     {
-        $users = User::latest()->get();
-        return view('admin.users.index', compact('users'));
+        $query = User::query();
+
+        // Search by name or email
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by role
+        if (request('role') && request('role') !== 'all') {
+            $query->where('role', request('role'));
+        }
+
+        $users = $query->latest()->paginate(15)->withQueryString();
+
+        $stats = [
+            'total'       => User::count(),
+            'admin'       => User::where('role', 'admin')->count(),
+            'head_mitcom' => User::where('role', 'head-mitcom')->count(),
+            'enforcer'    => User::where('role', 'enforcer')->count(),
+        ];
+
+        return view('admin.users.index', compact('users', 'stats'));
     }
 
     /**

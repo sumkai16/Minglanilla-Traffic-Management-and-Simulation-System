@@ -10,13 +10,24 @@ class ReportController extends Controller
 {
     public function index()
     {
+        $enforcerId = auth()->id();
+
         $reports = Report::with(['user', 'assignedEnforcer', 'verifier'])
-            ->where('assigned_to', auth()->id())
+            ->where('assigned_to', $enforcerId)
+            ->filter(request()->only('search', 'status', 'issue_type'))
             ->orderByRaw("FIELD(status, 'assigned', 'for_verification', 'resolved', 'rejected')")
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('enforcer.reports.index', compact('reports'));
+        $stats = [
+            'total'            => Report::where('assigned_to', $enforcerId)->count(),
+            'assigned'         => Report::where('assigned_to', $enforcerId)->where('status', 'assigned')->count(),
+            'for_verification' => Report::where('assigned_to', $enforcerId)->where('status', 'for_verification')->count(),
+            'resolved'         => Report::where('assigned_to', $enforcerId)->where('status', 'resolved')->count(),
+        ];
+
+        return view('enforcer.reports.index', compact('reports', 'stats'));
     }
 
     public function show(Request $request, Report $report)

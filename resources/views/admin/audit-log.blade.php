@@ -1,82 +1,102 @@
-<x-dashboard-shell title="Audit Log" page-title="Audit Log"
-    page-eyebrow="System Administration"
-    page-description="A chronological record of all system actions performed across reports, advisories, and announcements.">
+<x-app-nav title="Audit Log" page-title="Audit Log" page-eyebrow="System Administration">
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
 
-    <x-slot:actions>
-        <a href="{{ route('admin.dashboard') }}"
-            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
-            ← Back to Dashboard
-        </a>
-    </x-slot:actions>
+        {{-- Stats Row --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            @php
+                $totalLogs = $logs->total();
+                $createdCount = \Spatie\Activitylog\Models\Activity::where('event', 'created')->count();
+                $updatedCount = \Spatie\Activitylog\Models\Activity::where('event', 'updated')->count();
+                $deletedCount = \Spatie\Activitylog\Models\Activity::where('event', 'deleted')->count();
+            @endphp
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition cursor-default">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Total Entries</p>
+                <p class="text-3xl font-bold text-blue-600 mt-1">{{ $totalLogs }}</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition cursor-default">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Created</p>
+                <p class="text-3xl font-bold text-green-600 mt-1">{{ $createdCount }}</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition cursor-default">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Updated</p>
+                <p class="text-3xl font-bold text-yellow-500 mt-1">{{ $updatedCount }}</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition cursor-default">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Deleted</p>
+                <p class="text-3xl font-bold text-red-500 mt-1">{{ $deletedCount }}</p>
+            </div>
+        </div>
 
-    <div class="mx-auto max-w-7xl space-y-6">
+        {{-- Table Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-200">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Activity Trail</h2>
+                        <p class="text-xs text-slate-500 mt-1">Chronological record of all system actions across reports, advisories, and announcements</p>
+                    </div>
+                    <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                        {{ $logs->total() }} {{ Str::plural('entry', $logs->total()) }}
+                    </span>
+                </div>
 
-        {{-- Filters --}}
-        <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Filters</p>
-           <form method="GET" action="{{ route('admin.audit-log') }}" class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" x-data id="filter-form">
-                <div>
-                    <label class="text-xs font-semibold text-slate-500">Event Type</label>
-                    <select name="event" @change="$el.form.submit()"
-                        class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
-                        <option value="">All Events</option>
-                        <option value="created" {{ request('event') === 'created' ? 'selected' : '' }}>Created</option>
-                        <option value="updated" {{ request('event') === 'updated' ? 'selected' : '' }}>Updated</option>
-                        <option value="deleted" {{ request('event') === 'deleted' ? 'selected' : '' }}>Deleted</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-500">Subject</label>
-                   <select name="subject" @change="$el.form.submit()"
-                        class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
-                        <option value="">All Subjects</option>
-                        <option value="Report" {{ request('subject') === 'Report' ? 'selected' : '' }}>Report</option>
-                        <option value="Announcement" {{ request('subject') === 'Announcement' ? 'selected' : '' }}>Announcement</option>
-                        <option value="TrafficAdvisory" {{ request('subject') === 'TrafficAdvisory' ? 'selected' : '' }}>Traffic Advisory</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-500">Performed By</label>
-                    <input type="text" name="causer" value="{{ request('causer') }}"
-                    placeholder="Search by name..."
-                    x-data="{ timeout: null }"
-                    @input="clearTimeout(timeout); timeout = setTimeout(() => $el.form.submit(), 500)"
-                    class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-500">Date From</label>
-                   <input type="date" name="date_from" value="{{ request('date_from') }}" @change="$el.form.submit()"
-                        class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
-                </div>
-                <div>
-                    <label class="text-xs font-semibold text-slate-500">Date To</label>
-                   <input type="date" name="date_to" value="{{ request('date_to') }}" @change="$el.form.submit()"
-                        class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
-                </div>
-                <div class="flex items-end gap-2 sm:col-span-2 xl:col-span-3">
-                   
-                    @if(request()->anyFilled(['event', 'subject', 'causer', 'date_from', 'date_to']))
-                        <a href="{{ route('admin.audit-log') }}"
-                            class="rounded-xl border border-slate-200 bg-slate-50 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">
-                            Clear
-                        </a>
-                    @endif
-                </div>
-            </form>
-        </section>
+                {{-- Filter Bar --}}
+                <form method="GET" action="{{ route('admin.audit-log') }}" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                    <div class="relative md:col-span-2">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="causer" value="{{ request('causer') }}" placeholder="Search by user name..."
+                            class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-400">
+                    </div>
 
-        {{-- Log Table --}}
-        <section class="rounded-[2rem] border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Activity Trail</p>
-                    <h3 class="mt-1 text-xl font-bold text-slate-950">System-wide actions</h3>
-                </div>
-                <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
-                    {{ $logs->total() }} {{ Str::plural('entry', $logs->total()) }}
-                </span>
+                    <div>
+                        <select name="event"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="">All Events</option>
+                            <option value="created" @selected(request('event') === 'created')>Created</option>
+                            <option value="updated" @selected(request('event') === 'updated')>Updated</option>
+                            <option value="deleted" @selected(request('event') === 'deleted')>Deleted</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select name="subject"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="">All Subjects</option>
+                            <option value="Report" @selected(request('subject') === 'Report')>Report</option>
+                            <option value="Announcement" @selected(request('subject') === 'Announcement')>Announcement</option>
+                            <option value="TrafficAdvisory" @selected(request('subject') === 'TrafficAdvisory')>Traffic Advisory</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="date" name="date_from" value="{{ request('date_from') }}"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600"
+                            placeholder="From" title="Date from">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl transition text-sm">
+                            Apply
+                        </button>
+                        @if(request()->anyFilled(['event', 'subject', 'causer', 'date_from', 'date_to']))
+                            <a href="{{ route('admin.audit-log') }}" class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition" title="Clear Filters">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+
+                    {{-- Hidden date_to preserves the value if already set --}}
+                    <input type="hidden" name="date_to" value="{{ request('date_to') }}">
+                </form>
             </div>
 
+            {{-- Activity List --}}
             <div class="divide-y divide-slate-100">
                 @forelse($logs as $log)
                     @php
@@ -89,9 +109,9 @@
                             default => $subjectType,
                         };
                         $colors = [
-                            'created' => 'bg-emerald-100 text-emerald-700',
+                            'created' => 'bg-green-100 text-green-700',
                             'updated' => 'bg-blue-100 text-blue-700',
-                            'deleted' => 'bg-rose-100 text-rose-700',
+                            'deleted' => 'bg-red-100 text-red-700',
                         ];
                         $eventColor = $colors[$log->event] ?? 'bg-slate-100 text-slate-600';
                         $initials = $causer
@@ -100,7 +120,7 @@
                         $attributes = $log->properties->get('attributes') ?? [];
                     @endphp
                     <div class="flex items-start gap-4 px-6 py-4 hover:bg-slate-50 transition">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white text-xs font-bold">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-700 to-slate-900 text-white text-xs font-bold">
                             {{ $initials }}
                         </div>
                         <div class="flex-1 min-w-0">
@@ -109,8 +129,14 @@
                                     {{ $causer ? $causer->first_name . ' ' . $causer->last_name : 'System' }}
                                 </span>
                                 @if($causer)
-                                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
-                                        {{ $causer->role }}
+                                    <span @class([
+                                        'px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide',
+                                        'bg-purple-100 text-purple-700' => $causer->role === 'admin',
+                                        'bg-yellow-100 text-yellow-700' => $causer->role === 'head-mitcom',
+                                        'bg-green-100 text-green-700' => $causer->role === 'enforcer',
+                                        'bg-blue-100 text-blue-700' => $causer->role === 'user',
+                                    ])>
+                                        {{ str_replace('-', ' ', $causer->role) }}
                                     </span>
                                 @endif
                                 <span class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide {{ $eventColor }}">
@@ -144,17 +170,15 @@
                     </div>
                 @empty
                     <div class="px-6 py-16 text-center">
-                        <p class="text-sm font-semibold text-slate-500">No activity recorded yet.</p>
-                        <p class="mt-1 text-xs text-slate-400">Actions on reports, advisories, and announcements will appear here.</p>
+                        <p class="text-sm text-slate-300">No activity recorded yet.</p>
+                        <p class="mt-1 text-xs text-slate-300">Actions on reports, advisories, and announcements will appear here.</p>
                     </div>
                 @endforelse
             </div>
 
-            @if($logs->hasPages())
-                <div class="px-6 py-4 border-t border-slate-100">
-                    {{ $logs->links() }}
-                </div>
-            @endif
-        </section>
-    </div>
-</x-dashboard-shell>
+            <div class="px-6 py-4 border-t border-slate-100">
+                {{ $logs->links() }}
+            </div>
+        </div>
+    </main>
+</x-app-nav>
