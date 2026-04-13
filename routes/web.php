@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\NotificationController;
 Route::get('/', function () {
-    return view('welcome');
+    $reportCount = \App\Models\Report::count();
+    return view('welcome', compact('reportCount'));
 });
 
 // Dashboard redirect based on role

@@ -73,3 +73,12 @@ html {
 .impact-card:hover::before {
     transform: scale(1.2);
 }
+
+/* Hide scrollbar for Modal */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
