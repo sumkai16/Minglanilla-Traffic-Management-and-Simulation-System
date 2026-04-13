@@ -122,6 +122,8 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     //simulation
     Route::get('/simulation', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'index'])->name('simulation.index');
     Route::get('/simulation/data', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'data'])->name('simulation.data');
+
+   Route::resource('enforcer-stations', \App\Http\Controllers\HeadMitcom\EnforcerStationController::class);
 });
 
 // Public report routes

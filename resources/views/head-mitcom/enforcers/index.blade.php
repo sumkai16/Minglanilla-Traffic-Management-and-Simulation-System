@@ -59,7 +59,7 @@
                                                 <td class="px-6 py-4 text-slate-500">{{ $enforcer->email }}</td>
                                                 <td class="px-6 py-4">
                                                     <span class="px-2.5 py-1 rounded-full text-xs font-semibold
-                                                    {{ $enforcer->assigned_reports_count > 0
+                                                                        {{ $enforcer->assigned_reports_count > 0
                             ? 'bg-purple-100 text-purple-700'
                             : 'bg-slate-100 text-slate-400' }}">
                                                         {{ $enforcer->assigned_reports_count }} assigned
@@ -69,14 +69,25 @@
                                                     {{ $enforcer->created_at->format('M d, Y') }}
                                                 </td>
                                                 <td class="px-6 py-4">
-                                                    <a href="{{ route('head-mitcom.enforcers.show', $enforcer) }}"
-                                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition">
-                                                        View
-                                                        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fill-rule="evenodd"
-                                                                d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
-                                                        </svg>
-                                                    </a>
+                                                    <div class="flex items-center gap-2">
+                                                        <a href="{{ route('head-mitcom.enforcers.show', $enforcer) }}"
+                                                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition">
+                                                            View
+                                                            <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" />
+                                                            </svg>
+                                                        </a>
+                                                        <a href="{{ route('head-mitcom.enforcer-stations.create', ['enforcer_id' => $enforcer->id]) }}"
+                                                            class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 font-semibold text-xs border border-emerald-200 hover:border-emerald-400 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition">
+                                                            <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 15.012 17 12.343 17 9A7 7 0 103 9c0 3.343 1.698 6.012 3.354 7.385a13.31 13.31 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                            Deploy
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                         @empty

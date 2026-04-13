@@ -52,7 +52,8 @@
                     <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">On-Site Response</p>
                     <h2 class="mt-3 text-3xl font-bold tracking-tight">Good day, {{ auth()->user()->first_name }}.</h2>
                     <p class="mt-3 max-w-2xl text-sm leading-6 text-blue-100/85">
-                        Keep track of assigned incidents, submit proof quickly, and stay aligned with Head MITCOM review workflows.
+                        Keep track of assigned incidents, submit proof quickly, and stay aligned with Head MITCOM review
+                        workflows.
                     </p>
                 </div>
                 <div class="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
@@ -68,7 +69,8 @@
                 <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                     <div class="flex items-start justify-between gap-4">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}</p>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}
+                            </p>
                             <p class="mt-4 text-4xl font-bold text-slate-950">{{ $stat['value'] }}</p>
                             <p class="mt-3 text-sm leading-6 text-slate-500">{{ $stat['description'] }}</p>
                         </div>
@@ -79,7 +81,64 @@
                 </article>
             @endforeach
         </section>
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Current Assignment</p>
+            <h3 class="mt-2 text-xl font-bold text-slate-950">Your Station</h3>
 
+            @if($currentStation)
+                <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+                    <div class="space-y-4">
+                        <div class="rounded-3xl border border-blue-100 bg-blue-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-blue-500">Station</p>
+                            <p class="mt-2 text-lg font-bold text-blue-900">{{ $currentStation->label }}</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Start</p>
+                                <p class="mt-1 text-sm font-semibold text-slate-800">
+                                    {{ $currentStation->assigned_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">End</p>
+                                <p class="mt-1 text-sm font-semibold text-slate-800">
+                                    {{ $currentStation->expires_at->format('M d, Y') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        @if($currentStation->isExpired())
+                            <div class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3">
+                                <p class="text-xs font-semibold text-rose-700">⚠ This station assignment has expired. Await
+                                    reassignment from Head MITCOM.</p>
+                            </div>
+                        @else
+                            <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+                                <p class="text-xs font-semibold text-emerald-700">✓ Active —
+                                    {{ $currentStation->expires_at->diffForHumans() }} remaining
+                                </p>
+                            </div>
+                        @endif
+
+                        @if($currentStation->notes)
+                            <div class="rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-amber-600 mb-1">Notes</p>
+                                <p class="text-sm text-amber-800">{{ $currentStation->notes }}</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div id="enforcer-station-map" class="h-64 w-full rounded-3xl border border-slate-200 lg:h-auto z-0">
+                    </div>
+                </div>
+            @else
+                <div class="mt-6 rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
+                    <p class="text-sm font-semibold text-slate-500">No station assigned yet.</p>
+                    <p class="mt-1 text-xs text-slate-400">Head MITCOM will assign your station location and schedule.</p>
+                </div>
+            @endif
+        </section>
         <section class="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
             <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Quick Actions</p>
@@ -96,7 +155,8 @@
                         </span>
                         <span>
                             <span class="block text-lg font-semibold text-slate-900">My Assigned Reports</span>
-                            <span class="mt-2 block text-sm leading-6 text-slate-500">Open incident records, upload proof, and continue active case handling.</span>
+                            <span class="mt-2 block text-sm leading-6 text-slate-500">Open incident records, upload
+                                proof, and continue active case handling.</span>
                         </span>
                     </a>
 
@@ -112,7 +172,8 @@
                         </span>
                         <span>
                             <span class="block text-lg font-semibold text-slate-900">Profile Management</span>
-                            <span class="mt-2 block text-sm leading-6 text-slate-500">Update your account details and keep field contact information current.</span>
+                            <span class="mt-2 block text-sm leading-6 text-slate-500">Update your account details and
+                                keep field contact information current.</span>
                         </span>
                     </a>
                 </div>
@@ -125,15 +186,18 @@
                 <div class="mt-6 space-y-4">
                     <div class="rounded-3xl border border-amber-100 bg-amber-50 p-4">
                         <p class="text-sm font-semibold text-amber-900">Assigned</p>
-                        <p class="mt-2 text-sm leading-6 text-amber-800/80">Report is routed to you for response. Proceed on-site and document your action.</p>
+                        <p class="mt-2 text-sm leading-6 text-amber-800/80">Report is routed to you for response.
+                            Proceed on-site and document your action.</p>
                     </div>
                     <div class="rounded-3xl border border-blue-100 bg-blue-50 p-4">
                         <p class="text-sm font-semibold text-blue-900">For Verification</p>
-                        <p class="mt-2 text-sm leading-6 text-blue-800/80">Proof has been submitted and is awaiting confirmation from Head MITCOM.</p>
+                        <p class="mt-2 text-sm leading-6 text-blue-800/80">Proof has been submitted and is awaiting
+                            confirmation from Head MITCOM.</p>
                     </div>
                     <div class="rounded-3xl border border-emerald-100 bg-emerald-50 p-4">
                         <p class="text-sm font-semibold text-emerald-900">Resolved</p>
-                        <p class="mt-2 text-sm leading-6 text-emerald-800/80">The case is closed after leadership confirms the submitted completion evidence.</p>
+                        <p class="mt-2 text-sm leading-6 text-emerald-800/80">The case is closed after leadership
+                            confirms the submitted completion evidence.</p>
                     </div>
                 </div>
             </div>
@@ -141,4 +205,25 @@
 
         <x-toast />
     </div>
+    @if(isset($currentStation) && $currentStation)
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const lat = {{ $currentStation->latitude }};
+                const lng = {{ $currentStation->longitude }};
+
+                const map = L.map('enforcer-station-map', { zoomControl: true, dragging: true }).setView([lat, lng], 15);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                L.marker([lat, lng])
+                    .addTo(map)
+                    .bindPopup('<strong>{{ addslashes($currentStation->label) }}</strong>')
+                    .openPopup();
+            });
+        </script>
+    @endif
 </x-dashboard-shell>
