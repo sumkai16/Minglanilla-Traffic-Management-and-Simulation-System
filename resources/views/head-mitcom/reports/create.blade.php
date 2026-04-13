@@ -30,4 +30,14 @@
             </div>
         </div>
     </main>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof window.initReportMapPicker === 'function') {
+                    initReportMapPicker();
+                }
+            });
+        </script>
+    @endpush
 </x-app-nav>

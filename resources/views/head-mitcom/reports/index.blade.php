@@ -26,9 +26,18 @@
                         <h2 class="text-lg font-bold text-slate-900">All Reports</h2>
                         <p class="text-xs text-slate-500 mt-1">Search through civilian reports and filter by status or type</p>
                     </div>
-                    <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
-                        {{ $reports->total() }} total reports
-                    </span>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                            {{ $reports->total() }} total reports
+                        </span>
+                        <a href="{{ route('head-mitcom.reports.create') }}"
+                            class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl transition text-sm shadow-sm">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5.75v12.5m6.25-6.25H5.75" />
+                            </svg>
+                            Report Incident
+                        </a>
+                    </div>
                 </div>
 
                 {{-- Filter Bar --}}

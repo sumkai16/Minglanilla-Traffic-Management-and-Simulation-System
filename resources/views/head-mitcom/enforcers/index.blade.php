@@ -23,9 +23,61 @@
 
         {{-- Table --}}
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-slate-900">All Enforcers</h2>
-                <span class="text-sm text-slate-400">{{ $enforcers->total() }} total</span>
+            <div class="px-6 py-5 border-b border-slate-200">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">All Enforcers</h2>
+                        <p class="text-xs text-slate-500 mt-1">Search, filter, and sort enforcers by name, email, or assignment status</p>
+                    </div>
+                    <span class="text-sm text-slate-400 font-medium px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
+                        {{ $enforcers->total() }} total
+                    </span>
+                </div>
+
+                {{-- Filter Bar --}}
+                <form method="GET" action="{{ route('head-mitcom.enforcers.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div class="relative md:col-span-2">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name or email..."
+                            class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-400">
+                    </div>
+
+                    <div>
+                        <select name="assignment"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="all">All Assignments</option>
+                            <option value="has_assignments" @selected(request('assignment') === 'has_assignments')>Has Assignments</option>
+                            <option value="no_assignments" @selected(request('assignment') === 'no_assignments')>No Assignments</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select name="sort"
+                            class="w-full py-2 text-sm border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-slate-600">
+                            <option value="created_at" @selected(request('sort', 'created_at') === 'created_at')>Sort: Newest First</option>
+                            <option value="first_name" @selected(request('sort') === 'first_name')>Sort: Name (A-Z)</option>
+                            <option value="assigned_reports_count" @selected(request('sort') === 'assigned_reports_count')>Sort: Most Assignments</option>
+                        </select>
+                        <input type="hidden" name="dir" value="{{ request('sort') === 'first_name' ? 'asc' : (request('sort') === 'assigned_reports_count' ? 'desc' : 'desc') }}">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl transition text-sm">
+                            Apply
+                        </button>
+                        @if(request()->anyFilled(['search', 'assignment', 'sort']))
+                            <a href="{{ route('head-mitcom.enforcers.index') }}" class="inline-flex items-center justify-center p-2 rounded-xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition" title="Clear Filters">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
 
             <div class="overflow-x-auto">

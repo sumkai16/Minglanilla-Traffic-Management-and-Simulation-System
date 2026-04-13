@@ -3,10 +3,7 @@
     page-description="High-level view of system activity, report health, and operational metrics.">
 
     <x-slot:actions>
-        <a href="{{ route('admin.dashboard') }}"
-            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
-            ← Back to Dashboard
-        </a>
+       
     </x-slot:actions>
 
     <div class="mx-auto max-w-7xl space-y-6">

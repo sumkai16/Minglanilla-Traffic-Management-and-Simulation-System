@@ -27,8 +27,8 @@ class RoleNavigation
             ],
             'head-mitcom' => [
                 self::item('Dashboard', route('head-mitcom.dashboard'), ['head-mitcom.dashboard'], 'dashboard'),
-                self::item('Report Incident', route('head-mitcom.reports.create'), ['head-mitcom.reports.create'], 'create'),
                 self::item('Reports', route('head-mitcom.reports.index'), [
+                    'head-mitcom.reports.create',
                     'head-mitcom.reports.index',
                     'head-mitcom.reports.show',
                     'head-mitcom.reports.assign',
