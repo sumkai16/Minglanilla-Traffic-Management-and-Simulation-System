@@ -50,6 +50,7 @@
                 <a href="#" class="text-blue-900/80 hover:text-blue-700 text-xl transition">Home</a>
                 <a href="#core-features" class="text-blue-900/80 hover:text-blue-700 text-xl transition">Features</a>
                 <a href="#impact" class="text-blue-900/80 hover:text-blue-700 text-xl transition">Impact</a>
+                
             </nav>
 
             @auth
