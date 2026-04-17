@@ -1,100 +1,148 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+// Controllers
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AdvisoryController;
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UsermanagementController as AdminUserController;
+use App\Http\Controllers\Admin\ReportManagementController as AdminReportController;
+
 use App\Http\Controllers\Enforcer\DashboardController as EnforcerDashboardController;
+use App\Http\Controllers\Enforcer\ReportController as EnforcerReportController;
+
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\User\ReportController as UserReportController;
+use App\Http\Controllers\User\AnnouncementController as UserAnnouncementController;
+
 use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDashboardController;
 use App\Http\Controllers\HeadMitcom\ReportController as HeadMitcomReportController;
 use App\Http\Controllers\HeadMitcom\EnforcerController as HeadMitcomEnforcerController;
 use App\Http\Controllers\HeadMitcom\AnnouncementController as HeadMitcomAnnouncementController;
-use App\Http\Controllers\User\AnnouncementController as UserAnnouncementController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\HeadMitcom\TrafficAdvisoryController as HeadMitcomAdvisoryController;
+use App\Http\Controllers\HeadMitcom\SimulationController as HeadMitcomSimulationController;
+use App\Http\Controllers\HeadMitcom\EnforcerStationController as HeadMitcomEnforcerStationController;
+
+// ─────────────────────────────────────────────
+// Public Routes
+// ─────────────────────────────────────────────
+
 Route::get('/', function () {
     $reportCount = \App\Models\Report::count();
     return view('welcome', compact('reportCount'));
 });
 
-// Dashboard redirect based on role
-Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
-    /** @var User $user */
-    $user = Auth::user();
-    
-    if ($user->isAdmin()) {
-        return redirect()->route('admin.dashboard');
-    }
-    
-    if ($user->isEnforcer()) {
-        return redirect()->route('enforcer.dashboard');
-    }
-    
-    if ($user->isHeadMitcom()) {
-        return redirect()->route('head-mitcom.dashboard');
-    }
+Route::get('/report', [ReportController::class, 'create'])->name('report.create');
+Route::post('/report', [ReportController::class, 'store'])->name('report.store');
+Route::post('/reports/check-duplicate', [ReportController::class, 'checkDuplicate'])->name('reports.check-duplicate');
+Route::get('/api/reports/map', [ReportController::class, 'mapData'])->name('reports.map');
 
-    return redirect()->route('user.dashboard');
-})->name('dashboard');
+Route::get('/advisories', [AdvisoryController::class, 'index'])->name('advisories.index');
+Route::get('/advisories/{advisory}', [AdvisoryController::class, 'show'])->name('advisories.show');
 
-// Profile routes (all authenticated users)
-Route::middleware('auth')->group(function () {
+// ─────────────────────────────────────────────
+// Authenticated — All Roles
+// ─────────────────────────────────────────────
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return match(true) {
+            $user->isAdmin()      => redirect()->route('admin.dashboard'),
+            $user->isEnforcer()   => redirect()->route('enforcer.dashboard'),
+            $user->isHeadMitcom() => redirect()->route('head-mitcom.dashboard'),
+            default               => redirect()->route('user.dashboard'),
+        };
+    })->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-      // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
-// Admin routes
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+// ─────────────────────────────────────────────
+// Admin Routes
+// ─────────────────────────────────────────────
+
+Route::middleware(['auth', 'verified', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('users', \App\Http\Controllers\Admin\UsermanagementController::class);
-
-    Route::get('reports',[App\Http\Controllers\Admin\ReportManagementController::class, 'index'])->name('reports.index');
-    Route::get('/reports/{report}',[App\Http\Controllers\Admin\ReportManagementController::class, 'show'])->name('reports.show');
-    Route::patch('reports/{report}/status',[App\Http\Controllers\Admin\ReportManagementController::class, 'updateStatus'])->name('reports.updateStatus');
-
     Route::get('/map', [AdminDashboardController::class, 'map'])->name('map');
     Route::get('/system', [AdminDashboardController::class, 'system'])->name('system');
     Route::get('/audit-log', [AdminDashboardController::class, 'auditLog'])->name('audit-log');
+
+    Route::resource('users', AdminUserController::class);
+
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [AdminReportController::class, 'show'])->name('reports.show');
+    Route::patch('/reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('reports.updateStatus');
 });
 
-// Enforcer routes
-Route::middleware(['auth', 'verified', 'role:enforcer'])->prefix('enforcer')->name('enforcer.')->group(function () {
+// ─────────────────────────────────────────────
+// Enforcer Routes
+// ─────────────────────────────────────────────
+
+Route::middleware(['auth', 'verified', 'role:enforcer'])
+    ->prefix('enforcer')
+    ->name('enforcer.')
+    ->group(function () {
+
     Route::get('/dashboard', [EnforcerDashboardController::class, 'index'])->name('dashboard');
 
-    // Report routes
-    Route::get('/reports', [App\Http\Controllers\Enforcer\ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/{report}', [App\Http\Controllers\Enforcer\ReportController::class, 'show'])->name('reports.show');
-    Route::post('/reports/{report}/proof', [App\Http\Controllers\Enforcer\ReportController::class, 'submitProof'])->name('reports.proof');
+    Route::get('/reports', [EnforcerReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/{report}', [EnforcerReportController::class, 'show'])->name('reports.show');
+    Route::post('/reports/{report}/proof', [EnforcerReportController::class, 'submitProof'])->name('reports.proof');
 });
 
-// User routes
-Route::middleware(['auth', 'verified', 'role:user'])->prefix('user')->name('user.')->group(function () {
+// ─────────────────────────────────────────────
+// Citizen (User) Routes
+// ─────────────────────────────────────────────
+
+Route::middleware(['auth', 'verified', 'role:user'])
+    ->prefix('user')
+    ->name('user.')
+    ->group(function () {
+
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/announcements', [UserAnnouncementController::class, 'index'])->name('announcements.index');
-    Route::get('/reports/create', [App\Http\Controllers\User\ReportController::class, 'create'])->name('reports.create');
-    Route::post('/reports', [App\Http\Controllers\User\ReportController::class, 'store'])->name('reports.store');
-    Route::get('/reports/{report}',[App\Http\Controllers\User\ReportController::class, 'show'])->name('reports.show');
-
     Route::get('/profile', fn () => redirect()->route('profile.edit'))->name('profile.edit');
+
+    Route::get('/announcements', [UserAnnouncementController::class, 'index'])->name('announcements.index');
+
+    Route::get('/reports/create', [UserReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports', [UserReportController::class, 'store'])->name('reports.store');
+    Route::get('/reports/{report}', [UserReportController::class, 'show'])->name('reports.show');
 });
-// Head MITCOM routes
-Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom')->name('head-mitcom.')->group(function () {
+
+// ─────────────────────────────────────────────
+// Head MITCOM Routes
+// ─────────────────────────────────────────────
+
+Route::middleware(['auth', 'verified', 'role:head-mitcom'])
+    ->prefix('head-mitcom')
+    ->name('head-mitcom.')
+    ->group(function () {
+
     Route::get('/dashboard', [HeadMitcomDashboardController::class, 'index'])->name('dashboard');
     Route::get('/map', [HeadMitcomDashboardController::class, 'map'])->name('map');
-    Route::get('/announcements', [HeadMitcomAnnouncementController::class, 'index'])->name('announcements.index');
-    Route::post('/announcements', [HeadMitcomAnnouncementController::class, 'store'])->name('announcements.store');
-    Route::get('/announcements/{announcement}/edit', [HeadMitcomAnnouncementController::class, 'edit'])->name('announcements.edit');
-    Route::put('/announcements/{announcement}', [HeadMitcomAnnouncementController::class, 'update'])->name('announcements.update');
-    Route::patch('/announcements/{announcement}/publish', [HeadMitcomAnnouncementController::class, 'publish'])->name('announcements.publish');
-    Route::patch('/announcements/{announcement}/unpublish', [HeadMitcomAnnouncementController::class, 'unpublish'])->name('announcements.unpublish');
+
+    // Reports
     Route::get('/reports', [HeadMitcomReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/create', [HeadMitcomReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [HeadMitcomReportController::class, 'store'])->name('reports.store');
@@ -103,40 +151,39 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])->prefix('head-mitcom
     Route::post('/reports/{report}/reassign', [HeadMitcomReportController::class, 'reassign'])->name('reports.reassign');
     Route::post('/reports/{report}/verify', [HeadMitcomReportController::class, 'verify'])->name('reports.verify');
     Route::post('/reports/{report}/reject', [HeadMitcomReportController::class, 'reject'])->name('reports.reject');
+    Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
+    Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
 
+    // Enforcers
     Route::get('/enforcers', [HeadMitcomEnforcerController::class, 'index'])->name('enforcers.index');
     Route::get('/enforcers/{user}', [HeadMitcomEnforcerController::class, 'show'])->name('enforcers.show');
 
-    Route::post('/reports/{report}/confirm-resolved', [HeadMitcomReportController::class, 'confirmResolved'])->name('reports.confirm-resolved');
-    Route::post('/reports/{report}/reject-resolved', [HeadMitcomReportController::class, 'rejectResolved'])->name('reports.reject-resolved');
-    Route::get('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'index'])->name('advisories.index');
-    Route::get('/advisories/create', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'create'])->name('advisories.create');
-    Route::post('/advisories', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'store'])->name('advisories.store');
-    Route::get('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'show'])->name('advisories.show');
-    Route::get('/advisories/{advisory}/edit', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'edit'])->name('advisories.edit');
-    Route::put('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'update'])->name('advisories.update');
-    Route::post('/advisories/{advisory}/publish', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'publish'])->name('advisories.publish');
-    Route::post('/advisories/{advisory}/unpublish', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'unpublish'])->name('advisories.unpublish');
-    Route::post('/advisories/{advisory}/archive', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'archive'])->name('advisories.archive');
-    Route::delete('/advisories/{advisory}', [App\Http\Controllers\HeadMitcom\TrafficAdvisoryController::class, 'destroy'])->name('advisories.destroy');
+    // Enforcer Stations
+    Route::resource('enforcer-stations', HeadMitcomEnforcerStationController::class);
 
-    //simulation
-    Route::get('/simulation', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'index'])->name('simulation.index');
-    Route::get('/simulation/data', [App\Http\Controllers\HeadMitcom\SimulationController::class, 'data'])->name('simulation.data');
+    // Announcements
+    Route::get('/announcements', [HeadMitcomAnnouncementController::class, 'index'])->name('announcements.index');
+    Route::post('/announcements', [HeadMitcomAnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('/announcements/{announcement}/edit', [HeadMitcomAnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('/announcements/{announcement}', [HeadMitcomAnnouncementController::class, 'update'])->name('announcements.update');
+    Route::patch('/announcements/{announcement}/publish', [HeadMitcomAnnouncementController::class, 'publish'])->name('announcements.publish');
+    Route::patch('/announcements/{announcement}/unpublish', [HeadMitcomAnnouncementController::class, 'unpublish'])->name('announcements.unpublish');
 
-   Route::resource('enforcer-stations', \App\Http\Controllers\HeadMitcom\EnforcerStationController::class);
+    // Traffic Advisories
+    Route::get('/advisories', [HeadMitcomAdvisoryController::class, 'index'])->name('advisories.index');
+    Route::get('/advisories/create', [HeadMitcomAdvisoryController::class, 'create'])->name('advisories.create');
+    Route::post('/advisories', [HeadMitcomAdvisoryController::class, 'store'])->name('advisories.store');
+    Route::get('/advisories/{advisory}', [HeadMitcomAdvisoryController::class, 'show'])->name('advisories.show');
+    Route::get('/advisories/{advisory}/edit', [HeadMitcomAdvisoryController::class, 'edit'])->name('advisories.edit');
+    Route::put('/advisories/{advisory}', [HeadMitcomAdvisoryController::class, 'update'])->name('advisories.update');
+    Route::post('/advisories/{advisory}/publish', [HeadMitcomAdvisoryController::class, 'publish'])->name('advisories.publish');
+    Route::post('/advisories/{advisory}/unpublish', [HeadMitcomAdvisoryController::class, 'unpublish'])->name('advisories.unpublish');
+    Route::post('/advisories/{advisory}/archive', [HeadMitcomAdvisoryController::class, 'archive'])->name('advisories.archive');
+    Route::delete('/advisories/{advisory}', [HeadMitcomAdvisoryController::class, 'destroy'])->name('advisories.destroy');
+
+    // Simulation
+    Route::get('/simulation', [HeadMitcomSimulationController::class, 'index'])->name('simulation.index');
+    Route::get('/simulation/data', [HeadMitcomSimulationController::class, 'data'])->name('simulation.data');
 });
-
-// Public report routes
-Route::get('/report', [App\Http\Controllers\ReportController::class, 'create'])->name('report.create');
-Route::post('/report', [App\Http\Controllers\ReportController::class, 'store'])->name('report.store');
-Route::post('/reports/check-duplicate', [App\Http\Controllers\ReportController::class, 'checkDuplicate'])->name('reports.check-duplicate');
-
-//public advisory routes
-Route::get('/advisories', [\App\Http\Controllers\AdvisoryController::class, 'index'])->name('advisories.index');
-Route::get('/advisories/{advisory}', [\App\Http\Controllers\AdvisoryController::class, 'show'])->name('advisories.show');
-
-//API endpoint for map data
-Route::get('/api/reports/map', [App\Http\Controllers\ReportController::class, 'mapData'])->name('reports.map');
 
 require __DIR__.'/auth.php';
