@@ -33,6 +33,8 @@ class DashboardController extends Controller
                 ->selectRaw("SUM(CASE WHEN status = 'assigned' THEN 1 ELSE 0 END) as active_count")
                 ->selectRaw("SUM(CASE WHEN status = 'for_verification' THEN 1 ELSE 0 END) as for_verification_count")
                 ->selectRaw("SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved_count")
+                ->selectRaw('SUM(rejection_count) as total_rejections')
+                ->selectRaw("AVG(CASE WHEN status = 'resolved' AND resolved_at IS NOT NULL AND assigned_at IS NOT NULL THEN TIMESTAMPDIFF(MINUTE, assigned_at, resolved_at) ELSE NULL END) as avg_resolution_minutes")
                 ->first();
         });
 
@@ -40,6 +42,9 @@ class DashboardController extends Controller
         $activeCount = (int) ($reportStats->active_count ?? 0);
         $forVerificationCount = (int) ($reportStats->for_verification_count ?? 0);
         $resolvedCount = (int) ($reportStats->resolved_count ?? 0);
+        $totalRejections = (int) ($reportStats->total_rejections ?? 0);
+        $avgResolutionMinutes = (int) ($reportStats->avg_resolution_minutes ?? 0);
+        $completionRate = $assignedCount > 0 ? round(($resolvedCount / $assignedCount) * 100) : 0;
         $currentStation = EnforcerStation::where('enforcer_id', $enforcerId)
             ->where('is_active', true)
             ->latest('assigned_at')
@@ -52,6 +57,9 @@ class DashboardController extends Controller
             'forVerificationCount',
             'resolvedCount',
             'currentStation',
+            'totalRejections',
+            'avgResolutionMinutes',
+            'completionRate',
         ));
     }
 }

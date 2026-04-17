@@ -1,26 +1,3 @@
-@php
-    $stats = [
-        [
-            'label' => 'Assigned',
-            'value' => $assignedCount,
-            'description' => 'Cases currently under your response queue.',
-            'accent' => 'bg-amber-50 text-amber-700 border-amber-100',
-        ],
-        [
-            'label' => 'For Verification',
-            'value' => $forVerificationCount,
-            'description' => 'Proof submitted and pending MITCOM review.',
-            'accent' => 'bg-blue-50 text-blue-700 border-blue-100',
-        ],
-        [
-            'label' => 'Resolved',
-            'value' => $resolvedCount,
-            'description' => 'Reports confirmed as completed.',
-            'accent' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-        ],
-    ];
-@endphp
-
 <x-dashboard-shell title="Enforcer Dashboard" page-title="Enforcer Dashboard" page-eyebrow="Field Operations"
     page-description="Review your assignments, monitor verification status, and keep response work organized from one formal enforcer workspace.">
     <x-slot:actions>
@@ -64,22 +41,53 @@
             </div>
         </section>
 
+
+        {{-- Performance Stats --}}
         <section class="grid gap-4 md:grid-cols-3">
-            @foreach ($stats as $stat)
-                <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">{{ $stat['label'] }}
-                            </p>
-                            <p class="mt-4 text-4xl font-bold text-slate-950">{{ $stat['value'] }}</p>
-                            <p class="mt-3 text-sm leading-6 text-slate-500">{{ $stat['description'] }}</p>
-                        </div>
-                        <span class="rounded-2xl border px-3 py-2 text-xs font-semibold {{ $stat['accent'] }}">
-                            Status
-                        </span>
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Completion Rate</p>
+                        <p class="mt-4 text-4xl font-bold text-slate-950">{{ $completionRate }}%</p>
+                        <p class="mt-3 text-sm leading-6 text-slate-500">Resolved vs total assigned cases.</p>
                     </div>
-                </article>
-            @endforeach
+                    <span
+                        class="rounded-2xl border px-3 py-2 text-xs font-semibold
+                {{ $completionRate >= 70 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : ($completionRate >= 40 ? 'bg-amber-50 text-amber-700 border-amber-100' : 'bg-red-50 text-red-700 border-red-100') }}">
+                        {{ $completionRate >= 70 ? 'Good' : ($completionRate >= 40 ? 'Fair' : 'Low') }}
+                    </span>
+                </div>
+            </article>
+
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Avg Resolution Time
+                        </p>
+                        <p class="mt-4 text-4xl font-bold text-slate-950">{{ $avgResolutionMinutes }}</p>
+                        <p class="mt-3 text-sm leading-6 text-slate-500">Average minutes per resolved case.</p>
+                    </div>
+                    <span
+                        class="rounded-2xl border px-3 py-2 text-xs font-semibold bg-blue-50 text-blue-700 border-blue-100">
+                        Minutes
+                    </span>
+                </div>
+            </article>
+
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Proof Rejections</p>
+                        <p class="mt-4 text-4xl font-bold text-slate-950">{{ $totalRejections }}</p>
+                        <p class="mt-3 text-sm leading-6 text-slate-500">Proof uploads rejected by MITCOM.</p>
+                    </div>
+                    <span
+                        class="rounded-2xl border px-3 py-2 text-xs font-semibold
+                {{ $totalRejections === 0 ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-red-50 text-red-700 border-red-100' }}">
+                        {{ $totalRejections === 0 ? 'Clean' : 'Review' }}
+                    </span>
+                </div>
+            </article>
         </section>
         <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Current Assignment</p>
