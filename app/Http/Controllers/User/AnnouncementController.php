@@ -10,9 +10,13 @@ class AnnouncementController extends Controller
 {
     public function index(): View
     {
-        $announcements = Announcement::with('author')
-            ->published()
-            ->paginate(12);
+        $query = Announcement::with('author')->published();
+
+        if (request('type')) {
+            $query->where('type', request('type'));
+        }
+
+        $announcements = $query->paginate(12)->withQueryString();
 
         $urgentAnnouncement = Announcement::with('author')
             ->published()

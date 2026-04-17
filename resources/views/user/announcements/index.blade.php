@@ -31,121 +31,175 @@
 
             {{-- Urgent Announcement Banner --}}
             @if($urgentAnnouncement)
-                <section class="mb-8 overflow-hidden rounded-[1.75rem] border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-amber-50 shadow-md">
-                    <div class="flex flex-col lg:flex-row">
+                <section class="mb-10 relative overflow-hidden rounded-[2.5rem] border-2 border-rose-200 bg-white p-1 shadow-2xl shadow-rose-500/10">
+                    <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-rose-100/50 blur-3xl"></div>
+                    <div class="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-amber-100/50 blur-3xl"></div>
+                    
+                    <div class="relative flex flex-col lg:flex-row overflow-hidden rounded-[2.25rem]">
                         @if($urgentAnnouncement->image)
-                            <div class="lg:w-80 shrink-0">
+                            <div class="lg:w-[28rem] shrink-0 relative overflow-hidden group">
                                 <img src="{{ asset('storage/' . $urgentAnnouncement->image) }}"
                                     alt="{{ $urgentAnnouncement->title }}"
-                                    class="h-48 w-full object-cover lg:h-full">
+                                    class="h-64 w-full object-cover lg:h-full transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-gradient-to-r from-rose-600/20 to-transparent mix-blend-overlay"></div>
                             </div>
                         @endif
-                        <div class="flex flex-1 flex-col gap-5 p-6 lg:flex-row lg:items-center lg:justify-between">
-                            <div class="min-w-0">
-                                <div class="inline-flex items-center gap-2 rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
-                                    <svg class="h-3.5 w-3.5 animate-pulse" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>
-                                    Urgent Announcement
-                                </div>
-                                <h2 class="mt-3 text-2xl font-bold text-slate-900">{{ $urgentAnnouncement->title }}</h2>
-                                <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{{ $urgentAnnouncement->content }}</p>
+                        <div class="flex flex-1 flex-col justify-center p-8 lg:p-12">
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex items-center gap-2 rounded-full bg-rose-600 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-rose-200">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-300 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                                    </span>
+                                    Live Alert
+                                </span>
+                                <span class="text-xs font-bold uppercase tracking-widest text-slate-400">
+                                    {{ $typeLabels[$urgentAnnouncement->type] ?? 'Emergency' }}
+                                </span>
                             </div>
-                            <div class="shrink-0 rounded-2xl border border-rose-200 bg-white/90 p-4 text-sm text-slate-600 shadow-sm">
-                                <p class="text-xs font-semibold uppercase tracking-widest text-rose-600">{{ $typeLabels[$urgentAnnouncement->type] ?? 'Announcement' }}</p>
-                                <p class="mt-2 font-semibold text-slate-900">Published {{ $urgentAnnouncement->published_at?->format('M d, Y h:i A') }}</p>
-                                <p class="mt-1 text-xs text-slate-500">By {{ $urgentAnnouncement->author?->first_name }} {{ $urgentAnnouncement->author?->last_name }}</p>
+                            
+                            <h2 class="mt-6 text-3xl lg:text-4xl font-black text-slate-900 leading-tight">
+                                {{ $urgentAnnouncement->title }}
+                            </h2>
+                            <p class="mt-4 text-lg leading-relaxed text-slate-600 lg:pr-10">
+                                {{ $urgentAnnouncement->content }}
+                            </p>
+                            
+                            <div class="mt-8 flex flex-wrap items-center gap-6 border-t border-slate-100 pt-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Published</p>
+                                        <p class="text-sm font-bold text-slate-700">{{ $urgentAnnouncement->published_at?->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Authorized By</p>
+                                        <p class="text-sm font-bold text-slate-700">{{ $urgentAnnouncement->author?->first_name }} {{ $urgentAnnouncement->author?->last_name }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
             @endif
 
-            {{-- Main Announcements Section --}}
-            <section class="rounded-[1.75rem] border border-blue-100 bg-white shadow-sm overflow-hidden">
-                <div class="border-b border-slate-200 px-6 py-5 flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2xl font-bold text-slate-900">Public Announcements</h1>
-                        <p class="mt-1 text-sm text-slate-500">Stay updated with traffic advisories, closures, emergency notices, and service announcements.</p>
-                    </div>
-                    <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500">
-                        <svg class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 0 1 0 3.46" />
-                        </svg>
-                        <span>{{ $announcements->total() }} {{ Str::plural('announcement', $announcements->total()) }}</span>
-                    </div>
+            {{-- Filter Bar --}}
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Public Updates</h1>
+                    <p class="mt-1 text-slate-500">Official traffic and system announcements for Minglanilla citizens.</p>
                 </div>
+                
+                <nav class="flex flex-wrap items-center gap-2 rounded-[1.25rem] bg-slate-200/50 p-1.5 backdrop-blur-sm">
+                    <a href="{{ route('user.announcements.index') }}" 
+                        class="rounded-xl px-4 py-2 text-sm font-bold transition-all {{ !request('type') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                        All Updates
+                    </a>
+                    @foreach($typeLabels as $value => $label)
+                        <a href="{{ route('user.announcements.index', ['type' => $value]) }}" 
+                            class="rounded-xl px-4 py-2 text-sm font-bold transition-all {{ request('type') === $value ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                            {{ $label }}
+                        </a>
+                    @endforeach
+                </nav>
+            </div>
 
-                @if($announcements->count())
-                    <div class="grid gap-5 px-6 py-6 md:grid-cols-2 xl:grid-cols-3">
-                        @foreach($announcements as $announcement)
-                            <article class="group flex flex-col rounded-2xl border overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5
-                                {{ $announcement->priority === 'urgent' ? 'border-rose-200 bg-rose-50/40' : ($announcement->priority === 'important' ? 'border-amber-200 bg-amber-50/30' : 'border-slate-200 bg-white') }}">
-
-                                {{-- Image --}}
+            {{-- Main Announcements Feed --}}
+            @if($announcements->count())
+                <div class="space-y-6">
+                    @foreach($announcements as $announcement)
+                        <article class="group relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-2 transition-all duration-300 hover:border-blue-300 hover:shadow-2xl hover:shadow-blue-500/10">
+                            <div class="flex flex-col lg:flex-row lg:items-center gap-6 p-4">
+                                {{-- Media Content --}}
                                 @if($announcement->image)
-                                    <div class="relative overflow-hidden">
+                                    <div class="relative h-48 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 lg:h-56 lg:w-72 xl:w-80">
                                         <img src="{{ asset('storage/' . $announcement->image) }}"
                                             alt="{{ $announcement->title }}"
-                                            class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                                            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                        <div class="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl"></div>
                                     </div>
                                 @else
-                                    {{-- Decorative header when no image --}}
-                                    <div class="h-2 w-full {{ $announcement->priority === 'urgent' ? 'bg-gradient-to-r from-rose-400 to-rose-500' : ($announcement->priority === 'important' ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-blue-400 to-blue-600') }}"></div>
+                                    <div class="relative h-48 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100 lg:h-56 lg:w-72 xl:w-80 flex items-center justify-center">
+                                        <div class="text-slate-300">
+                                            {!! $typeIcons[$announcement->type] ?? '' !!}
+                                        </div>
+                                    </div>
                                 @endif
 
-                                {{-- Content --}}
-                                <div class="flex flex-1 flex-col p-5">
-                                    {{-- Badges --}}
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-200">
+                                {{-- Textual Content --}}
+                                <div class="flex flex-1 flex-col min-w-0">
+                                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-700 ring-1 ring-blue-200">
                                             {!! $typeIcons[$announcement->type] ?? '' !!}
                                             {{ $typeLabels[$announcement->type] ?? 'Announcement' }}
                                         </span>
-                                        <span class="rounded-full px-3 py-1 text-xs font-semibold ring-1
-                                            {{ $announcement->priority === 'urgent' ? 'bg-rose-100 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-100 text-amber-700 ring-amber-200' : 'bg-slate-100 text-slate-600 ring-slate-200') }}">
-                                            {{ ucfirst($announcement->priority) }}
+                                        <span class="rounded-full px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest ring-1
+                                            {{ $announcement->priority === 'urgent' ? 'bg-rose-50 text-rose-700 ring-rose-200' : ($announcement->priority === 'important' ? 'bg-amber-50 text-amber-700 ring-amber-200' : 'bg-slate-50 text-slate-600 ring-slate-200') }}">
+                                            {{ $announcement->priority }}
+                                        </span>
+                                        <span class="ml-auto text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                            {{ $announcement->published_at?->format('F d, Y') }}
                                         </span>
                                     </div>
 
-                                    {{-- Title & Body --}}
-                                    <h2 class="mt-3 text-lg font-bold text-slate-900 leading-snug">{{ $announcement->title }}</h2>
-                                    <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{{ \Illuminate\Support\Str::limit($announcement->content, 180) }}</p>
+                                    <h2 class="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors duration-200">
+                                        {{ $announcement->title }}
+                                    </h2>
+                                    <p class="mt-3 text-base leading-relaxed text-slate-600 line-clamp-2">
+                                        {{ $announcement->content }}
+                                    </p>
 
-                                    {{-- Footer --}}
-                                    <div class="mt-4 flex items-center gap-3 border-t pt-4 text-xs text-slate-400
-                                        {{ $announcement->priority === 'urgent' ? 'border-rose-200' : ($announcement->priority === 'important' ? 'border-amber-200' : 'border-slate-200') }}">
-                                        <div class="flex items-center gap-1.5">
-                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                                            </svg>
-                                            <span>{{ $announcement->published_at?->format('M d, Y') }}</span>
+                                    <div class="mt-6 flex flex-wrap items-center gap-y-2 gap-x-6 border-t border-slate-50 pt-5 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-black">
+                                                {{ substr($announcement->author?->first_name ?? 'M', 0, 1) }}
+                                            </div>
+                                            <span class="text-slate-600">{{ $announcement->author?->first_name }} {{ $announcement->author?->last_name }}</span>
                                         </div>
-                                        <span class="text-slate-300">·</span>
-                                        <div class="flex items-center gap-1.5">
-                                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                        <div class="flex items-center gap-2">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                             </svg>
-                                            <span>{{ $announcement->author?->first_name }} {{ $announcement->author?->last_name }}</span>
+                                            <span>{{ $announcement->published_at?->diffForHumans() }}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </article>
-                        @endforeach
-                    </div>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
 
-                    <div class="border-t border-slate-200 px-6 py-4">
-                        {{ $announcements->links() }}
-                    </div>
-                @else
-                    <div class="px-6 py-20 text-center">
-                        <svg class="mx-auto h-14 w-14 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                <div class="mt-12 flex justify-center">
+                    {{ $announcements->links() }}
+                </div>
+            @else
+                <div class="mt-12 overflow-hidden rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-white px-6 py-24 text-center">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-slate-50 text-slate-300">
+                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 0 1-1.44-4.282m3.102.069a18.03 18.03 0 0 1-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 0 1 8.835 2.535M10.34 6.66a23.847 23.847 0 0 0 8.835-2.535m0 0A23.74 23.74 0 0 0 18.795 3m.38 1.125a23.91 23.91 0 0 1 1.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 0 0 1.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 0 1 0 3.46" />
                         </svg>
-                        <h2 class="mt-4 text-lg font-bold text-slate-900">No announcements available yet</h2>
-                        <p class="mt-2 text-sm text-slate-500">Once Head MITCOM publishes updates, they will appear here.</p>
                     </div>
-                @endif
-            </section>
+                    <h2 class="mt-8 text-2xl font-black text-slate-900">No updates found</h2>
+                    <p class="mt-4 text-slate-500">There are no announcements matching your current filter.</p>
+                    <a href="{{ route('user.announcements.index') }}" class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700">
+                        Clear all filters
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </a>
+                </div>
+            @endif
         </div>
     </main>
 
