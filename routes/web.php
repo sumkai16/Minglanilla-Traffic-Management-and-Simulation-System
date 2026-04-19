@@ -187,6 +187,7 @@ Route::middleware(['auth', 'verified', 'role:head-mitcom'])
     // Simulation
     Route::get('/simulation', [HeadMitcomSimulationController::class, 'index'])->name('simulation.index');
     Route::get('/simulation/data', [HeadMitcomSimulationController::class, 'data'])->name('simulation.data');
+    Route::get('/analysis', [HeadMitcomSimulationController::class, 'analysis'])->name('analysis');
 });
 
 require __DIR__.'/auth.php';
