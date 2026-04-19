@@ -39,25 +39,31 @@ class ReportController extends Controller
         return view('enforcer.reports.show', compact('report'));
     }
 
-    public function submitProof(Request $request, Report $report)
-    {
-        abort_unless((int) $report->assigned_to === (int) $request->user()->id, 403);
+ public function submitProof(Request $request, Report $report)
+{
+    abort_unless((int) $report->assigned_to === (int) $request->user()->id, 403);
 
-        if ($report->status !== 'assigned') {
-            return back()->with('error', 'This report cannot be updated at this stage.');
-        }
-
-        $request->validate([
-            'proof_image' => ['required', 'image', 'max:5120'],
-        ]);
-
-        $path = $request->file('proof_image')->store('proof-images', 'public');
-
-        $report->update([
-            'proof_image' => $path,
-            'status' => 'for_verification',
-        ]);
-
-        return back()->with('success', 'Proof submitted. Awaiting Head MITCOM verification.');
+    if ($report->status !== 'assigned') {
+        return back()->with('error', 'This report cannot be updated at this stage.');
     }
+
+    $request->validate([
+        'proof_image'     => ['required', 'image', 'max:5120'],
+        'proof_remarks'   => ['required', 'string', 'max:1000'],
+        'proof_latitude'  => ['nullable', 'numeric'],
+        'proof_longitude' => ['nullable', 'numeric'],
+    ]);
+
+    $path = $request->file('proof_image')->store('proof-images', 'public');
+
+    $report->update([
+        'proof_image'     => $path,
+        'proof_remarks'   => $request->proof_remarks,
+        'proof_latitude'  => $request->proof_latitude,
+        'proof_longitude' => $request->proof_longitude,
+        'status'          => 'for_verification',
+    ]);
+
+    return back()->with('success', 'Proof submitted. Awaiting Head MITCOM verification.');
+}
 }

@@ -10,16 +10,15 @@
                             </p>
                             <h2 class="text-xl font-bold text-slate-900 mt-2">Report #{{ $report->id }}</h2>
                         </div>
-                        <span
-                            @class([
-                                'px-3 py-1 rounded-full text-sm font-semibold w-fit',
-                                'bg-yellow-100 text-yellow-700' => $report->status === 'pending',
-                                'bg-blue-100 text-blue-700' => $report->status === 'verified',
-                                'bg-purple-100 text-purple-700' => $report->status === 'assigned',
-                                'bg-cyan-100 text-cyan-800' => $report->status === 'for_verification',
-                                'bg-green-100 text-green-700' => $report->status === 'resolved',
-                                'bg-red-100 text-red-700' => $report->status === 'rejected',
-                            ])>
+                        <span @class([
+                            'px-3 py-1 rounded-full text-sm font-semibold w-fit',
+                            'bg-yellow-100 text-yellow-700' => $report->status === 'pending',
+                            'bg-blue-100 text-blue-700' => $report->status === 'verified',
+                            'bg-purple-100 text-purple-700' => $report->status === 'assigned',
+                            'bg-cyan-100 text-cyan-800' => $report->status === 'for_verification',
+                            'bg-green-100 text-green-700' => $report->status === 'resolved',
+                            'bg-red-100 text-red-700' => $report->status === 'rejected',
+                        ])>
                             {{ ucfirst(str_replace('_', ' ', $report->status)) }}
                         </span>
                     </div>
@@ -27,7 +26,8 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">Issue Type</p>
-                            <p class="text-slate-900 font-semibold">{{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
+                            <p class="text-slate-900 font-semibold">
+                                {{ ucwords(str_replace('_', ' ', $report->issue_type)) }}
                             </p>
                         </div>
                         <div>
@@ -44,7 +44,8 @@
                             <p class="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">Location</p>
                             <p class="text-slate-900">{{ $report->location }}</p>
                             <p class="text-xs text-slate-400 mt-0.5">{{ $report->latitude }},
-                                {{ $report->longitude }}</p>
+                                {{ $report->longitude }}
+                            </p>
                         </div>
                     </div>
 
@@ -68,14 +69,16 @@
                     <h2 class="text-base font-bold text-slate-900 mb-4">Assignment Summary</h2>
                     <div class="space-y-4 text-sm">
                         <div class="rounded-xl bg-purple-50 border border-purple-100 px-4 py-3">
-                            <p class="text-xs font-semibold uppercase tracking-wide text-purple-500">Assigned Enforcer</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-purple-500">Assigned Enforcer
+                            </p>
                             <p class="text-slate-900 font-semibold mt-1">
                                 {{ $report->assignedEnforcer?->first_name }}
                                 {{ $report->assignedEnforcer?->last_name }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Assignment Status</p>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Assignment Status
+                            </p>
                             <p class="text-slate-700 mt-1">This incident is currently part of your active workload.</p>
                         </div>
                         <div>
@@ -129,18 +132,49 @@
                         <h3 class="font-semibold text-slate-800 mb-1">Submit Proof of Resolution</h3>
                         <p class="text-sm text-slate-500 mb-4">Upload a photo proving the issue has been resolved. Head
                             MITCOM will verify it.</p>
+
                         <form action="{{ route('enforcer.reports.proof', $report) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
+
+                            <!-- Hidden GPS fields -->
+                            <input type="hidden" name="proof_latitude" id="proof_latitude">
+                            <input type="hidden" name="proof_longitude" id="proof_longitude">
+
+                            <!-- GPS Status -->
+                            <div class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+                                <svg class="w-4 h-4 animate-spin text-blue-500" id="gps-spinner"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                </svg>
+                                <span id="gps-label">Capturing your location...</span>
+                            </div>
+
+                            <!-- Proof Photo -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Proof Photo <span
                                         class="text-red-500">*</span></label>
-                                <input type="file" name="proof_image" accept="image/*"
+                                <input type="file" name="proof_image" accept="image/*" required
                                     class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                 @error('proof_image')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            <!-- Remarks -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Remarks <span
+                                        class="text-red-500">*</span></label>
+                                <textarea name="proof_remarks" rows="3" required
+                                    placeholder="Describe what action was taken to resolve this incident..."
+                                    class="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('proof_remarks') }}</textarea>
+                                @error('proof_remarks')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <button type="submit"
                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition">
                                 Submit for Verification
@@ -178,7 +212,7 @@
 
     @push('scripts')
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const map = L.map('report-map').setView([{{ $report->latitude }}, {{ $report->longitude }}], 16);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors',
@@ -192,6 +226,32 @@
                     )
                     .openPopup();
             });
+            const latField = document.getElementById('proof_latitude');
+            const lngField = document.getElementById('proof_longitude');
+            const gpsLabel = document.getElementById('gps-label');
+            const gpsSpinner = document.getElementById('gps-spinner');
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        latField.value = position.coords.latitude;
+                        lngField.value = position.coords.longitude;
+                        gpsSpinner.classList.add('hidden');
+                        gpsLabel.textContent = '✓ Location captured (' + position.coords.latitude.toFixed(5) + ', ' + position.coords.longitude.toFixed(5) + ')';
+                        gpsLabel.classList.remove('text-slate-500');
+                        gpsLabel.classList.add('text-green-600', 'font-medium');
+                    },
+                    function () {
+                        gpsSpinner.classList.add('hidden');
+                        gpsLabel.textContent = '⚠ Location unavailable — submission will proceed without GPS.';
+                        gpsLabel.classList.add('text-amber-500');
+                    }
+                );
+            } else {
+                gpsSpinner.classList.add('hidden');
+                gpsLabel.textContent = '⚠ GPS not supported on this device.';
+                gpsLabel.classList.add('text-amber-500');
+            }
         </script>
     @endpush
 </x-app-nav>

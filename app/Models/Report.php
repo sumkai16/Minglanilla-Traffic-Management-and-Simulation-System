@@ -29,6 +29,9 @@ class Report extends Model
         'proof_image',
         'resolved_at',
         'parent_id',
+        'proof_remarks',
+        'proof_latitude',
+        'proof_longitude',
     ];
 
     protected $casts = [
