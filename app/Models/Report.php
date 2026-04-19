@@ -32,6 +32,7 @@ class Report extends Model
         'proof_remarks',
         'proof_latitude',
         'proof_longitude',
+        'reporter_ip',
     ];
 
     protected $casts = [

@@ -481,6 +481,46 @@
             </div>
         </div>
     @endif
+    @if(session('guest_limit'))
+    <div id="guestLimitModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-md rounded-lg shadow-xl p-8 text-center transform scale-95 opacity-0 transition-all duration-300"
+            id="guestLimitModalContent">
+            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 mx-auto mb-4">
+                <svg class="w-8 h-8 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Report Limit Reached</h2>
+            <p class="text-gray-600 mb-2">
+                You have already submitted a report from this device.
+            </p>
+            <p class="text-sm text-gray-500 mb-6">
+                Create an account to submit multiple reports and track your incident history.
+            </p>
+            <div class="flex flex-col gap-3">
+                <a href="{{ route('register') }}"
+                    class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg transition font-semibold">
+                    Create an Account
+                </a>
+                <a href="{{ route('login') }}"
+                    class="border border-slate-200 text-slate-700 hover:bg-slate-50 px-6 py-2.5 rounded-lg transition font-semibold">
+                    Log In
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('guestLimitModal');
+            const content = document.getElementById('guestLimitModalContent');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 100);
+        });
+    </script>
+@endif
 </body>
 
 </html>

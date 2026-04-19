@@ -16,51 +16,50 @@ class ReportController extends Controller
     }
 
     // Store a new report
-    public function store(Request $request)
-    {
-        // If guest, check if they already reported with this email
-        if (!Auth::check()) {
-            $existingReport = Report::whereNull('user_id')
-                ->where('reporter_email', $request->email)
-                ->exists();
+   public function store(Request $request)
+{
+    if (!Auth::check()) {
+        $clientIp = $request->ip();
 
-            if ($existingReport) {
-                return back()->with('error', 'You have already submitted a report. Please login to submit more.');
-            }
+        $alreadyReported = Report::whereNull('user_id')
+            ->where('reporter_ip', $clientIp)
+            ->exists();
+
+        if ($alreadyReported) {
+            return back()->with('guest_limit', true);
         }
-
-        $validated = $request->validate([
-            'issue_type' => 'required|string|max:255',
-            'description' => 'required|string',
-            'location' => 'required|string|max:255',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-            // Guest fields - only required if not logged in
-            'reporter_name' => Auth::check() ? 'nullable' : 'required|string|max:255',
-            'reporter_email' => Auth::check() ? 'nullable' : 'required|email|max:255',
-            'reporter_phone' => 'nullable|string|max:20',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',      
-            
-        ]);
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('reports', 'public');
-        }
-
-        $validated['image_path'] = $imagePath;
-        Report::create([
-            ...$validated,
-            'image_path' => $imagePath,
-            'user_id' => Auth::check() ? Auth::id() : null,
-            'parent_id' => Report::findDuplicate($validated['issue_type'], $validated['latitude'], $validated['longitude'])?->id,
-            'reporter_name' => Auth::check() ? null : $validated['reporter_name'],
-            'reporter_email' => Auth::check() ? null : $validated['reporter_email'],
-            'reporter_phone' => Auth::check() ? null : $validated['reporter_phone'],
-        ]);
-
-        return redirect()->back()->with('success', 'Report submitted successfully.');
     }
+
+    $validated = $request->validate([
+        'issue_type'     => 'required|string|max:255',
+        'description'    => 'required|string',
+        'location'       => 'required|string|max:255',
+        'latitude'       => 'required|numeric|between:-90,90',
+        'longitude'      => 'required|numeric|between:-180,180',
+        'reporter_name'  => Auth::check() ? 'nullable' : 'required|string|max:255',
+        'reporter_email' => Auth::check() ? 'nullable' : 'required|email|max:255',
+        'reporter_phone' => 'nullable|string|max:20',
+        'image'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('reports', 'public');
+    }
+
+    Report::create([
+        ...$validated,
+        'image_path'     => $imagePath,
+        'user_id'        => Auth::check() ? Auth::id() : null,
+        'reporter_ip'    => Auth::check() ? null : $request->ip(),
+        'parent_id'      => Report::findDuplicate($validated['issue_type'], $validated['latitude'], $validated['longitude'])?->id,
+        'reporter_name'  => Auth::check() ? null : $validated['reporter_name'],
+        'reporter_email' => Auth::check() ? null : $validated['reporter_email'],
+        'reporter_phone' => Auth::check() ? null : $validated['reporter_phone'],
+    ]);
+
+    return redirect()->back()->with('success', 'Report submitted successfully.');
+}
    // Get reports for map display
     public function mapData()
     {
