@@ -64,7 +64,12 @@
                             <p class="mt-4 text-lg leading-relaxed text-slate-600 lg:pr-10">
                                 {{ $urgentAnnouncement->content }}
                             </p>
-                            
+                            <a href="{{ route('user.announcements.show', $urgentAnnouncement->id) }}"
+                               class="mt-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-rose-700 transition">
+                                View Details
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                            </a>
+
                             <div class="mt-8 flex flex-wrap items-center gap-6 border-t border-slate-100 pt-6">
                                 <div class="flex items-center gap-3">
                                     <div class="h-10 w-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
@@ -158,8 +163,17 @@
                                     </h2>
                                     <p class="mt-3 text-base leading-relaxed text-slate-600 line-clamp-2">
                                         {{ $announcement->content }}
+                                        
                                     </p>
-
+                                        <a href="{{ isset($announcement->is_advisory) && $announcement->is_advisory 
+                                                ? route('user.advisories.show', str_replace('advisory-', '', $announcement->id)) 
+                                                : route('user.announcements.show', $announcement->id) }}"
+                                            class="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-800 transition">
+                                            View Details
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                            </svg>
+                                        </a>
                                     <div class="mt-6 flex flex-wrap items-center gap-y-2 gap-x-6 border-t border-slate-50 pt-5 text-[11px] font-bold uppercase tracking-widest text-slate-400">
                                         <div class="flex items-center gap-2.5">
                                             <div class="h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-black">

@@ -17,53 +17,12 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-8">
-                    <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden">
-                        <div class="px-6 py-5 border-b border-slate-200">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <div>
-                                    <h2 class="text-lg font-bold text-slate-900">Map View</h2>
-                                    <p class="text-sm text-slate-500 mt-1">Click markers to view report details</p>
-                                </div>
-                                <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">
-                                    Powered by the same live map as the Citizen dashboard
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="head-mitcom-map" class="w-full z-0 overflow-hidden"
-                            style="height: 520px; min-height: 520px;">
-                            <div id="map-fallback-message"
-                                class="flex items-center justify-center h-full text-sm text-slate-400">
-                                Loading map...
-                            </div>
-                        </div>
-
-                        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-                            <div class="flex flex-wrap items-center gap-4 text-xs">
-                                <span class="font-semibold text-slate-700">Legend:</span>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-slate-600">Pending</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                                    <span class="text-slate-600">Verified</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                                    <span class="text-slate-600">Assigned</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <span class="text-slate-600">Resolved</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-slate-600">Rejected</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <x-incident-map 
+                        mapId="head-mitcom-map" 
+                        heightClass="h-[520px]"
+                        title="Map View"
+                        :showFilters="true"
+                    />
                 </div>
 
                 <div class="lg:col-span-4 space-y-6">
@@ -139,35 +98,12 @@
 
     @push('scripts')
         <script>
-            const refreshIntervalMs = 60000;
-
             document.addEventListener('DOMContentLoaded', function () {
-                const mapEl = document.getElementById('head-mitcom-map');
-                if (mapEl && typeof window.initPublicMap === 'function') {
-                    // Reuse the same public map initializer used on the user dashboard
-                    window.initPublicMap('head-mitcom-map');
-                } else if (mapEl && window.L) {
-                    // Fallback initializer if the bundle didn't load
-                    initPublicMapFallback('head-mitcom-map');
-                }
-                const fallback = document.getElementById('map-fallback-message');
-                if (fallback) {
-                    fallback.style.display = 'none';
-                }
-
-                loadSummary();
-                setInterval(loadSummary, refreshIntervalMs);
+                window.addEventListener('reports-loaded-head-mitcom-map', function(e) {
+                    updateCounts(e.detail);
+                    updateLastUpdated();
+                });
             });
-
-            function loadSummary() {
-                fetch('/api/reports/map')
-                    .then(response => response.json())
-                    .then(reports => {
-                        updateCounts(reports);
-                        updateLastUpdated();
-                    })
-                    .catch(error => console.error('Error loading reports:', error));
-            }
 
             function updateCounts(reports) {
                 const counts = {
@@ -201,73 +137,6 @@
                     minute: '2-digit'
                 });
                 document.getElementById('last-updated').textContent = formatted;
-            }
-
-            function initPublicMapFallback(containerId) {
-                const map = L.map(containerId).setView([10.245375383221655, 123.7959085935566], 13);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Â© OpenStreetMap contributors',
-                    maxZoom: 19,
-                }).addTo(map);
-
-                fetch('/api/reports/map')
-                    .then(response => response.json())
-                    .then(reports => {
-                        reports.forEach(report => {
-                            const color = getMarkerColor(report.issue_type);
-
-                            const icon = L.divIcon({
-                                className: 'custom-marker',
-                                html: `<div style="background-color: ${color}; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
-                                iconSize: [25, 25],
-                                iconAnchor: [12, 12],
-                            });
-
-                            const marker = L.marker([report.latitude, report.longitude], { icon }).addTo(map);
-
-                            const popupContent = `
-                                <div class="p-2">
-                                    <h3 class="font-bold text-sm mb-1">${formatIssueType(report.issue_type)}</h3>
-                                    <p class="text-xs text-gray-600 mb-1">${report.location}</p>
-                                    <p class="text-xs text-gray-500">${report.created_at}</p>
-                                    <span class="inline-block px-2 py-1 text-xs rounded mt-1 ${getStatusClass(report.status)}">${report.status}</span>
-                                </div>
-                            `;
-
-                            marker.bindPopup(popupContent);
-                        });
-                    })
-                    .catch(error => console.error('Error loading map data:', error));
-            }
-
-            function getMarkerColor(issueType) {
-                const colors = {
-                    'traffic_signal_problem': '#f59e0b',
-                    'road_damage': '#ef4444',
-                    'illegal_parking': '#8b5cf6',
-                    'traffic_obstruction': '#f97316',
-                    'accident': '#dc2626',
-                    'traffic_violation': '#ec4899',
-                    'reckless_driving': '#be123c',
-                    'public_safety': '#ea580c',
-                    'infrastructure': '#6366f1',
-                };
-                return colors[issueType] || '#6b7280';
-            }
-
-            function formatIssueType(type) {
-                return type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            }
-
-            function getStatusClass(status) {
-                const classes = {
-                    'pending': 'bg-yellow-100 text-yellow-800',
-                    'verified': 'bg-blue-100 text-blue-800',
-                    'assigned': 'bg-purple-100 text-purple-800',
-                    'resolved': 'bg-green-100 text-green-800',
-                };
-                return classes[status] || 'bg-gray-100 text-gray-800';
             }
         </script>
     @endpush

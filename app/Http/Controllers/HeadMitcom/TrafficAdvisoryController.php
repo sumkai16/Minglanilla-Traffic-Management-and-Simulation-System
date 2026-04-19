@@ -90,6 +90,7 @@ class TrafficAdvisoryController extends Controller
 
     public function update(Request $request, TrafficAdvisory $advisory)
     {
+        
             $request->validate([
                 'title'       => ['required', 'string', 'max:255'],
                 'description' => ['nullable', 'string'],
@@ -141,4 +142,5 @@ class TrafficAdvisoryController extends Controller
         return redirect()->route('head-mitcom.advisories.index')
             ->with('success', 'Advisory deleted successfully.');
     }
+    
 }

@@ -163,61 +163,162 @@
                 <p class="text-blue-700/80">View recent traffic incidents and reports across Minglanilla</p>
             </div>
 
-            <div class="relative bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100">
-                <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.18),transparent_55%)]"></div>
-                <div id="public-map" class="w-full h-[500px]"></div>
-                <div class="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow">
-                    Live Feed
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-blue-100"
+                 x-data="{ trafficVisible: false, markersVisible: true }">
+
+                <!-- Map Controls -->
+                <div class="px-5 py-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/70">
+                    <div class="flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-xs font-semibold text-slate-600">Live Feed</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Traffic Flow Toggle -->
+                        <button type="button"
+                            @click="trafficVisible = !trafficVisible; publicMapToggleTraffic()"
+                            :class="trafficVisible
+                                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                                : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50'"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200">
+                            <span class="w-2 h-2 rounded-full inline-block"
+                                style="background: linear-gradient(to right, #22c55e, #ef4444);"></span>
+                            <span x-text="trafficVisible ? 'Hide Traffic Flow' : 'Show Traffic Flow'"></span>
+                        </button>
+                        <!-- Markers Toggle -->
+                        <button type="button"
+                            @click="markersVisible = !markersVisible; publicMapToggleMarkers()"
+                            :class="markersVisible
+                                ? 'bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50'
+                                : 'bg-slate-800 text-white shadow-md shadow-slate-800/20'"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200">
+                            <span class="w-2 h-2 rounded-full inline-block"
+                                :class="markersVisible ? 'bg-blue-500' : 'bg-slate-400'"></span>
+                            <span x-text="markersVisible ? 'Hide Markers' : 'Show Markers'"></span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <!-- Legend -->
-            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-                <div class="flex flex-wrap items-center gap-4 text-xs">
-                    <span class="font-semibold text-slate-700">Legend:</span>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <span class="text-slate-600">Pending</span>
+
+                <!-- Map -->
+                <div class="relative">
+                    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.10),transparent_55%)] z-10"></div>
+                    <div id="public-map" class="w-full h-[500px]"></div>
+                </div>
+
+                <!-- Legend -->
+                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/80">
+                    <div class="flex flex-wrap items-center gap-4 text-xs">
+                        <span class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Status Legend:</span>
+                        <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div><span class="text-slate-600 font-medium">Pending</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div><span class="text-slate-600 font-medium">Verified</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-purple-500"></div><span class="text-slate-600 font-medium">Assigned</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div><span class="text-slate-600 font-medium">Resolved</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-red-500"></div><span class="text-slate-600 font-medium">Rejected</span></div>
+                        <div class="w-px h-4 bg-slate-300 mx-1 hidden sm:block"></div>
+                        <span class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Traffic Flow:</span>
+                        <div class="flex items-center gap-1.5"><div class="w-4 h-1.5 rounded-full" style="background-color:#06c167;"></div><span class="text-slate-600 font-medium">Free Flow</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-4 h-1.5 rounded-full" style="background-color:#ff8c00;"></div><span class="text-slate-600 font-medium">Slow</span></div>
+                        <div class="flex items-center gap-1.5"><div class="w-4 h-1.5 rounded-full" style="background-color:#ff0000;"></div><span class="text-slate-600 font-medium">Congested</span></div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span class="text-slate-600">Verified</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-purple-500"></div>
-                        <span class="text-slate-600">Assigned</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        <span class="text-slate-600">Resolved</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span class="text-slate-600">Rejected</span>
-                    </div>
-                     <div class="w-px h-4 bg-slate-300 mx-2"></div>
-                        <span class="font-semibold text-slate-700">Traffic Flow:</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-2 rounded-sm" style="background-color: #06c167;"></div>
-                            <span class="text-slate-600">Free Flow</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-2 rounded-sm" style="background-color: #ff8c00;"></div>
-                            <span class="text-slate-600">Slow</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-2 rounded-sm" style="background-color: #ff0000;"></div>
-                            <span class="text-slate-600">Congested</span>
-                        </div>
                 </div>
             </div>
         </div>
-
     </section>
 
     <script>
+        // Public map state
+        let _publicMap = null;
+        let _publicMarkersLayer = null;
+        let _publicTrafficLayer = null;
+        let _publicTrafficVisible = false;
+        let _publicMarkersVisible = true;
+
+        const TOMTOM_KEY = 'ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z';
+
         document.addEventListener('DOMContentLoaded', function () {
-            initPublicMap('public-map');
+            _publicMap = L.map('public-map').setView([10.2833, 123.7972], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 20,
+                subdomains: 'abc',
+            }).addTo(_publicMap);
+
+            _publicTrafficLayer = L.tileLayer(
+                `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${TOMTOM_KEY}`,
+                { attribution: '© TomTom', maxZoom: 19, opacity: 0.8 }
+            );
+
+            _publicMarkersLayer = L.layerGroup().addTo(_publicMap);
+
+            // Load markers
+            fetch('/api/reports/map')
+                .then(r => r.json())
+                .then(reports => {
+                    reports.forEach(report => {
+                        const colors = { pending:'#eab308', verified:'#3b82f6', assigned:'#a855f7', resolved:'#10b981', rejected:'#ef4444' };
+                        const color = colors[report.status] || '#64748b';
+
+                        const icon = L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div style="background-color:${color};width:26px;height:26px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>`,
+                            iconSize: [26, 26],
+                            iconAnchor: [13, 13],
+                        });
+
+                        const badgeClasses = { pending:'bg-yellow-100 text-yellow-800', verified:'bg-blue-100 text-blue-800', assigned:'bg-purple-100 text-purple-800', resolved:'bg-emerald-100 text-emerald-800', rejected:'bg-red-100 text-red-800' };
+                        const badge = badgeClasses[report.status] || 'bg-slate-100 text-slate-800';
+                        const issueLabel = report.issue_type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+                        const popup = `
+                            <div class="p-4 min-w-[210px] font-sans">
+                                <div class="flex items-start justify-between mb-2 gap-2">
+                                    <h3 class="font-bold text-sm text-slate-800 leading-tight">${issueLabel}</h3>
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-md ${badge}">${report.status}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mb-1">📍 ${report.location}</p>
+                                <p class="text-[11px] text-slate-500">🕐 ${report.created_at}</p>
+                            </div>`;
+
+                        L.marker([report.latitude, report.longitude], { icon })
+                            .bindPopup(popup, { maxWidth: 260, className: 'modern-popup', closeButton: false })
+                            .addTo(_publicMarkersLayer);
+                    });
+                })
+                .catch(e => console.error('Map load error:', e));
+
+            // Inject popup styles once
+            if (!document.getElementById('modern-popup-styles')) {
+                const s = document.createElement('style');
+                s.id = 'modern-popup-styles';
+                s.textContent = `
+                    .modern-popup .leaflet-popup-content-wrapper{padding:0;border-radius:.75rem;overflow:hidden;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);}
+                    .modern-popup .leaflet-popup-content{margin:0;}
+                    .modern-popup .leaflet-popup-tip{box-shadow:0 4px 6px -2px rgba(0,0,0,.05);}`;
+                document.head.appendChild(s);
+            }
         });
+
+        function publicMapToggleTraffic() {
+            if (!_publicMap) return;
+            if (_publicTrafficVisible) {
+                _publicMap.removeLayer(_publicTrafficLayer);
+                _publicTrafficVisible = false;
+            } else {
+                _publicTrafficLayer.addTo(_publicMap);
+                _publicTrafficVisible = true;
+            }
+        }
+
+        function publicMapToggleMarkers() {
+            if (!_publicMap) return;
+            if (_publicMarkersVisible) {
+                _publicMap.removeLayer(_publicMarkersLayer);
+                _publicMarkersVisible = false;
+            } else {
+                _publicMarkersLayer.addTo(_publicMap);
+                _publicMarkersVisible = true;
+            }
+        }
     </script>
     <!-- CORE FEATURES -->
     <section id="core-features" class="py-20 bg-white">

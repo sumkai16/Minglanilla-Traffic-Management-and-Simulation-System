@@ -20,6 +20,7 @@ use App\Http\Controllers\Enforcer\ReportController as EnforcerReportController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\ReportController as UserReportController;
 use App\Http\Controllers\User\AnnouncementController as UserAnnouncementController;
+use App\Http\Controllers\User\AdvisoryController as UserAdvisoryController;
 
 use App\Http\Controllers\HeadMitcom\DashboardController as HeadMitcomDashboardController;
 use App\Http\Controllers\HeadMitcom\ReportController as HeadMitcomReportController;
@@ -124,6 +125,8 @@ Route::middleware(['auth', 'verified', 'role:user'])
     Route::get('/profile', fn () => redirect()->route('profile.edit'))->name('profile.edit');
 
     Route::get('/announcements', [UserAnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/{announcement}', [UserAnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('/advisories/{advisory}', [UserAdvisoryController::class, 'show'])->name('advisories.show');
 
     Route::get('/reports/create', [UserReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [UserReportController::class, 'store'])->name('reports.store');
