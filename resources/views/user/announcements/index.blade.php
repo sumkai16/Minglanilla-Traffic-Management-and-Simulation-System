@@ -14,15 +14,28 @@
     ];
 @endphp
 
-<x-app-nav title="Announcements" page-title="Announcements" page-eyebrow="Citizen Portal">
+@php
+    $pageTitle = request('type') === 'traffic_advisory' ? 'Traffic Advisories' : 'Announcements';
+@endphp
+<x-app-nav :title="$pageTitle" :page-title="$pageTitle" :page-eyebrow="ucfirst($prefix) . ' Portal'">
     <x-slot:actions>
-        <a href="{{ route('user.reports.create') }}"
-            class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Report Incident
-        </a>
+        @if(auth()->user()->role === 'user')
+            <a href="{{ route('user.reports.create') }}"
+                class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Report Incident
+            </a>
+        @elseif(auth()->user()->role === 'enforcer')
+            <a href="{{ route('enforcer.reports.index') }}"
+                class="inline-flex items-center gap-2 rounded-2xl bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                My Reports
+            </a>
+        @endif
     </x-slot:actions>
 
     <main class="py-10 relative">
@@ -64,7 +77,7 @@
                             <p class="mt-4 text-lg leading-relaxed text-slate-600 lg:pr-10">
                                 {{ $urgentAnnouncement->content }}
                             </p>
-                            <a href="{{ route('user.announcements.show', $urgentAnnouncement->id) }}"
+                            <a href="{{ route($prefix . '.announcements.show', $urgentAnnouncement->id) }}"
                                class="mt-6 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-rose-700 transition">
                                 View Details
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
@@ -99,40 +112,49 @@
                 </section>
             @endif
 
-            {{-- Filter Bar --}}
-            <div class="mb-8 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-                <div>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tight">Public Updates</h1>
-                    <p class="mt-1 text-slate-500">Official traffic and system announcements for Minglanilla citizens.</p>
-                </div>
-                
-                <div class="flex flex-col md:flex-row items-center gap-4 w-full xl:w-auto mt-2 xl:mt-0">
-                    <form action="{{ route('user.announcements.index') }}" method="GET" class="relative w-full md:w-auto">
-                        @if(request('type'))
-                            <input type="hidden" name="type" value="{{ request('type') }}">
-                        @endif
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search updates..." 
-                               class="w-full md:w-56 lg:w-64 pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)]">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                            <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+            <div class="mb-12">
+                <div class="flex flex-col gap-10 pb-10 border-b border-slate-200/60">
+                    <div class="max-w-3xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="h-1 w-10 rounded-full bg-blue-600"></span>
+                            <span class="text-[11px] font-black uppercase tracking-[0.25em] text-blue-600 leading-none">Official Portal Updates</span>
                         </div>
-                    </form>
+                        <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+                            {{ request('type') === 'traffic_advisory' ? 'Traffic Advisories' : 'Public Updates' }}
+                        </h1>
+                        <p class="mt-6 text-xl text-slate-500 leading-relaxed font-medium">
+                            Official {{ request('type') === 'traffic_advisory' ? 'road notifications and traffic management alerts' : 'system announcements and community updates' }} for the municipality of Minglanilla.
+                        </p>
+                    </div>
 
-                    <div class="w-full relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-1 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] md:w-max">
-                        <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth">
-                            <a href="{{ route('user.announcements.index', ['search' => request('search')]) }}" 
-                                class="shrink-0 rounded-xl px-4 py-2 text-sm font-bold transition-all ease-out {{ !request('type') ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
-                                All Updates
-                            </a>
-                            @foreach($typeLabels as $value => $label)
-                                <a href="{{ route('user.announcements.index', ['type' => $value, 'search' => request('search')]) }}" 
-                                    class="shrink-0 rounded-xl px-4 py-2 text-sm font-bold transition-all ease-out {{ request('type') === $value ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50' }}">
-                                    {{ $label }}
+                    <div class="flex flex-col md:flex-row items-center gap-4 w-full">
+                        <form action="{{ route($prefix . '.announcements.index') }}" method="GET" class="relative group flex-1 max-w-md">
+                            @if(request('type'))
+                                <input type="hidden" name="type" value="{{ request('type') }}">
+                            @endif
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search official updates..." 
+                                   class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm group-hover:border-slate-300">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500">
+                                <svg class="h-5 w-5 text-slate-400 group-focus-within:text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                        </form>
+
+                        <div class="w-full md:w-auto relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/50 p-1 shadow-inner">
+                            <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth">
+                                <a href="{{ route($prefix . '.announcements.index', ['search' => request('search')]) }}" 
+                                    class="shrink-0 rounded-xl px-5 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all {{ !request('type') ? 'bg-white text-blue-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800' }}">
+                                    All Updates
                                 </a>
-                            @endforeach
-                        </nav>
+                                @foreach($typeLabels as $value => $label)
+                                    <a href="{{ route($prefix . '.announcements.index', ['type' => $value, 'search' => request('search')]) }}" 
+                                        class="shrink-0 rounded-xl px-5 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all {{ request('type') === $value ? 'bg-white text-blue-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800' }}">
+                                        {{ str_replace(' Traffic Advisory', '', $label) }}
+                                    </a>
+                                @endforeach
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -183,8 +205,8 @@
                                         
                                     </p>
                                         <a href="{{ isset($announcement->is_advisory) && $announcement->is_advisory 
-                                                ? route('user.advisories.show', str_replace('advisory-', '', $announcement->id)) 
-                                                : route('user.announcements.show', $announcement->id) }}"
+                                                ? route($prefix . '.advisories.show', str_replace('advisory-', '', $announcement->id)) 
+                                                : route($prefix . '.announcements.show', $announcement->id) }}"
                                             class="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-800 transition">
                                             View Details
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -223,7 +245,7 @@
                     </div>
                     <h2 class="mt-8 text-2xl font-black text-slate-900">No updates found</h2>
                     <p class="mt-4 text-slate-500">There are no announcements matching your current filter.</p>
-                    <a href="{{ route('user.announcements.index') }}" class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700">
+                    <a href="{{ route($prefix . '.announcements.index') }}" class="mt-8 inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700">
                         Clear all filters
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />

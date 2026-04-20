@@ -112,6 +112,11 @@ Route::middleware(['auth', 'verified', 'role:enforcer'])
     Route::get('/reports', [EnforcerReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/{report}', [EnforcerReportController::class, 'show'])->name('reports.show');
     Route::post('/reports/{report}/proof', [EnforcerReportController::class, 'submitProof'])->name('reports.proof');
+
+    // Announcements & Advisories
+    Route::get('/announcements', [UserAnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/{announcement}', [UserAnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('/advisories/{advisory}', [UserAdvisoryController::class, 'show'])->name('advisories.show');
 });
 
 // ─────────────────────────────────────────────
