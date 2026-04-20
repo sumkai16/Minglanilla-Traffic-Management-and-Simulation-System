@@ -98,13 +98,13 @@ class UsermanagementController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'role' => 'required|in:admin,user,enforcer,head-mitcom',
             'password' => 'nullable|string|min:8|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
@@ -113,9 +113,17 @@ class UsermanagementController extends Controller
         if($request->filled('password')){
             $user->password = Hash::make($request->password);
         }
+
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_image);
+            }
+            $path = $request->file('profile_image')->store('profile_images', 'public');
+            $user->profile_image = $path;
+        }
+
         $user->save();
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
-
     }
 
     /**

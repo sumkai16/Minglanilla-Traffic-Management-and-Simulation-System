@@ -36,7 +36,9 @@ use App\Http\Controllers\HeadMitcom\EnforcerStationController as HeadMitcomEnfor
 
 Route::get('/', function () {
     $reportCount = \App\Models\Report::count();
-    return view('welcome', compact('reportCount'));
+    $advisories = \App\Models\TrafficAdvisory::where('status', 'published')->latest()->get();
+    $announcements = \App\Models\Announcement::published()->get();
+    return view('welcome', compact('reportCount', 'advisories', 'announcements'));
 });
 
 Route::get('/report', [ReportController::class, 'create'])->name('report.create');
