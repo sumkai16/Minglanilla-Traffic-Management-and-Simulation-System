@@ -540,38 +540,7 @@
     </section>
 
     <!-- IMPACT SECTION -->
-    <section id="impact" class="py-20 bg-gradient-to-b from-blue-50 to-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-            <h2 class="text-3xl md:text-4xl font-bold text-blue-900 mb-12">
-                Our Impact
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-
-                <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-6 hover:shadow-lg transition hover:-translate-y-1">
-                    <div class="text-4xl font-bold text-blue-700 mb-2">{{ number_format($reportCount) }}</div>
-                    <p class="text-blue-700/80">Reports Submitted</p>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-6 hover:shadow-lg transition hover:-translate-y-1">
-                    <div class="text-4xl font-bold text-blue-800 mb-2">45%</div>
-                    <p class="text-blue-700/80">Faster Response</p>
-                </div>
-
-                <div>
-                    <div class="text-4xl font-bold text-sky-600 mb-2">98%</div>
-                    <p class="text-blue-700/80">User Satisfaction</p>
-                </div>
-
-                <div>
-                    <div class="text-4xl font-bold text-blue-600 mb-2">24/7</div>
-                    <p class="text-blue-700/80">System Availability</p>
-                </div>
-
-            </div>
-        </div>
-    </section>
+    
 
     <!-- CTA -->
     <section class="py-20 bg-gradient-to-r from-blue-800 to-blue-950 text-white text-center relative overflow-hidden">

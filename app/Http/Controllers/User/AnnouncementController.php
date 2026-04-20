@@ -57,6 +57,7 @@ class AnnouncementController extends Controller
                     'published_at' => $advisory->start_date->startOfDay(),
                     'author'       => $advisory->creator,
                     'is_advisory'  => true,
+                    'map_data'     => $advisory->map_data,
                 ];
             });
     }

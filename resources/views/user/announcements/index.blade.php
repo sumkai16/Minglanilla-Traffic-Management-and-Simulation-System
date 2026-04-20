@@ -173,6 +173,16 @@
                                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         <div class="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl"></div>
                                     </div>
+                                @elseif(($announcement->is_advisory ?? false) && !empty($announcement->map_data))
+                                    @php
+                                        $mapId = 'mini-map-' . $loop->index;
+                                        $mapJson = json_encode($announcement->map_data);
+                                    @endphp
+                                    <div id="{{ $mapId }}"
+                                         class="relative h-48 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100 lg:h-56 lg:w-72 xl:w-80 flex items-center justify-center"
+                                         style="z-index:0;"
+                                         data-map-data="{{ htmlspecialchars($mapJson, ENT_QUOTES, 'UTF-8') }}">
+                                    </div>
                                 @else
                                     <div class="relative h-48 w-full shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-slate-50 to-slate-100 lg:h-56 lg:w-72 xl:w-80 flex items-center justify-center">
                                         <div class="text-slate-300">
@@ -257,4 +267,74 @@
     </main>
 
     <x-toast />
+    @push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapContainers = document.querySelectorAll('div[id^="mini-map-"]');
+            
+            mapContainers.forEach(container => {
+                const rawData = container.getAttribute('data-map-data');
+                if (!rawData) return;
+                
+                try {
+                    const mapData = JSON.parse(rawData);
+                    
+                    // Initialize Leaflet map with zoomControl false, interactive false
+                    const map = L.map(container.id, {
+                        zoomControl: false,
+                        dragging: false,
+                        touchZoom: false,
+                        scrollWheelZoom: false,
+                        doubleClickZoom: false,
+                        boxZoom: false,
+                        keyboard: false,
+                        attributionControl: false
+                    }).setView([10.2833, 123.7972], 14);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 20,
+                    }).addTo(map);
+
+                    const bounds = L.latLngBounds();
+                    
+                    // Draw closures
+                    if (mapData.closures && mapData.closures.length) {
+                        mapData.closures.forEach(item => {
+                            const line = L.polyline(item.coordinates, {
+                                color: '#ef4444',
+                                weight: 4,
+                                opacity: 0.85,
+                                dashArray: '8, 6',
+                            }).addTo(map);
+                            bounds.extend(line.getBounds());
+                        });
+                    }
+
+                    // Draw reroutes
+                    if (mapData.reroutes && mapData.reroutes.length) {
+                        mapData.reroutes.forEach(item => {
+                            const line = L.polyline(item.coordinates, {
+                                color: '#22c55e',
+                                weight: 4,
+                                opacity: 0.85,
+                            }).addTo(map);
+                            bounds.extend(line.getBounds());
+                        });
+                    }
+
+                    if (bounds.isValid()) {
+                        map.fitBounds(bounds, { padding: [10, 10] });
+                    }
+                    
+                    // Disable all interactions to make it truly static
+                    if (map.tap) map.tap.disable();
+
+                } catch(e) {
+                    console.error("Error rendering mini-map:", e);
+                }
+            });
+        });
+    </script>
+    @endpush
 </x-app-nav>

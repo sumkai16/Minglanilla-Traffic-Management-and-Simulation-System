@@ -51,7 +51,6 @@ class RoleNavigation
                 self::item('Dashboard', route('enforcer.dashboard'), ['enforcer.dashboard'], 'dashboard'),
                 self::item('Assigned Reports', route('enforcer.reports.index'), ['enforcer.reports.*'], 'reports'),
                 self::item('Announcements', route('enforcer.announcements.index'), ['enforcer.announcements.*'], 'announcements', request()->routeIs('enforcer.announcements.*') && !request('type')),
-                self::item('Traffic Advisories', route('enforcer.announcements.index', ['type' => 'traffic_advisory']), [], 'advisories', request()->routeIs('enforcer.announcements.*') && request('type') === 'traffic_advisory'),
                 self::item('Profile', route('profile.edit'), ['profile.*'], 'profile'),
             ],
             default => [
