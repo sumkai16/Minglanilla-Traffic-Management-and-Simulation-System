@@ -50,6 +50,8 @@ class RoleNavigation
             'enforcer' => [
                 self::item('Dashboard', route('enforcer.dashboard'), ['enforcer.dashboard'], 'dashboard'),
                 self::item('Assigned Reports', route('enforcer.reports.index'), ['enforcer.reports.*'], 'reports'),
+                self::item('Announcements', route('enforcer.announcements.index'), ['enforcer.announcements.*'], 'announcements', request()->routeIs('enforcer.announcements.*') && !request('type')),
+                self::item('Traffic Advisories', route('enforcer.announcements.index', ['type' => 'traffic_advisory']), [], 'advisories', request()->routeIs('enforcer.announcements.*') && request('type') === 'traffic_advisory'),
                 self::item('Profile', route('profile.edit'), ['profile.*'], 'profile'),
             ],
             default => [
@@ -90,12 +92,12 @@ class RoleNavigation
         return $name !== '' ? $name : ucfirst(str_replace('-', ' ', $user->role));
     }
 
-    private static function item(string $label, string $href, array $routePatterns, string $icon): array
+    private static function item(string $label, string $href, array $routePatterns, string $icon, ?bool $active = null): array
     {
         return [
             'label' => $label,
             'href' => $href,
-            'active' => request()->routeIs(...$routePatterns),
+            'active' => $active ?? request()->routeIs(...$routePatterns),
             'icon' => $icon,
         ];
     }

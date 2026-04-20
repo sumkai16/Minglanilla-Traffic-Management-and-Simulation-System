@@ -101,40 +101,53 @@ class DashboardController extends Controller
             'lastAdvisory',
         ));
     }
-public function auditLog(Request $request)
-{
-    $query = Activity::with('causer', 'subject')->latest();
+    public function auditLog(Request $request)
+    {
+        $query = Activity::with('causer', 'subject')->latest();
 
-    if ($request->filled('event')) {
-        $query->where('event', $request->event);
+        if ($request->filled('event')) {
+            $query->where('event', $request->event);
+        }
+
+        if ($request->filled('subject')) {
+            $query->where('subject_type', 'like', '%' . $request->subject . '%');
+        }
+
+        if ($request->filled('causer')) {
+            $query->whereHasMorph('causer', '*', function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->causer . '%')
+                  ->orWhere('last_name', 'like', '%' . $request->causer . '%');
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $logs = $query->paginate(20)->withQueryString();
+
+        $enforcers = \App\Models\User::where('role', 'enforcer')
+            ->select('id', 'first_name', 'last_name')
+            ->get()
+            ->keyBy('id');
+
+        // Dynamically fetch available events and subjects for the filters
+        $events = Activity::select('event')->distinct()->pluck('event')->filter()->values();
+        
+        $subjects = Activity::select('subject_type')
+            ->whereNotNull('subject_type')
+            ->distinct()
+            ->pluck('subject_type')
+            ->map(fn($type) => class_basename($type))
+            ->unique()
+            ->values();
+
+        $allUsers = User::select('id', 'first_name', 'last_name', 'email', 'role', 'created_at')->get();
+
+        return view('admin.audit-log', compact('logs', 'enforcers', 'events', 'subjects', 'allUsers'));
     }
-
-    if ($request->filled('subject')) {
-        $query->where('subject_type', 'like', '%' . $request->subject . '%');
-    }
-
-    if ($request->filled('causer')) {
-        $query->whereHasMorph('causer', '*', function ($q) use ($request) {
-            $q->where('first_name', 'like', '%' . $request->causer . '%')
-              ->orWhere('last_name', 'like', '%' . $request->causer . '%');
-        });
-    }
-
-    if ($request->filled('date_from')) {
-        $query->whereDate('created_at', '>=', $request->date_from);
-    }
-
-    if ($request->filled('date_to')) {
-        $query->whereDate('created_at', '<=', $request->date_to);
-    }
-
-    $logs = $query->paginate(20)->withQueryString();
-
-    $enforcers = \App\Models\User::where('role', 'enforcer')
-        ->select('id', 'first_name', 'last_name')
-        ->get()
-        ->keyBy('id');
-
-    return view('admin.audit-log', compact('logs', 'enforcers'));
-}
 }

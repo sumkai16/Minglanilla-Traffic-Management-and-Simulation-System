@@ -12,17 +12,40 @@ class AnnouncementController extends Controller
 {
     // Fetch published announcements
     $announcementQuery = Announcement::with('author')->published();
-    if (request('type') && request('type') !== 'traffic_advisory') {
-        $announcementQuery->where('type', request('type'));
+    
+    if (request('search')) {
+        $search = request('search');
+        $announcementQuery->where(function($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('content', 'LIKE', "%{$search}%");
+        });
     }
-    $announcements = $announcementQuery->get();
+
+    if (request('type')) {
+        if (request('type') === 'traffic_advisory') {
+            $announcements = collect();
+        } else {
+            $announcements = $announcementQuery->where('type', request('type'))->get();
+        }
+    } else {
+        $announcements = $announcementQuery->get();
+    }
 
     // Fetch published advisories and normalize to match announcement structure
     $advisories = collect();
     if (!request('type') || request('type') === 'traffic_advisory') {
-        $advisories = \App\Models\TrafficAdvisory::with('creator')
-            ->where('status', 'published')
-            ->get()
+        $advisoryQuery = \App\Models\TrafficAdvisory::with('creator')
+            ->where('status', 'published');
+            
+        if (request('search')) {
+            $search = request('search');
+            $advisoryQuery->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+            
+        $advisories = $advisoryQuery->get()
             ->map(function ($advisory) {
                 return (object) [
                     'id'           => 'advisory-' . $advisory->id,
@@ -64,7 +87,9 @@ class AnnouncementController extends Controller
         ->where('priority', 'urgent')
         ->first();
 
-    return view('user.announcements.index', compact('announcements', 'urgentAnnouncement'));
+    $prefix = auth()->user()->role === 'enforcer' ? 'enforcer' : 'user';
+
+    return view('user.announcements.index', compact('announcements', 'urgentAnnouncement', 'prefix'));
 }
 public function show(string $announcement): View
 {
@@ -93,7 +118,8 @@ public function show(string $announcement): View
             'end_date'     => $advisory->end_date,
         ];
 
-        return view('user.announcements.show', compact('announcement'));
+        $prefix = auth()->user()->role === 'enforcer' ? 'enforcer' : 'user';
+        return view('user.announcements.show', compact('announcement', 'prefix'));
     }
 
     // Regular announcement
@@ -105,6 +131,7 @@ public function show(string $announcement): View
 
     $announcement->load('author');
 
-    return view('user.announcements.show', compact('announcement'));
+    $prefix = auth()->user()->role === 'enforcer' ? 'enforcer' : 'user';
+    return view('user.announcements.show', compact('announcement', 'prefix'));
 }
 }

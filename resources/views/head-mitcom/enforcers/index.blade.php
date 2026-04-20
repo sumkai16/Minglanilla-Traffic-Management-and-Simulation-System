@@ -96,10 +96,13 @@
                                             <tr class="hover:bg-slate-50 transition">
                                                 <td class="px-6 py-4">
                                                     <div class="flex items-center gap-3">
-                                                        <div
-                                                            class="h-9 w-9 rounded-full bg-gradient-to-br from-blue-700 to-slate-900 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                                            {{ strtoupper(substr($enforcer->first_name, 0, 1)) }}{{ strtoupper(substr($enforcer->last_name, 0, 1)) }}
-                                                        </div>
+                                                        @if($enforcer->profile_image)
+                                                            <img src="{{ asset('storage/' . $enforcer->profile_image) }}" alt="{{ $enforcer->first_name }}" class="h-9 w-9 rounded-full object-cover shrink-0 ring-2 ring-blue-50">
+                                                        @else
+                                                            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-blue-700 to-slate-900 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                                                {{ strtoupper(substr($enforcer->first_name, 0, 1)) }}{{ strtoupper(substr($enforcer->last_name, 0, 1)) }}
+                                                            </div>
+                                                        @endif
                                                         <div>
                                                             <p class="font-semibold text-slate-900">
                                                                 {{ $enforcer->first_name }} {{ $enforcer->last_name }}

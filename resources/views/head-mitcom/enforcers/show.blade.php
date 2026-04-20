@@ -30,10 +30,15 @@
             <div class="relative px-6 pb-6 pt-28 sm:px-8 sm:pt-28">
                 <div class="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                     <div class="flex flex-col gap-5 sm:flex-row sm:items-start">
-                        <div
-                            class="flex h-24 w-24 items-center justify-center rounded-[1.75rem] border-4 border-white bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-2xl font-black text-white shadow-xl">
-                            {{ $initials }}
-                        </div>
+                        @if($enforcer->profile_image)
+                            <img src="{{ asset('storage/' . $enforcer->profile_image) }}" alt="{{ $fullName }}"
+                                 class="h-24 w-24 object-cover rounded-[1.75rem] border-4 border-white shadow-xl shrink-0">
+                        @else
+                            <div
+                                class="flex h-24 w-24 shrink-0 items-center justify-center rounded-[1.75rem] border-4 border-white bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-2xl font-black text-white shadow-xl">
+                                {{ $initials }}
+                            </div>
+                        @endif
 
                         <div class="space-y-3">
                             <div class="space-y-1">

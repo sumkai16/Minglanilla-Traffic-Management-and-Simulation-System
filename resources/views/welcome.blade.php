@@ -155,6 +155,178 @@
             </div>
         </div>
     </section>
+
+    <!-- TRAFFIC ADVISORIES / NEWS SECTION -->
+    @if( (isset($announcements) && $announcements->count() > 0) || (isset($advisories) && $advisories->count() > 0) )
+    <section class="py-24 relative overflow-hidden bg-slate-50/50">
+        <!-- Engaging visual backgrounds -->
+        <div class="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-40"></div>
+        <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-white to-transparent"></div>
+        <div class="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-white/80 to-transparent"></div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center mb-20">
+                <!-- Eyebrow -->
+                <div class="inline-flex items-center justify-center gap-2 mb-6 p-1 pr-3 rounded-full bg-white border border-blue-100 shadow-sm shadow-blue-100/50">
+                    <span class="px-3 py-1 text-[11px] font-black uppercase tracking-wider text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-full shadow-inner">
+                        Live Now
+                    </span>
+                    <span class="text-xs font-bold text-blue-800 tracking-wide">
+                        Command Center Updates
+                    </span>
+                </div>
+                
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-5">
+                    Community <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Updates & News</span>
+                </h2>
+                
+                <p class="text-lg text-slate-500 leading-relaxed">
+                    Stay one step ahead. Get the latest verified traffic announcements, road closures, public events, and route optimizations directly from the Minglanilla Traffic Command.
+                </p>
+            </div>
+
+            @if(isset($announcements) && $announcements->count() > 0)
+            <div class="mb-16">
+                <h3 class="text-2xl font-extrabold text-slate-800 mb-8 flex items-center gap-3">
+                    <div class="p-2 rounded-lg bg-blue-100 text-blue-600 shadow-sm">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                    </div>
+                    Public Announcements
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    @foreach($announcements as $announcement)
+                    <div onclick="openAnnouncementModal({{ $announcement->id }})" class="group cursor-pointer flex flex-col h-full relative overflow-hidden bg-white rounded-3xl border border-slate-200 hover:border-blue-300 transition-all duration-500 hover:shadow-[0_20px_60px_-15px_rgba(37,99,235,0.15)] hover:-translate-y-1.5 z-10">
+                        @if($announcement->image)
+                            <div class="h-48 w-full overflow-hidden relative border-b border-slate-100 group-hover:border-blue-100 transition-colors">
+                                <img src="{{ Storage::url($announcement->image) }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                @if($announcement->priority === 'high')
+                                    <div class="absolute top-4 right-4 bg-red-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-md animate-pulse">Urgent</div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true">
+                                <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-blue-100 to-indigo-100 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+                            </div>
+                        @endif
+                        
+                        <div class="p-7 flex flex-col flex-grow">
+                            <div class="flex flex-wrap items-center gap-2 mb-4">
+                                <span class="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-full ring-1 ring-blue-600/20">
+                                    {{ ucfirst($announcement->type ?? 'News') }}
+                                </span>
+                                <span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                    {{ $announcement->published_at ? $announcement->published_at->diffForHumans() : $announcement->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="text-xl font-extrabold text-slate-900 mb-3 leading-snug group-hover:text-blue-600 transition-colors duration-300">
+                                {{ $announcement->title }}
+                            </h3>
+                            
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+                                {{ Str::limit(strip_tags($announcement->content), 120) }}
+                            </p>
+                            
+                            <div class="mt-auto flex items-center justify-between text-sm font-bold text-blue-600 group-hover:text-blue-800 transition-colors pt-5 border-t border-slate-100 group-hover:border-blue-100">
+                                <span>Read Announcement</span>
+                                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                    <svg class="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if(isset($advisories) && $advisories->count() > 0)
+            <div>
+                <h3 class="text-2xl font-extrabold text-slate-800 mb-8 flex items-center gap-3">
+                    <div class="p-2 rounded-lg bg-orange-100 text-orange-600 shadow-sm">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    Traffic Advisories
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    @foreach($advisories as $advisory)
+                    <div onclick="openAdvisoryModal({{ $advisory->id }})" 
+                         class="group cursor-pointer flex flex-col justify-between h-full relative overflow-hidden bg-white rounded-3xl border border-slate-200 p-7 hover:border-orange-300 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(249,115,22,0.15)] hover:-translate-y-1.5 z-10">
+
+                        <!-- Ambient Hover Gradient -->
+                        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 opacity-0 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true">
+                            <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-orange-100 to-amber-100 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+                        </div>
+
+                        <div>
+                            <!-- Top header area -->
+                            <div class="flex items-start justify-between mb-5">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50/80 text-orange-700 ring-1 ring-orange-600/10 text-xs font-bold tracking-wide">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                                    </span>
+                                    ADVISORY
+                                </div>
+                                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    {{ $advisory->created_at->diffForHumans() }}
+                                </div>
+                            </div>
+
+                            <h3 class="text-xl font-extrabold text-slate-900 mb-3 leading-snug group-hover:text-orange-600 transition-colors duration-300">
+                                {{ $advisory->title }}
+                            </h3>
+
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+                                {{ Str::limit(strip_tags($advisory->description), 140) }}
+                            </p>
+                        </div>
+
+                        <!-- Bottom info area -->
+                        <div class="mt-auto">
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50/80 group-hover:bg-orange-50/50 transition-colors duration-300 border border-slate-100 group-hover:border-orange-100/50 mb-5">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Effective Date</span>
+                                    <div class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                                        <svg class="w-4 h-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+                                        {{ $advisory->start_date->format('M d') }}
+                                    </div>
+                                </div>
+                                
+                                <div class="w-px h-8 bg-slate-200 group-hover:bg-orange-200/50 transition-colors"></div>
+                                
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Until</span>
+                                    <div class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                                        <svg class="w-4 h-4 text-rose-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+                                        {{ $advisory->end_date->format('M d') }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between text-sm font-bold text-orange-600 group-hover:text-orange-700 transition-colors">
+                                <span>Read Full Details</span>
+                                <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 relative overflow-hidden">
+                                    <svg class="w-4 h-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+        </div>
+    </section>
+    @endif
+
     <!-- Traffic Map Section -->
     <section class="py-16 bg-gradient-to-b from-slate-50 to-blue-50 z-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -521,6 +693,209 @@
         });
     </script>
 @endif
+    <!-- ADVISORY MODALS -->
+    @if(isset($advisories) && $advisories->count() > 0)
+        @foreach($advisories as $advisory)
+        <div id="advisoryModal-{{ $advisory->id }}" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 invisible transition-all duration-300 z-[100] flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300" id="advisoryModalContent-{{ $advisory->id }}">
+                
+                <!-- Header -->
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-10 rounded-t-2xl">
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 pr-8">{{ $advisory->title }}</h2>
+                    <button onclick="closeAdvisoryModal({{ $advisory->id }})" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                <!-- Body -->
+                <div class="p-6 overflow-y-auto no-scrollbar">
+                    <div class="flex flex-wrap items-center gap-4 mb-6">
+                        <div class="flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                            <svg class="w-4 h-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+                            <span class="font-medium text-slate-700">From:</span> {{ $advisory->start_date->format('F d, Y') }}
+                        </div>
+                        <div class="flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                            <svg class="w-4 h-4 text-rose-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+                            <span class="font-medium text-slate-700">To:</span> {{ $advisory->end_date->format('F d, Y') }}
+                        </div>
+                    </div>
+                    
+                    <div class="prose prose-slate max-w-none text-slate-600 text-base leading-relaxed mb-6">
+                        {!! nl2br(e($advisory->description)) !!}
+                    </div>
+
+                    @if($advisory->map_data)
+                    <div class="mt-6 border-t border-slate-100 pt-6">
+                        <h3 class="font-bold text-slate-800 mb-2">Affected Area Map</h3>
+                        <div class="flex gap-4 text-xs text-slate-500 mb-4 font-medium">
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="inline-block w-4 h-1.5 bg-red-500 rounded-full"></span> Road Closure
+                            </span>
+                            <span class="inline-flex items-center gap-1.5">
+                                <span class="inline-block w-4 h-1.5 bg-emerald-500 rounded-full"></span> Reroute Path
+                            </span>
+                        </div>
+                        <div id="advisory-map-{{ $advisory->id }}" class="h-[300px] w-full rounded-xl border border-slate-200 z-[1] relative overflow-hidden bg-slate-100"></div>
+                    </div>
+                    @endif
+                </div>
+                
+                <!-- Footer -->
+                <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl mt-auto">
+                    <button onclick="closeAdvisoryModal({{ $advisory->id }})" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-xl transition shadow cursor-pointer">
+                        Close Details
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+        @endforeach
+
+        <script>
+            const advisoryMapData = {!! json_encode($advisories->pluck('map_data', 'id')) !!};
+            const advisoryMapInstances = {};
+
+            function openAdvisoryModal(id) {
+                const modal = document.getElementById('advisoryModal-' + id);
+                const content = document.getElementById('advisoryModalContent-' + id);
+                
+                if(modal && content) {
+                    modal.classList.remove('opacity-0', 'invisible');
+                    setTimeout(() => {
+                        content.classList.remove('scale-95');
+                        
+                        // Initialize map
+                        const mapContainer = document.getElementById('advisory-map-' + id);
+                        if (mapContainer && !advisoryMapInstances[id]) {
+                            const map = L.map('advisory-map-' + id).setView([10.2731, 123.7956], 14);
+                            
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors',
+                                maxZoom: 19
+                            }).addTo(map);
+
+                            const data = advisoryMapData[id];
+                            let bounds = L.latLngBounds();
+                            let hasPaths = false;
+
+                            if (data) {
+                                if (data.closures && data.closures.length > 0) {
+                                    data.closures.forEach(function (item) {
+                                        const pl = L.polyline(item.coordinates, { color: '#ef4444', weight: 5, opacity: 0.9 }).addTo(map);
+                                        bounds.extend(pl.getBounds());
+                                        hasPaths = true;
+                                    });
+                                }
+                                if (data.reroutes && data.reroutes.length > 0) {
+                                    data.reroutes.forEach(function (item) {
+                                        const pl = L.polyline(item.coordinates, { color: '#10b981', weight: 5, opacity: 0.9 }).addTo(map);
+                                        bounds.extend(pl.getBounds());
+                                        hasPaths = true;
+                                    });
+                                }
+                            }
+
+                            if (hasPaths) {
+                                // Add a little timeout to make sure container size is fully computed
+                                setTimeout(() => {
+                                    map.invalidateSize();
+                                    map.fitBounds(bounds, { padding: [30, 30] });
+                                }, 100);
+                            }
+                            
+                            advisoryMapInstances[id] = map;
+                        } else if (advisoryMapInstances[id]) {
+                            setTimeout(() => advisoryMapInstances[id].invalidateSize(), 50);
+                        }
+
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            function closeAdvisoryModal(id) {
+                const modal = document.getElementById('advisoryModal-' + id);
+                const content = document.getElementById('advisoryModalContent-' + id);
+                if(modal && content) {
+                    content.classList.add('scale-95');
+                    setTimeout(() => {
+                        modal.classList.add('opacity-0', 'invisible');
+                        document.body.style.overflow = '';
+                    }, 300);
+                }
+            }
+        </script>
+    @endif
+
+    <!-- ANNOUNCEMENT MODALS -->
+    @if(isset($announcements) && $announcements->count() > 0)
+        @foreach($announcements as $announcement)
+        <div id="announcementModal-{{ $announcement->id }}" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm opacity-0 invisible transition-all duration-300 z-[100] flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300" id="announcementModalContent-{{ $announcement->id }}">
+                
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-10 rounded-t-2xl">
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 pr-8">{{ $announcement->title }}</h2>
+                    <button onclick="closeAnnouncementModal({{ $announcement->id }})" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1.5 transition cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                
+                <div class="p-6 overflow-y-auto no-scrollbar">
+                    <div class="mb-5 flex flex-wrap items-center gap-3">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                            {{ ucfirst($announcement->type ?? 'Update') }}
+                        </span>
+                        @if($announcement->priority === 'high')
+                            <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-red-600 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
+                                Urgent Priority
+                            </span>
+                        @endif
+                        <span class="text-sm font-semibold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                            {{ $announcement->published_at ? $announcement->published_at->format('F d, Y \a\t h:i A') : $announcement->created_at->format('F d, Y') }}
+                        </span>
+                    </div>
+
+                    @if($announcement->image)
+                        <div class="mb-6 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                            <img src="{{ Storage::url($announcement->image) }}" class="w-full h-auto object-cover max-h-96">
+                        </div>
+                    @endif
+                    
+                    <div class="prose prose-slate max-w-none text-slate-600 text-base leading-relaxed mb-6">
+                        {!! $announcement->content !!}
+                    </div>
+                </div>
+                
+                <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl mt-auto">
+                    <button onclick="closeAnnouncementModal({{ $announcement->id }})" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-xl transition shadow cursor-pointer">
+                        Close Announcement
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endforeach
+        <script>
+            function openAnnouncementModal(id) {
+                const modal = document.getElementById('announcementModal-' + id);
+                const content = document.getElementById('announcementModalContent-' + id);
+                if(modal && content) {
+                    modal.classList.remove('opacity-0', 'invisible');
+                    setTimeout(() => content.classList.remove('scale-95'), 10);
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            function closeAnnouncementModal(id) {
+                const modal = document.getElementById('announcementModal-' + id);
+                const content = document.getElementById('announcementModalContent-' + id);
+                if(modal && content) {
+                    content.classList.add('scale-95');
+                    setTimeout(() => {
+                        modal.classList.add('opacity-0', 'invisible');
+                        document.body.style.overflow = '';
+                    }, 300);
+                }
+            }
+        </script>
+    @endif
 </body>
 
 </html>
