@@ -57,9 +57,15 @@
                         <div class="relative px-6 py-8 sm:px-8">
                             <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                                 <div class="flex items-center gap-5">
-                                    <div class="h-20 w-20 rounded-3xl bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 text-white flex items-center justify-center text-3xl font-black shadow-lg">
-                                        {{ strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1)) }}
-                                    </div>
+                                    @if($user->profile_image)
+                                        <div class="h-20 w-20 shrink-0 rounded-3xl overflow-hidden shadow-lg border-2 border-white ring-4 ring-blue-50/50">
+                                            <img src="{{ asset('storage/' . $user->profile_image) }}" alt="Profile Image" class="w-full h-full object-cover">
+                                        </div>
+                                    @else
+                                        <div class="h-20 w-20 shrink-0 rounded-3xl bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900 text-white flex items-center justify-center text-3xl font-black shadow-lg border-2 border-white ring-4 ring-blue-50/50">
+                                            {{ strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1)) }}
+                                        </div>
+                                    @endif
                                     <div>
                                         <p class="text-xs uppercase tracking-[0.3em] text-blue-700">{{ $roleLabel }}</p>
                                         <h2 class="text-2xl font-bold text-slate-900 mt-2">{{ $user->first_name }} {{ $user->last_name }}</h2>
@@ -98,11 +104,20 @@
                             <p class="text-sm text-slate-500 mt-1">Update your personal details and primary email address.</p>
                         </div>
 
-                        <form method="POST" action="{{ route('profile.update') }}" class="p-6 sm:p-8">
+                        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="p-6 sm:p-8">
                             @csrf
                             @method('PATCH')
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="md:col-span-2">
+                                    <label for="profile_image" class="block text-sm font-medium text-slate-700 mb-2">Profile Image (Optional)</label>
+                                    <input type="file" name="profile_image" id="profile_image" accept="image/*"
+                                        class="w-full text-base text-slate-600 file:mr-4 file:py-3.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-2xl bg-white shadow-sm focus:outline-none focus:border-blue-500 p-1.5 @error('profile_image') border-red-500 @enderror">
+                                    @error('profile_image')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
                                 <div>
                                     <label for="first_name" class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
                                     <input type="text" name="first_name" id="first_name"

@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
 
         // Create Regular User
         User::create([
-            'first_name' => 'Regular',
+            'first_name' => 'Citizen',
             'last_name' => 'User',
             'email' => 'user@example.com',
             'role' => 'user',
