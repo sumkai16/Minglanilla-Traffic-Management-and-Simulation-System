@@ -31,7 +31,7 @@ window.initPublicMap = function (containerId) {
         maxZoom: 19,
     }).addTo(map);
     L.tileLayer(
-        'https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z',
+        `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${window.TOMTOM_KEY}`,
         {
             attribution: '© TomTom',
             maxZoom: 19,

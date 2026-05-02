@@ -125,7 +125,7 @@
                 }).addTo(this.map);
 
                 // TomTom layer
-                const tomtomApiKey = 'ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z';
+                const tomtomApiKey = window.TOMTOM_KEY || "{{ config('services.tomtom.key') }}";
                 this.trafficLayer = L.tileLayer(
                     `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${tomtomApiKey}`,
                     {

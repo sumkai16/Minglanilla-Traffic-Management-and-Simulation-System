@@ -144,7 +144,7 @@
                 map = L.map('map').setView([10.2700, 123.7850], 13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                 }).addTo(map);
-                const tomtomApiKey = 'ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z';
+                const tomtomApiKey = "{{ config('services.tomtom.key') }}";
                 trafficLayer = L.tileLayer(
                     `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${tomtomApiKey}`,
                     {

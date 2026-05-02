@@ -232,7 +232,7 @@
         let _publicTrafficVisible = false;
         let _publicMarkersVisible = true;
 
-        const TOMTOM_KEY = 'ltjHbZJ204oMhEb0TuB2EmoqFVi1sV2Z';
+        const TOMTOM_KEY = "{{ config('services.tomtom.key') }}";
 
         document.addEventListener('DOMContentLoaded', function () {
             _publicMap = L.map('public-map').setView([10.2833, 123.7972], 13);
