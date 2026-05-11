@@ -15,28 +15,44 @@ class SimulationController extends Controller
     {
         return view('head-mitcom.simulation');
     }
-    public function data(Request $request)
-    {
-        $start = Carbon::parse($request->get('start', now()->subDays(30)->startOfDay()));
-        $end = Carbon::parse($request->get('end', now()->endOfDay()));
-
-        $reports = Report::whereBetween('created_at', [$start, $end])
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get(['id', 'issue_type', 'location', 'latitude', 'longitude', 'status', 'created_at', 'verified_at', 'assigned_at', 'resolved_at']);
-
-        $advisories = TrafficAdvisory::where('status', '!=', 'draft')
-            ->where('start_date', '<=', $end)
-            ->where('end_date', '>=', $start)
+  public function data(Request $request)
+{
+    // Mode 2 — no date params, return only active advisories
+    if (!$request->filled('start') && !$request->filled('end')) {
+        $advisories = TrafficAdvisory::where('status', 'published')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
             ->get(['id', 'title', 'map_data', 'start_date', 'end_date', 'status']);
 
         return response()->json([
-            'reports' => $reports,
+            'reports'    => [],
             'advisories' => $advisories,
-            'start' => $start->toIso8601String(),
-            'end' => $end->toIso8601String(),
+            'start'      => now()->toIso8601String(),
+            'end'        => now()->toIso8601String(),
         ]);
     }
+
+    // Mode 1 — date range provided, return reports + advisories
+    $start = Carbon::parse($request->get('start', now()->subDays(30)->startOfDay()));
+    $end   = Carbon::parse($request->get('end', now()->endOfDay()));
+
+    $reports = Report::whereBetween('created_at', [$start, $end])
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->get(['id', 'issue_type', 'location', 'latitude', 'longitude', 'status', 'created_at', 'verified_at', 'assigned_at', 'resolved_at']);
+
+    $advisories = TrafficAdvisory::where('status', '!=', 'draft')
+        ->where('start_date', '<=', $end)
+        ->where('end_date', '>=', $start)
+        ->get(['id', 'title', 'map_data', 'start_date', 'end_date', 'status']);
+
+    return response()->json([
+        'reports'    => $reports,
+        'advisories' => $advisories,
+        'start'      => $start->toIso8601String(),
+        'end'        => $end->toIso8601String(),
+    ]);
+}
     public function analysis()
 {
     $reports = Report::whereNotNull('latitude')

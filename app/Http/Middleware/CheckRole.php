@@ -13,14 +13,22 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
-    {
-        if(!$request->user()){
-            return redirect()->route('login');
+ public function handle(Request $request, Closure $next, string $role): Response
+{
+    if (!$request->user()) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
-        if($request->user()->role !== $role){
-            abort(403, 'Unauthorized access. You do not have permission to view this page.');
-        }
-        return $next($request);
+        return redirect()->route('login');
     }
+
+    if ($request->user()->role !== $role) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+        abort(403, 'Unauthorized access. You do not have permission to view this page.');
+    }
+
+    return $next($request);
+}
 }

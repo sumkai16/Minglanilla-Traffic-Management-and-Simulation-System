@@ -19,8 +19,24 @@
         </div>
 
         {{-- Controls Card --}}
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
-            <div class="flex flex-wrap items-end gap-4">
+        {{-- Controls Card --}}
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 space-y-4">
+
+            {{-- Mode Toggle --}}
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest mr-2">Simulate:</span>
+                <button id="modeReports" onclick="setMode('reports')"
+                    class="px-4 py-2 text-sm font-semibold rounded-xl transition bg-blue-600 text-white">
+                    Incident Reports
+                </button>
+                <button id="modeAdvisory" onclick="setMode('advisory')"
+                    class="px-4 py-2 text-sm font-semibold rounded-xl transition bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
+                    Traffic Advisory
+                </button>
+            </div>
+
+            {{-- Mode 1 Controls — Incident Reports --}}
+            <div id="mode1Controls" class="flex flex-wrap items-end gap-4">
                 {{-- Date Range --}}
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-1">Start Date</label>
@@ -65,8 +81,10 @@
                         <option value="30">30x</option>
                     </select>
                 </div>
+
                 {{-- Divider --}}
                 <div class="w-px h-8 bg-slate-200 hidden sm:block"></div>
+
                 {{-- Traffic Flow Toggle --}}
                 <button id="traffic-toggle" onclick="toggleTrafficLayer()"
                     class="px-3 py-2 rounded-xl text-sm font-semibold transition bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
@@ -76,8 +94,27 @@
                 </button>
             </div>
 
-            {{-- Timeline --}}
-            <div class="mt-4 flex items-center gap-4">
+            {{-- Mode 2 Controls — Traffic Advisory --}}
+            <div id="mode2Controls" class="hidden flex flex-wrap items-end gap-4">
+                <p class="text-sm text-slate-500">Showing all currently active traffic advisories with road closures and
+                    reroutes.</p>
+                <button id="loadAdvisoryBtn"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition">
+                    Load Advisories
+                </button>
+                {{-- Divider --}}
+                <div class="w-px h-8 bg-slate-200 hidden sm:block"></div>
+                {{-- Traffic Flow Toggle --}}
+                <button id="traffic-toggle-2" onclick="toggleTrafficLayer()"
+                    class="px-3 py-2 rounded-xl text-sm font-semibold transition bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full inline-block"
+                        style="background: linear-gradient(to right, #22c55e, #ef4444);"></span>
+                    Traffic Flow
+                </button>
+            </div>
+
+            {{-- Timeline (Mode 1 only) --}}
+            <div id="mode1Timeline" class="flex items-center gap-4">
                 <span id="currentTimeLabel" class="text-xs font-semibold text-slate-400 w-44 shrink-0">Not
                     started</span>
                 <div class="flex-1 bg-slate-100 rounded-full h-2">
@@ -86,6 +123,7 @@
                 </div>
                 <span id="reportCountLabel" class="text-xs text-slate-400 shrink-0">0 reports loaded</span>
             </div>
+
         </div>
 
         {{-- Legend + Map Card --}}
@@ -125,7 +163,11 @@
             </div>
 
             {{-- Map --}}
-            <div id="map" class="z-0 overflow-hidden" style="height: 520px; min-height: 520px;"></div>
+            <div style="position:relative; height:520px; min-height:520px;">
+                <div id="map" class="z-0 overflow-hidden" style="height:100%; width:100%;"></div>
+                <canvas id="vehicleCanvas"
+                    style="position:absolute;top:0;left:0;pointer-events:none;z-index:500;"></canvas>
+            </div>
         </div>
 
     </main>
@@ -138,7 +180,9 @@
             let map;
             let trafficLayer;
             let trafficVisible = false;
-
+            let activeMarkers = {};
+            let advisoryLayers = {};
+            let vehicleAnimations = {};
             document.addEventListener('DOMContentLoaded', function () {
 
                 map = L.map('map').setView([10.2700, 123.7850], 13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -153,6 +197,21 @@
                         opacity: 1,
                     }
                 );
+                initCanvas();
+                // Redraw canvas on map move/zoom
+                map.on('move moveend', function () {
+                    drawVehicles();
+                });
+
+                map.on('zoomend', function () {
+                    setTimeout(function () {
+                        const canvas = document.getElementById('vehicleCanvas');
+                        const mapContainer = document.getElementById('map');
+                        canvas.width = mapContainer.offsetWidth;
+                        canvas.height = mapContainer.offsetHeight;
+                        drawVehicles();
+                    }, 100);
+                });
                 let allReports = [];
                 let allAdvisories = [];
                 let startTime = null;
@@ -160,8 +219,7 @@
                 let simTime = null;
                 let simInterval = null;
                 let isPlaying = false;
-                let activeMarkers = {};
-                let advisoryLayers = {};
+
 
                 const statusColors = {
                     pending: '#facc15',
@@ -232,12 +290,15 @@
                                 const data = advisory.map_data;
                                 if (data.closures) {
                                     data.closures.forEach(function (item) {
-                                        L.polyline(item.coordinates, { color: '#ef4444', weight: 6, opacity: 0.9 }).addTo(group);
+                                        L.polyline(item.coordinates, { color: '#ef4444', weight: 12, opacity: 0.9 }).addTo(group);
                                     });
                                 }
                                 if (data.reroutes) {
                                     data.reroutes.forEach(function (item) {
-                                        L.polyline(item.coordinates, { color: '#22c55e', weight: 6, opacity: 0.9 }).addTo(group);
+                                        L.polyline(item.coordinates, { color: '#22c55e', weight: 12, opacity: 0.9 }).addTo(group);
+
+                                        animateVehicle(coords, 0);
+                                        startCanvasAnimation();
                                     });
                                 }
                                 group.addTo(map);
@@ -283,6 +344,7 @@
 
                 function resetSimulation() {
                     pauseSimulation();
+                    clearVehicleAnimations();
                     simTime = new Date(startTime);
                     Object.values(activeMarkers).forEach(m => map.removeLayer(m));
                     activeMarkers = {};
@@ -323,6 +385,7 @@
                 document.getElementById('playBtn').addEventListener('click', playSimulation);
                 document.getElementById('pauseBtn').addEventListener('click', pauseSimulation);
                 document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+                document.getElementById('loadAdvisoryBtn').addEventListener('click', loadAdvisories);
 
             });
             function toggleTrafficLayer() {
@@ -339,6 +402,184 @@
                     btn.classList.add('bg-blue-600', 'text-white');
                 }
             }
+
+            // Canvas vehicle animation
+            let canvasAnimationId = null;
+            let activeVehicles = [];
+            const carImage = new Image();
+            let carImageLoaded = false;
+            carImage.onload = function () { carImageLoaded = true; };
+            carImage.src = '/images/simulation/car.png';
+
+            function initCanvas() {
+                const canvas = document.getElementById('vehicleCanvas');
+                const mapContainer = document.getElementById('map');
+                canvas.width = mapContainer.offsetWidth;
+                canvas.height = mapContainer.offsetHeight;
+            }
+
+            function drawVehicles() {
+                if (!carImageLoaded) return;
+                const canvas = document.getElementById('vehicleCanvas');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                activeVehicles.forEach(function (vehicle) {
+                    const coords = vehicle.coords;
+                    const currentIndex = vehicle.currentIndex;
+                    const nextIndex = (currentIndex + 1) % coords.length;
+                    const progress = vehicle.progress || 0;
+
+                    const current = map.latLngToContainerPoint(L.latLng(coords[currentIndex][0], coords[currentIndex][1]));
+                    const next = map.latLngToContainerPoint(L.latLng(coords[nextIndex][0], coords[nextIndex][1]));
+
+                    // Interpolate position between current and next
+                    const x = current.x + (next.x - current.x) * progress;
+                    const y = current.y + (next.y - current.y) * progress;
+
+                    const angle = Math.atan2(next.y - current.y, next.x - current.x) + Math.PI / 2;
+
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(angle);
+                    ctx.drawImage(carImage, -24, -24, 48, 48);
+                    ctx.restore();
+                });
+            }
+
+            function startCanvasAnimation() {
+                if (canvasAnimationId) cancelAnimationFrame(canvasAnimationId);
+
+                const stepsPerSegment = 20; // frames to travel between two points
+
+                activeVehicles.forEach(function (vehicle) {
+                    vehicle.progress = 0; // 0.0 to 1.0 between current and next point
+                });
+
+                function advance() {
+                    activeVehicles.forEach(function (vehicle) {
+                        vehicle.progress += 1 / stepsPerSegment;
+                        if (vehicle.progress >= 1) {
+                            vehicle.progress = 0;
+                            vehicle.currentIndex = vehicle.currentIndex + 1;
+                            if (vehicle.currentIndex >= vehicle.coords.length - 1) {
+                                vehicle.currentIndex = 0;
+                                vehicle.progress = 0;
+                            }
+                        }
+                    });
+                    drawVehicles();
+                    canvasAnimationId = setTimeout(advance, 100);
+                }
+
+                advance();
+            }
+
+            function stopCanvasAnimation() {
+                if (canvasAnimationId) {
+                    clearTimeout(canvasAnimationId);
+                    canvasAnimationId = null;
+                }
+                activeVehicles = [];
+                const canvas = document.getElementById('vehicleCanvas');
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            function animateVehicle(coords, offset) {
+                const totalPoints = coords.length;
+                const startIndex = Math.floor(offset * totalPoints);
+                activeVehicles.push({
+                    coords: coords,
+                    currentIndex: startIndex
+                });
+                console.log('Vehicle added with offset', offset, 'starting at index', startIndex);
+            }
+
+            function clearVehicleAnimations() {
+                stopCanvasAnimation();
+                vehicleAnimations = {};
+            }
+
+
+            function setMode(mode) {
+                const mode1Controls = document.getElementById('mode1Controls');
+                const mode2Controls = document.getElementById('mode2Controls');
+                const mode1Timeline = document.getElementById('mode1Timeline');
+                const modeReportsBtn = document.getElementById('modeReports');
+                const modeAdvisoryBtn = document.getElementById('modeAdvisory');
+
+                // Clear everything first
+                clearVehicleAnimations();
+                Object.values(activeMarkers).forEach(m => map.removeLayer(m));
+                activeMarkers = {};
+                Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
+                advisoryLayers = {};
+
+                if (mode === 'reports') {
+                    mode1Controls.classList.remove('hidden');
+                    mode2Controls.classList.add('hidden');
+                    mode1Timeline.classList.remove('hidden');
+                    modeReportsBtn.classList.add('bg-blue-600', 'text-white');
+                    modeReportsBtn.classList.remove('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                    modeAdvisoryBtn.classList.remove('bg-blue-600', 'text-white');
+                    modeAdvisoryBtn.classList.add('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                } else {
+                    mode1Controls.classList.add('hidden');
+                    mode2Controls.classList.remove('hidden');
+                    mode1Timeline.classList.add('hidden');
+                    modeAdvisoryBtn.classList.add('bg-blue-600', 'text-white');
+                    modeAdvisoryBtn.classList.remove('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                    modeReportsBtn.classList.remove('bg-blue-600', 'text-white');
+                    modeReportsBtn.classList.add('bg-white', 'text-slate-700', 'ring-1', 'ring-slate-200');
+                }
+            }
+
+            function loadAdvisories() {
+                fetch('{{ route("head-mitcom.simulation.data") }}')
+                    .then(r => r.json())
+                    .then(function (data) {
+                        clearVehicleAnimations();
+                        Object.values(advisoryLayers).forEach(l => map.removeLayer(l));
+                        advisoryLayers = {};
+
+                        data.advisories.forEach(function (advisory) {
+                            if (!advisory.map_data) return;
+                            const group = L.layerGroup();
+                            const mapData = advisory.map_data;
+
+                            if (mapData.closures) {
+                                mapData.closures.forEach(function (item) {
+                                    L.polyline(item.coordinates, { color: '#ef4444', weight: 12, opacity: 0.9 }).addTo(group);
+                                });
+                            }
+
+                            if (mapData.reroutes) {
+                                mapData.reroutes.forEach(function (item) {
+                                    L.polyline(item.coordinates, { color: '#22c55e', weight: 12, opacity: 0.9 }).addTo(group);
+                                    console.log('Reroute item:', item); // ADD THIS
+                                    console.log('Coords:', item.coordinates); // ADD THIS
+                                    const coords = item.coordinates;
+                                    if (coords && coords.length > 1) {
+                                        animateVehicle(coords, 0);
+                                        startCanvasAnimation();
+                                    }
+                                });
+                            }
+
+                            group.addTo(map);
+                            advisoryLayers[advisory.id] = group;
+                        });
+
+                        if (data.advisories.length === 0) {
+                            alert('No active advisories with reroutes found.');
+                        }
+                    });
+            }
+
+            window.setMode = setMode;
             window.toggleTrafficLayer = toggleTrafficLayer;
         </script>
 
