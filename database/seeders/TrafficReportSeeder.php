@@ -103,7 +103,7 @@ class TrafficReportSeeder extends Seeder
                 'reporter_email' => null,
                 'reporter_phone' => null,
                 'issue_type' => $issueType,
-                'description' => 'Seeded report: ' . str_replace('_', ' ', $issueType) . ' at ' . $location['name'] . '.',
+                'description' => $this->generateDescription($issueType, $location['name']),
                 'location' => $location['name'],
                 'latitude' => $location['lat'],
                 'longitude' => $location['lng'],
@@ -124,4 +124,57 @@ class TrafficReportSeeder extends Seeder
 
         $this->command->info('40 seeded traffic reports inserted successfully.');
     }
+    private function generateDescription(string $issueType, string $locationName): string
+{
+    $templates = [
+        'traffic_signal_problem' => [
+            "Traffic light at $locationName is malfunctioning. Signal stuck on red for several minutes.",
+            "Broken traffic signal near $locationName causing confusion among motorists.",
+            "Traffic signal at $locationName not functioning properly since this morning.",
+        ],
+        'road_damage' => [
+            "Large pothole along $locationName road causing damage to vehicles.",
+            "Road surface at $locationName is severely cracked and needs immediate repair.",
+            "Deep crater on the road near $locationName posing danger to motorcycles.",
+        ],
+        'illegal_parking' => [
+            "Vehicles illegally parked along $locationName blocking one lane of traffic.",
+            "Tricycles and motorcycles parked on the road shoulder at $locationName obstructing flow.",
+            "Several vehicles blocking the road at $locationName with no parking signage observed.",
+        ],
+        'traffic_obstruction' => [
+            "Road obstruction at $locationName due to construction materials left on the road.",
+            "Fallen tree branch blocking part of the road near $locationName.",
+            "Stalled vehicle at $locationName causing heavy traffic buildup.",
+        ],
+        'accident' => [
+            "Minor collision between two motorcycles near $locationName. No serious injuries reported.",
+            "Vehicle accident at $locationName involving a tricycle and a private car.",
+            "Road accident near $locationName. Vehicles need to be cleared from the road.",
+        ],
+        'traffic_violation' => [
+            "Motorists observed beating the red light repeatedly at $locationName.",
+            "Truck violating load restriction ordinance along $locationName.",
+            "Motorcycles riding against traffic direction near $locationName.",
+        ],
+        'reckless_driving' => [
+            "Reckless driver spotted overtaking dangerously at $locationName.",
+            "Motorcycle rider driving at high speed and weaving between vehicles near $locationName.",
+            "Driver of a van observed swerving recklessly along $locationName road.",
+        ],
+        'public_safety' => [
+            "Loose electrical wire hanging low over the road at $locationName.",
+            "Open manhole near $locationName posing risk to pedestrians and cyclists.",
+            "Flooding along $locationName making the road hazardous for motorists.",
+        ],
+        'infrastructure' => [
+            "Damaged road barrier along $locationName needs immediate replacement.",
+            "Missing road signs at the intersection near $locationName causing confusion.",
+            "Broken street light at $locationName leaving the area dark at night.",
+        ],
+    ];
+
+    $options = $templates[$issueType] ?? ["Incident reported at $locationName. Needs immediate attention."];
+    return $options[array_rand($options)];
+}
 }
